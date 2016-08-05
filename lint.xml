@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress ALL -->
+<lint>
+	<issue id="all">
+        <ignore path="XEMSDKChatSample/*" />
+		<ignore path="xiiotdemo/*" />
+		<ignore path="build/" />
+    </issue>
+	
+</lint>

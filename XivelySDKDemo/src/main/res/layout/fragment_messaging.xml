@@ -1,0 +1,82 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.MessagingFragment">
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Message_editTextMessage"
+        android:layout_toLeftOf="@+id/Message_buttonSend"
+        android:layout_toStartOf="@+id/Message_buttonSend"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:hint="Type your message here..." />
+
+    <TextView
+        android:id="@+id/Message_Status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Messaging connected"
+        android:layout_above="@id/Message_editTextMessage"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send"
+        android:id="@+id/Message_buttonSend"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="5dp" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Select a device..."
+        android:id="@+id/Message_TextViewDeviceSelector"
+        android:layout_margin="5dp"
+        android:maxLines="2"
+        />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Select a channel..."
+        android:id="@+id/Message_textViewChannelSelector"
+        android:layout_below="@id/Message_TextViewDeviceSelector"
+        android:layout_margin="5dp"
+        android:maxLines="3"
+        />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/Message_textViewChannelSelector"
+        android:layout_above="@id/Message_Status"
+        android:layout_margin="5dp"
+        android:id="@+id/Message_messages_scroll"
+        android:fillViewport="true"
+        >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Message_tvMessages"
+            android:layout_gravity="bottom"
+            android:text=""
+            />
+
+    </ScrollView>
+
+</RelativeLayout>

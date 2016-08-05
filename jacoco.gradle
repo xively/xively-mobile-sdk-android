@@ -1,0 +1,71 @@
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion "0.7.5.201505241946"
+}
+
+def coverageSourceDirsChat = [
+        "$projectDir/src/main/java",
+        "$projectDir/src/chatsdk/java",
+]
+
+def coverageSourceDirsGeneral = [
+        "$projectDir/src/main/java",
+        "$projectDir/src/general/java",
+]
+
+task jacocoChatTestReport(type: JacocoReport, dependsOn: "testChatsdkDebugUnitTest") {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running chat sdk tests."
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+    classDirectories = fileTree(
+            dir: './build/intermediates/classes/chatsdk/debug',
+            excludes: ['**/R*.class',
+                       '**/*$InjectAdapter.class',
+                       '**/*$ModuleAdapter.class',
+                       '**/*$ViewInjector*.class'
+            ]
+    )
+    sourceDirectories = files(coverageSourceDirsChat)
+    executionData = files("$buildDir/jacoco/testChatsdkDebugUnitTest.exec")
+    // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
+    // We iterate through the compiled .class tree and rename $$ to $.
+    doFirst {
+        new File("$buildDir/intermediates/classes/chatsdk/").eachFileRecurse { file ->
+            if (file.name.contains('$$')) {
+                file.renameTo(file.path.replace('$$', '$'))
+            }
+        }
+    }
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: "testDebugUnitTest") {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running general sdk tests."
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+    classDirectories = fileTree(
+            dir: './build/intermediates/classes/general/debug',
+            excludes: ['**/R*.class',
+                       '**/*$InjectAdapter.class',
+                       '**/*$ModuleAdapter.class',
+                       '**/*$ViewInjector*.class'
+            ]
+    )
+    sourceDirectories = files(coverageSourceDirsGeneral)
+    executionData = files("$buildDir/jacoco/testGeneralDebugUnitTest.exec")
+    // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
+    // We iterate through the compiled .class tree and rename $$ to $.
+    doFirst {
+        new File("$buildDir/intermediates/classes/general/").eachFileRecurse { file ->
+            if (file.name.contains('$$')) {
+                file.renameTo(file.path.replace('$$', '$'))
+            }
+        }
+    }
+}

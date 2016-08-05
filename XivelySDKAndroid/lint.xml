@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress ALL -->
+<lint>
+	
+    <issue id="IconDensities" severity="ignore" />
+	<issue id="IconMissingDensityFolder" severity="ignore" />
+	<issue id="SpellCheckingInspection" severity="ignore" />
+	
+    <issue id="Annotator">
+        <ignore path="XEMSDKAndroid/src/overview.html" />
+    </issue>
+</lint>

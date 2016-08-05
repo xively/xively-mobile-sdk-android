@@ -1,0 +1,80 @@
+apply plugin: 'com.android.library'
+
+repositories {
+    maven {
+        url 'https://artifactory.intra.3amlabs.net/artifactory/repo'
+        credentials {
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+        }
+    }
+}
+
+android {
+    signingConfigs {
+        lmiSignConfig {
+            //noinspection GroovyAssignabilityCheck
+            storeFile file(project.lmikeystoreLocation)
+            //noinspection GroovyAssignabilityCheck
+            storePassword project.lmikeystorePassword
+            //noinspection GroovyAssignabilityCheck
+            keyAlias project.lmikeyAlias
+            //noinspection GroovyAssignabilityCheck
+            keyPassword project.lmikeyPassword
+        }
+
+        platformSignConfig {
+            storeFile file('../keystores/platform.jks')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
+    compileSdkVersion 21
+    buildToolsVersion '24.0.0'
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 21
+
+        versionCode 1
+        versionName "0.1"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //noinspection GroovyAssignabilityCheck
+            signingConfig signingConfigs.lmiSignConfig
+        }
+        debug {
+            minifyEnabled false
+            //noinspection GroovyAssignabilityCheck
+            signingConfig signingConfigs.platformSignConfig
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    lintOptions {
+        abortOnError true
+        absolutePaths false
+        lintConfig file("lint.xml")
+    }
+}
+
+apply from: '../jacoco.gradle'
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    testCompile('org.robolectric:robolectric:2.4') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
+    compile files('libs/org.eclipse.paho.android.service-1.0.1.jar')
+    compile files('libs/org.eclipse.paho.client.mqttv3-1.0.1.jar')
+    compile files('libs/retrofit-1.7.1.jar')
+    compile files('libs/gson-2.3.jar')
+}
+
