@@ -58,7 +58,7 @@ public class TimeSeriesWebServicesTest extends TestCase {
 
         verify(mockRestAdapter, times(1)).create(Matchers.<Class<GetData>>anyObject());
 
-        verify(mockGetData, timeout(1000).times(1)).getData(eq(mockTopic), eq(mockTopic),
+        verify(mockGetData, timeout(1000).times(1)).getData( eq(mockTopic),
                 eq(expectedStartDate), eq(expectedEndDate), anyInt(), anyString(), anyBoolean(),
                 anyString(), anyInt(), eq(mockCallback));
     }
@@ -86,7 +86,7 @@ public class TimeSeriesWebServicesTest extends TestCase {
 
         verify(mockRestAdapter, times(1)).create(Matchers.<Class<GetData>>anyObject());
 
-        verify(mockGetData, timeout(1000).times(1)).getData(eq(mockTopic), eq(mockTopic),
+        verify(mockGetData, timeout(1000).times(1)).getData(eq(mockTopic),
                 eq(expectedStartDate), eq(expectedEndDate), eq(mockPageSize), eq(mockToken),
                 eq(mockOmitNull), eq(mockCategory), eq(mockGroupType),
                 eq(mockCallback));

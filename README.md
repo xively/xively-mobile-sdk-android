@@ -1,18 +1,21 @@
 # Xively SDK for Android
-This is the Xively Android SDK. It is designed to help facilitate building an Android application using Xively. It will help facilitate communication with Xively HTTP APIs as well as setup connections to the Xively MQTT broker. 
+
+This is the Xively Android SDK. It is designed to help facilitate building an Android application using Xively Services ( Idm, Blueprint, TimeSeries, Messaging ).
 
 ## Table of Contents
+
 1. Introduction
-	- About Xively
-	- Download
-	- Contents
 	- Supported Xively Services
+	- Contents
+
 2. Getting Started
 	- Prerequisites
 	- Install Xively SDK
 	- Configure Xively 'Hello World'
 	- Run 'Hello World'
+
 3. API Reference
+
 4. Tutorials
 	- Using the Android SDK
 	- Login
@@ -20,45 +23,45 @@ This is the Xively Android SDK. It is designed to help facilitate building an An
 	- Receive Messages
 	- List Devices
 	- Graph TimeSeries Data
+
 5. Reference Application
-	- 
+	- XivelySDKE2E
+	- XivelySDKDemo
+
 6. Troubleshooting
 	- Known Issues
 	- Common Problems
 	- Getting Help
 
 ## Introduction
-### About Xively
-** TODO **
-This documentation will refer to Xively objects such as devices, end users, channels, and more. We will do our best to explain but if you are unsure what these are, you should see the full Xively [API Documentation](http://docs.xively.com/).
 
-For further details see http:\\docs.xively.com
-### Download
-**TODO: update this section when doc goes public!**
-The internal release of the library can be downloaded from the following location:
-https://artifactory.intra.3amlabs.net/artifactory/simple/xively/xem-sdk-android-release/sdk-release-packages
+### Supported Xively Services
 
-### Contents
-Package structure:
+The SDK currently supports using the following services:
 
-* [examples] - sample source code and reference implementation
+ * Username/Password based authentication to Xively Identity Management(IdM) API
+ * Querying organization or organization list from Blueprint
+ * Querying device or device list from Blueprint
+ * Querying end user or end user list from Blueprint
+ * Updating end user in Blueprint
+ * Updating device in Blueprint
+ * Querying time series records of channels
+ * Messaging through the publish-subscribe style (MQTT) interface
+
+### Package structure:
+
 * [javadoc] - API documentation
-* [libs] - xively-sdk-0.1.1.aar
-* [screenshots] - screenshots complementing the documentation
+* [XivelySDKAndroid] - the source code of the library
+* [XivelySDKDemo] - visual demo application
+* [XivelySDKE2E] - sample application showing all features, can be used for end-to-end tests
 * CHANGELOG - release history
 * COPYING - Copying and redistributing legal info
 * LICENSE - License Agreement
 * README.md - project readme document
 
-### Supported Xively Services
-The SDK currently supports using the following services:
 
- * Username/Password based authentication to Xively Identity Management(IdM) API
- * Querying the list of devices from Blueprint
- * Querying Time Series records of channels
- * Messaging through the publish-subscribe style (MQTT) interface
- 
 ## Getting Started
+
 This section will help you get the Xively Android SDK setup in your environment. It will take you through the basic installation as well as a simple example.
  
 ### Prerequisites

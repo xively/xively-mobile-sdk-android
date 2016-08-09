@@ -1,1 +1,1 @@
-javadoc -public -splitindex -overview XivelySDKAndroid/src/overview.html -subpackages com.xively -exclude com.xively.internal:com.xively.chat.internal:com.xively.connection.internal:com.xively.device.internal:com.xively.iot.impl:com.xively.auth.impl -sourcepath XivelySDKAndroid/src/main/java -d /Users/milgra/Desktop/Doc
+javadoc -public -splitindex -subpackages com.xively -exclude com.xively.internal:com.xively.chat.internal:com.xively.connection.internal:com.xively.device.internal:com.xively.iot.impl:com.xively.auth.impl -sourcepath XivelySDKAndroid/src/main/java -d javadoc

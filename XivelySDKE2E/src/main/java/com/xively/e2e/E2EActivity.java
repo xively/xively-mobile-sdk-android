@@ -65,9 +65,9 @@ public class E2EActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dev);
 
-        String xivelyUsername = "app53810938@xively.com";
-        String xivelyPassword = "itVJd9RRVy8l/BhrJcjguXD2suNUBD5buXFGniGJ6i0=";
-        String xivelyAccountId = "ec274e02-a279-4faf-8901-ed503d80c55c";
+        String xivelyUsername = "";
+        String xivelyPassword = "";
+        String xivelyAccountId = "";
 
         XiAuthenticationCallback callback = new XiAuthenticationCallback() {
             @Override

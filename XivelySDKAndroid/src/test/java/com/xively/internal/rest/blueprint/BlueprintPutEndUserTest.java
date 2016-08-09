@@ -11,6 +11,8 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.HashMap;
+
 import retrofit.Callback;
 import retrofit.RestAdapter;
 
@@ -44,8 +46,9 @@ public class BlueprintPutEndUserTest extends TestCase {
 
         final String userId = "mock user id";
         final String version = "ef";
-        XiEndUserUpdateInfo data = new XiEndUserUpdateInfo();
-        data.emailAddress = "anotheremail";
+
+        HashMap<String,Object> data = new HashMap<String,Object>();
+        data.put("emailAddress","anotheremail");
         testWS.putEndUser( userId, version, data, mockCallback );
 
         verify(mockRestAdapter, times(1)).create(Matchers.<Class<CreateCredentials>>anyObject());
