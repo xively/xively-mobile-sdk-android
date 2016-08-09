@@ -11,8 +11,8 @@ This is the Xively Android SDK. It is designed to help facilitate building an An
 2. Getting Started
 	- Prerequisites
 	- Install Xively SDK
-	- Configure Xively 'Hello World'
-	- Run 'Hello World'
+	- Run XivelySDKDemo
+	- Run XivelySDKE2E
 
 3. API Reference
 
@@ -23,10 +23,6 @@ This is the Xively Android SDK. It is designed to help facilitate building an An
 	- Receive Messages
 	- List Devices
 	- Graph TimeSeries Data
-
-5. Reference Application
-	- XivelySDKE2E
-	- XivelySDKDemo
 
 6. Troubleshooting
 	- Known Issues
@@ -39,7 +35,7 @@ This is the Xively Android SDK. It is designed to help facilitate building an An
 
 The SDK currently supports using the following services:
 
- * Username/Password based authentication to Xively Identity Management(IdM) API
+ * Username/Password based authentication with Xively Identity Management(IdM) API
  * Querying organization or organization list from Blueprint
  * Querying device or device list from Blueprint
  * Querying end user or end user list from Blueprint
@@ -50,6 +46,7 @@ The SDK currently supports using the following services:
 
 ### Package structure:
 
+* XivelySDKAndroid.aar - the Xively SDK archive
 * [javadoc] - API documentation
 * [XivelySDKAndroid] - the source code of the library
 * [XivelySDKDemo] - visual demo application
@@ -62,18 +59,26 @@ The SDK currently supports using the following services:
 
 ## Getting Started
 
-This section will help you get the Xively Android SDK setup in your environment. It will take you through the basic installation as well as a simple example.
+This section will help you get the Xively Android SDK setup in your environment.
  
 ### Prerequisites
+
+#### SDK
+
+The SDK is provided as an android archive library and as source.
+
 #### Development Environment
-The Xively SDK is presented as an Android .aar library.
+
 This guide assumes that the developer using the Xively SDK is familiar with Android Studio and Android development basics.
 The expected minimum Android API level of the Xively SDK is 15 (Android 4.0.3).
 
-This guide assumes that you have a Xively account already setup, if you don't, click here. It also assumes that you have 'account user' credentials as they will be needed to facilitate the basic connection.
+This guide assumes that you have a Xively account already setup, if you don't, [click here](https://www.xively.com/get-started).
+It also assumes that you have 'account user' credentials as they will be needed to facilitate the basic connection.
 
 ### Install Xively SDK
+
 #### Dependencies and Third Party Content
+
 There are no external dependencies, however the library is based on and uses the following open source software:
 
 * Paho Java client for MQTT - http://eclipse.org/paho/clients/android/
@@ -81,14 +86,15 @@ There are no external dependencies, however the library is based on and uses the
 * Retrofit - http://square.github.io/retrofit/
 
 #### 1. Download the SDK
-If you haven't already download the zip which contains the SDK, click here. - https://artifactory.intra.3amlabs.net/artifactory/simple/xively/xem-sdk-android-release/sdk-release-packages
+
+If you haven't already check out the sdk or just download the aar file [from here](https://github.com/xively/xively-mobile-sdk-android).
 
 #### 2. Import the Library
-Unpack the zip to any folder.
+
 Copy the xively sdk library aar to your project (create an [aars] or any other folder in your project).
 To import the library, open your application module settings (F4) and open the Dependencies tab. You may add the library as a file dependency, but you can also create a local maven repository for your library dependencies.
 
-The Hello World application's build.gradle file we have defined the [aars] folder of the module as a local repository:
+A typical build.gradle should look like this after the previous steps :
 
 ```gradle
 repositories {
@@ -102,48 +108,40 @@ dependencies {
     }
 ```
 
-### Configure Xively 'Hello World'
-The SDK package contains the XivelySDKAndroidSamples project. This projects is embedding the Xively Hello World application.
-This application authenticates a predefined user, opens a Messaging connection, subscribes to a predefined channel, publishes to that channel and displays the received messages.
+And the library is ready to use.
 
-#### 1. Setup the Configuration
-To keep the Hello World application simple the Xively Credentials are defined in the XivelyUserData.java source file.
-Please fill in your user and account information before you try to run the application.
+#### 3. Run XivelySDKE2E
 
-*com.logmein.xively.xivelyhelloworld.XivelyUserData.java*
+If you checked out the full source you can quickly test the SDK in action with the XivelySDKE2E module. It has one main activity, the E2EActivity class.
+In E2EActivity's onCreate function you have to write in your Xively credentials :
 
-```Java
-	//****** Your Xively Credentials ******
-    static String xivelyUsername = ""; //The IdM username of a Xively user
-    static String xivelyPassword = ""; //The IdM password of a Xively user
-    static String xivelyAccountId = ""; //The Id of your Xively account
-    static String xivelyTestChannel = ""; //A valid Xively Channel
-```
+String xivelyUsername = "your xively username";
+String xivelyPassword = "your xively password";
+String xivelyAccountId = "your xively account id";
 
-### Run it
-You're finally ready to build the application. Make sure you have an emulator setup or a physical device connected to your computer and hit the 'Run' button
+After this you can build and run the project. It covers all API functionality, E2EActivity's source is a very good starting point for your own application.
 
-![Run](screenshots/run.jpg)
+#### 3. Run XivelySDKDemo
 
-It should look like this:
+This module is a visual demo application for the Xively SDK. The only thing you need to do is adding your xively account id to MainActivity's xivelyAccountId member :
 
-![Emulator](screenshots/em.jpg)
+private String xivelyAccountId = "your xively account id";
 
-When pushing the Send Hello World button you should see a message being published to your Xively channel.
-You will see this message appear in the view.
+After building and running the module you will see a possible usage scenario for the SDK.
 
-Congratulations, you have completed the Xively Android SDK getting started guide. You are now ready to start developing your own applications. For more examples head over to the [Tutorials](#tutorial) section or click here to look at the full [API Reference](#api).
 
 ## API Reference
+
 The API Reference is included in the [javadoc] folder of the downloaded package. This is an autogenerated document in html format. Look for the *index.html* to open the document's Overview page.
 
 ## Tutorials
+
 This section provides brief code snippets that would help someone add the desired Xively functionality - such as message publish and subscribe, authentication etc. - to their existing application.
 
 ### Using the Android SDK
+
 Before starting to use any Xively SDK APIs, the embedding application is expected to perform authentication.
-The authentication service is the single entry point of the Xively SDK.
-The Authentication service can be instantiated using the *XiAuthenticationFactory* factory methods.
+The authentication service is the single entry point of the Xively SDK. It can  be instantiated using the *XiAuthenticationFactory* factory methods.
 It is mandatory to pass the embedding application's Context object to the authentication service factory methods:
 
 ```java
@@ -169,7 +167,9 @@ XiAuthentication auth =
 ```
 
 ### Login
-Everything in the Xively Android SDK happens in the context of a user. The first thing that must happen is logging into the Xively service in order to do that all we need to do is initialize the library and call the login function.
+
+Everything in the Xively Android SDK happens in the context of a user.
+The first thing that must be done is to initializethe library and call the login function.
 
 Before you can access the Xively SDK services a user must be authenticated.
 Authentication is handled by the *com.xively.auth.XiAuthentication* service which can be instantiated using the *XiAuthenticationFactory*.
@@ -196,10 +196,12 @@ Authentication results are returned asynchronously using the *XiAuthenticationCa
 Once you are logged in your user context and JWT is stored and handled by the Xively SDK.
 
 ### Send Message
+
 The Xively message bus makes it easy to communicate back and forth with your devices.
 If you want to send messages to your device the first thing you have to do is connect, then you can publish and receive messages.
 
 #### 1. Connect to Message Bus
+
 Messaging can be accessed once you have a valid XiSession. The method *requestMessaging* can return the Creator object to asynchronously create an *XiMessaging* instance.
 The method *requestMessaging* can be provided clean session and last will parameters. 
 If the Messaging is created with clean session on, all subscriptions are canceled if the connection is closed or lost. If the clean session is off, all subscriptions remain alive on connection close or lost. This property is turned on by default. 
@@ -269,6 +271,7 @@ The following subscribe and publish operations are always available when the ser
 ```
 
 ### Receive Messages
+
 Xively uses a publish / subscribe model. This means you can setup a subscription on a specific channel and be notified anytime a new message arrives.
 Once a Messaging object instance is created you can register listeners for its events.
 Note that most of the operations may throw an XiException if the operation fails or it is not available:
@@ -321,6 +324,7 @@ try {
 If you don't need the Messaging service any more you should remove all your listeners and invoke *xiMessaging.close()*.
 
 ### List Devices
+
 The SDK provides a service to retrieve a list of devices accesible with your credentials and their details (device id, device name, channels etc.).
 The service can be accessed through the *requestXiDeviceInfoList* API of the XiSession object.
 
@@ -343,6 +347,7 @@ session.requestXiDeviceInfoList(new XiDeviceInfoCallback() {
 ```
 
 ### Graph TimeSeries Data
+
 Xively provides TimeSeries data storage to persist the data of specific device channels (e.g. sensor data). 
 Here is an example for how to query it then graph it using the MPAndroidChart library.
 
@@ -381,45 +386,3 @@ timeSeries.requestTimeSeriesItemsForChannel(sensorChannel, start, end, category,
     }
 }
 ```
-
-Now we can graph it.
-
-#### 2. Graph it
-In our reference application We will use the MPAndroidChart Android library to graph it (https://github.com/PhilJay/MPAndroidChart).
-
-```java
-
-LineChart chart = (LineChart) rootView.findViewById(R.id.aqi_history_chart);
-...
-
-LineDataSet aqiDataSet = new LineDataSet(aqiValues, "AQI");
-aqiDataSet.setDrawCircles(false);
-aqiDataSet.setDrawValues(false);
-
-aqiDataSet.setLineWidth(4.0f);
-chart.setDescription("AQI");
-
-chart.setData(new LineData(xAxisValues, aqiDataSet));
-chart.invalidate();
-```
-
-#### 3. View it
-We can see our great new graph. It looks like this:
-
-![graph](screenshots/graph.jpg)
-
-## Reference App
-** Concaria demo app **
-** TODO **
-
-##Troubleshooting
-** TODO **
-
-### Known Issues
-None.
-** TODO **
-### Common Problems
-### Getting Help
-** TODO **
-
-If you are still having trouble you can reach out to Xively by contacting your Sales Engineer.

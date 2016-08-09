@@ -46,8 +46,7 @@ public class MainActivity extends AppCompatActivity
      * Insert your account Id here before using the app.
      * **************************************************
      */
-    private String xivelyAccountId =
-            "ec274e02-a279-4faf-8901-ed503d80c55c";
+    private String xivelyAccountId = "";
 
     private enum UiState {unknown, login, DevicesFragment, MessagingFragment, TimeSeriesFragment, SettingsFragment}
     private UiState currentUiState = UiState.login;
