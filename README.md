@@ -19,15 +19,16 @@ This is the Xively Android SDK. It is designed to help facilitate building an An
 4. Tutorials
 	- Using the Android SDK
 	- Login
+	- List Devices
+	- List Organizations
+	- List End Users
+	- Get End User
+	- Get Device
+	- Update End User
+	- Update Device
 	- Send a Message
 	- Receive Messages
-	- List Devices
 	- Graph TimeSeries Data
-
-6. Troubleshooting
-	- Known Issues
-	- Common Problems
-	- Getting Help
 
 ## Introduction
 
@@ -112,21 +113,22 @@ And the library is ready to use.
 
 #### 3. Run XivelySDKE2E
 
-If you checked out the full source you can quickly test the SDK in action with the XivelySDKE2E module. It has one main activity, the E2EActivity class.
+If you checked out the full source you can quickly test the SDK in action with the XivelySDKE2E module. It has one activity, the E2EActivity class.
 In E2EActivity's onCreate function you have to write in your Xively credentials :
-
+```
 String xivelyUsername = "your xively username";
 String xivelyPassword = "your xively password";
 String xivelyAccountId = "your xively account id";
+```
 
 After this you can build and run the project. It covers all API functionality, E2EActivity's source is a very good starting point for your own application.
 
 #### 3. Run XivelySDKDemo
 
 This module is a visual demo application for the Xively SDK. The only thing you need to do is adding your xively account id to MainActivity's xivelyAccountId member :
-
+```
 private String xivelyAccountId = "your xively account id";
-
+```
 After building and running the module you will see a possible usage scenario for the SDK.
 
 
@@ -194,6 +196,151 @@ Authentication results are returned asynchronously using the *XiAuthenticationCa
 ```
 
 Once you are logged in your user context and JWT is stored and handled by the Xively SDK.
+
+### List Devices
+
+The SDK provides a service to retrieve a list of devices accesible with your credentials and their details (device id, device name, channels etc.).
+The service can be accessed through the *requestXiDeviceInfoList* API of the XiSession object.
+
+```java
+session.requestXiDeviceInfoList(new XiDeviceInfoCallback() {
+            @Override
+            public void onDeviceInfoListReceived(List<XiDeviceInfo> list) {
+                //process the list as required
+                for (XiDeviceInfo device : list){
+                    myDevices.add(device.deviceName, deviceInfo.deviceId);
+					//...
+                }
+            }
+
+            @Override
+            public void onDeviceInfoListFailed() {
+                //device listing failed
+            }
+        });
+```
+
+### List Organizations
+
+The SDK provides a service to retrieve a list of organizations accesible with your credentials and their details.
+The service can be accessed through the *requestXiOrganizationList* API of the XiSession object.
+
+```java
+session.requestXiOrganizationList(new XiOrganizationListCallback() {
+            @Override
+            public void onOrganizationListReceived(List<XiOrganizationInfo> list) {
+                //process the list as required
+                for (XiOrganizationInfo org : list){
+					//...
+                }
+            }
+
+            @Override
+            public void onOrganizationListFailed() {
+                //org listing failed
+            }
+        });
+```
+
+### List End Users
+
+The SDK provides a service to retrieve a list of end users accesible with your credentials and their details.
+The service can be accessed through the *requestXiEndUserList* API of the XiSession object.
+
+```java
+session.requestXiEndUserList(new XiEndUserListCallback() {
+            @Override
+            public void onEndUserListReceived(List<XiEndUserInfo> list) {
+                //process the list as required
+                for (XiEndUserInfo org : list){
+					//...
+                }
+            }
+
+            @Override
+            public void onEndUserListFailed() {
+                //end user listing failed
+            }
+        });
+```
+
+### Get End User
+
+The SDK provides a service to retrieve one specific end user accesible with your credentials and their details.
+The service can be accessed through the *requestXiEndUser* API of the XiSession object.
+
+```java
+session.requestXiEndUser(new XiEndUserCallback() {
+            @Override
+            public void onEndUserReceived(XiEndUserInfo info) {
+                //process the info as required
+            }
+
+            @Override
+            public void onEndUserFailed() {
+                //end user info failed
+            }
+        });
+```
+
+### Get Device
+
+The SDK provides a service to retrieve one specific device accesible with your credentials and their details.
+The service can be accessed through the *requestXiDeviceInfo* API of the XiSession object.
+
+```java
+session.requestXiDeviceInfo(new XiDeviceInfoCallback() {
+            @Override
+            public void onDeviceInfoReceived(XiDeviceInfo deviceInfo) {
+                //process the info as required
+            }
+
+            @Override
+            public void onDeviceInfoFailed() {
+                //end user info failed
+            }
+        });
+```
+
+### Update End User
+
+The SDK provides a service to update one specific end user accesible with your credentials and their details.
+The service can be accessed through the *requestXiEndUserUpdate* API of the XiSession object.
+You have to provide the userId, the version tag of the user data retrieved by requestDeviceInfo or requestDeviceInfoList functions and a HashMap containing the new fields or custom fields you want to modify.
+
+```java
+session.requestXiEndUserUpdate(userId, version, data, new XiEndUserUpdateCallback() {
+            @Override
+            public void onEndUserUpdateSuccess(XiEndUserInfo info) {
+                //process the info as required
+            }
+
+            @Override
+            public void onEndUserUpdateFailed() {
+                //end user update failed
+            }
+        });
+```
+
+### Update Device
+
+The SDK provides a service to update one specific device accesible with your credentials and their details.
+The service can be accessed through the *requestXiDeviceUpdate* API of the XiSession object.
+You have to provide the userId, the version tag of the user data retrieved by requestDeviceInfo or requestDeviceInfoList functions and a HashMap containing the new fields or custom fields you want to modify.
+
+```java
+session.requestXiDeviceUpdate(userId, version, data, new XiEndUserUpdateCallback() {
+            @Override
+            public void onDevicUpdateSuccess(XiDeviceInfo info) {
+                //process the info as required
+            }
+
+            @Override
+            public void onDeviceUpdateFailed() {
+                //device update failed
+            }
+        });
+```
 
 ### Send Message
 
@@ -323,35 +470,10 @@ try {
 
 If you don't need the Messaging service any more you should remove all your listeners and invoke *xiMessaging.close()*.
 
-### List Devices
-
-The SDK provides a service to retrieve a list of devices accesible with your credentials and their details (device id, device name, channels etc.).
-The service can be accessed through the *requestXiDeviceInfoList* API of the XiSession object.
-
-```java
-session.requestXiDeviceInfoList(new XiDeviceInfoCallback() {
-            @Override
-            public void onDeviceInfoListReceived(List<XiDeviceInfo> list) {
-                //process the list as required
-                for (XiDeviceInfo device : list){
-                    myDevices.add(device.deviceName, deviceInfo.deviceId);
-					//...
-                }
-            }
-
-            @Override
-            public void onDeviceInfoListFailed() {
-                //device listing failed
-            }
-        });
-```
-
-### Graph TimeSeries Data
+### Query TimeSeries Data
 
 Xively provides TimeSeries data storage to persist the data of specific device channels (e.g. sensor data). 
-Here is an example for how to query it then graph it using the MPAndroidChart library.
 
-#### 1. Query Xively TimeSeries
 
 ```java
 //The TimeSeries APIs can be accessed from the session object
