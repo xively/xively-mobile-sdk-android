@@ -39,19 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-//  lists organizations
-//  lists the first organization
-//  lists end users
-//  list one user
-//  update one user
-//  lists devices
-//  list one device
-//  update one device
-//  connects to normal channel
-//  connects to timeseries channel
-//  send message to normal channel
-//  lists timeseries data
-
 public class E2EActivity extends AppCompatActivity {
 
     private XiSession xivelySession;
