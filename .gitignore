@@ -1,0 +1,9 @@
+XivelySDKE2E/build/intermediates
+XivelySDKDemo/build/intermediates
+XivelySDKAndroid/build/intermediates
+*.iml
+XivelySDKDemo/build
+XivelySDKAndroid/build
+.idea
+.gradle
+build

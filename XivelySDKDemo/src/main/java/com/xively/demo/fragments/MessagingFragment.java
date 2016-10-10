@@ -45,6 +45,7 @@ public class MessagingFragment extends Fragment {
     private TextView tvDeviceSelector;
     private TextView tvChannelSelector;
     private TextView tvMessages;
+    private String tvChannel;
     private ScrollView messagesScroll;
     private TextView tvStatus;
     private EditText editText;
@@ -139,7 +140,7 @@ public class MessagingFragment extends Fragment {
                         xivelyMessaging.getState().equals(XiMessaging.State.Running)) {
                     try {
                         xivelyMessaging.publish(
-                                tvChannelSelector.getText().toString(),
+                                tvChannel,
                                 editText.getText().toString().getBytes(),
                                 XiMessaging.XiMessagingQoS.AtLeastOnce
                         );
@@ -260,11 +261,12 @@ public class MessagingFragment extends Fragment {
     }
 
     private void subscribeToChannel(final String channel){
+        tvChannel = channel;
         XiMessagingSubscriptionListener subscriptionListener =
                 new XiMessagingSubscriptionListener() {
                     @Override
                     public void onSubscribed(String s) {
-                        tvChannelSelector.setText("Channel: " + channel);
+                        tvChannelSelector.setText("Channel: " + tvChannel);
                         tvStatus.setText("Connected");
                         enableSend();
                     }
@@ -288,7 +290,7 @@ public class MessagingFragment extends Fragment {
         try {
             xivelyMessaging.addSubscriptionListener(subscriptionListener);
             xivelyMessaging.subscribe(
-                    tvChannelSelector.getText().toString(),
+                    tvChannel,
                     XiMessaging.XiMessagingQoS.AtLeastOnce
             );
         } catch (XiException e) {
