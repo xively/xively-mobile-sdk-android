@@ -3,6 +3,26 @@
     android:layout_height="match_parent"
     tools:context=".fragments.MessagingFragment">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/Message_messages_scroll"
+        android:fillViewport="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/radioButton2">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Message_tvMessages"
+            android:layout_gravity="bottom"
+            android:text=""
+            />
+
+    </ScrollView>
+
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,17 +36,6 @@
         android:layout_marginRight="5dp"
         android:hint="Type your message here..." />
 
-    <TextView
-        android:id="@+id/Message_Status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Messaging connected"
-        android:layout_above="@id/Message_editTextMessage"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="5dp" />
-
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
@@ -38,45 +47,41 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="5dp" />
 
-    <TextView
-        android:layout_width="fill_parent"
+    <RadioButton
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Select a device..."
-        android:id="@+id/Message_TextViewDeviceSelector"
-        android:layout_margin="5dp"
-        android:maxLines="2"
-        />
+        android:text="QoS 0"
+        android:id="@+id/messaging_qos0"
+        android:checked="true"
+        android:textColor="@color/colorAccent"
+        android:layout_above="@+id/Message_editTextMessage"
+        android:layout_alignLeft="@+id/Message_editTextMessage"
+        android:layout_alignStart="@+id/Message_editTextMessage" />
 
-    <TextView
-        android:layout_width="fill_parent"
+    <RadioButton
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Select a channel..."
-        android:id="@+id/Message_textViewChannelSelector"
-        android:layout_below="@id/Message_TextViewDeviceSelector"
-        android:layout_margin="5dp"
-        android:maxLines="3"
-        />
+        android:text="QoS 1"
+        android:id="@+id/messaging_qos1"
+        android:checked="false"
+        android:textColor="@color/colorAccent"
+        android:layout_above="@+id/Message_editTextMessage"
+        android:layout_toRightOf="@+id/messaging_qos0"
+        android:layout_toEndOf="@+id/messaging_qos0"
+        android:layout_marginLeft="13dp"
+        android:layout_marginStart="13dp" />
 
-    <ScrollView
-        android:layout_width="match_parent"
+    <CheckBox
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/Message_textViewChannelSelector"
-        android:layout_above="@id/Message_Status"
-        android:layout_margin="5dp"
-        android:id="@+id/Message_messages_scroll"
-        android:fillViewport="true"
-        >
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/Message_tvMessages"
-            android:layout_gravity="bottom"
-            android:text=""
-            />
-
-    </ScrollView>
+        android:text="Retain"
+        android:id="@+id/messaging_retain"
+        android:checked="false"
+        android:textColor="@color/colorAccent"
+        android:layout_above="@+id/Message_editTextMessage"
+        android:layout_toRightOf="@+id/messaging_qos1"
+        android:layout_toEndOf="@+id/messaging_qos1"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp" />
 
 </RelativeLayout>

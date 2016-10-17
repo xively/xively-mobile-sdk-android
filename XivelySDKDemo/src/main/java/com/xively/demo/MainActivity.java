@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 import com.xively.demo.R;
 import com.xively.XiSdkConfig;
 import com.xively.XiSession;
+import com.xively.demo.fragments.ChannelsFragment;
 import com.xively.demo.fragments.DevicesFragment;
 import com.xively.demo.fragments.MessagingFragment;
 import com.xively.demo.fragments.OnFragmentInteractionListener;
@@ -30,6 +31,7 @@ import com.xively.demo.fragments.TimeSeriesFragment;
 import com.xively.auth.XiAuthentication;
 import com.xively.auth.XiAuthenticationCallback;
 import com.xively.auth.XiAuthenticationFactory;
+import com.xively.messaging.XiDeviceChannel;
 import com.xively.messaging.XiDeviceInfo;
 
 import java.util.HashMap;
@@ -200,8 +202,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onMessagingRequest(XiDeviceInfo device) {
-        changeFragment(MessagingFragment.newInstance(device), false);
+    public void onMessagingRequest(XiDeviceChannel channel) {
+        changeFragment(MessagingFragment.newInstance(channel), false);
+    }
+
+    @Override
+    public void onChannelsRequest(XiDeviceInfo device) {
+        changeFragment(ChannelsFragment.newInstance(device), false);
     }
 
     @Override

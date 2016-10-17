@@ -12,80 +12,12 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="General settings"
-            android:id="@+id/Settings_textViewGeneral"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_margin="5dp"
-            android:textColor="@color/accent_material_light" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Select Xi environment:"
-            android:id="@+id/Settings_buttonEnvLabel"
-            android:layout_below="@+id/Settings_textViewGeneral"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_margin="10dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="STAGE"
-            android:id="@+id/Settings_buttonEnv"
-            android:layout_alignBaseline="@+id/Settings_buttonEnvLabel"
-            android:layout_toRightOf="@+id/Settings_buttonEnvLabel"
-            android:layout_toEndOf="@+id/Settings_buttonEnvLabel"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Select log level:"
-            android:id="@+id/Settings_buttonLogLevelLabel"
-            android:layout_below="@+id/Settings_buttonEnv"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_margin="10dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="INFO"
-            android:id="@+id/Settings_buttonLogLevel"
-            android:layout_alignBaseline="@+id/Settings_buttonLogLevelLabel"
-            android:layout_toRightOf="@+id/Settings_buttonLogLevelLabel"
-            android:layout_toEndOf="@+id/Settings_buttonLogLevelLabel"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp" />
-
-        <View
-            android:id="@+id/Settings_separator0"
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorAccent"
-            android:layout_below="@id/Settings_buttonLogLevel"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp" />
-
-        <TextView
+            <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Connection settings"
             android:id="@+id/Settings_textView"
-            android:layout_below="@id/Settings_separator0"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_margin="5dp"

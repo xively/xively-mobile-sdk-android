@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +15,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.xively.XiSession;
 import com.xively.demo.MainActivity;
 import com.xively.demo.R;
-import com.xively.XiSession;
 import com.xively.messaging.XiDeviceInfo;
 import com.xively.messaging.XiDeviceInfoListCallback;
 
@@ -77,6 +78,8 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
 
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Devices");
+
         return view;
     }
 
@@ -133,18 +136,11 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
                     .setTitle(deviceInfoTitle)
                     .setMessage(deviceInfoMessage)
                     .setCancelable(true)
-                    .setPositiveButton("Messaging",
+                    .setPositiveButton("Channels",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     dialog.dismiss();
-                                    mListener.onMessagingRequest(deviceInfo);
-                                }
-                            })
-                    .setNegativeButton("TimeSeries",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.dismiss();
-                                    mListener.onTimeSeriesRequest(deviceInfo);
+                                    mListener.onChannelsRequest(deviceInfo);
                                 }
                             })
                     .setNeutralButton("Back",

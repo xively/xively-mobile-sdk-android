@@ -2,6 +2,7 @@ package com.xively.demo.fragments;
 
 import android.content.DialogInterface;
 
+import com.xively.messaging.XiDeviceChannel;
 import com.xively.messaging.XiDeviceInfo;
 
 /**
@@ -13,7 +14,8 @@ import com.xively.messaging.XiDeviceInfo;
 public interface OnFragmentInteractionListener {
     void onDialogRequest(String title, String message);
     void onDialogRequest(String title, String message, DialogInterface.OnClickListener onClickListener);
-    void onMessagingRequest(XiDeviceInfo device);
+    void onChannelsRequest(XiDeviceInfo device);
+    void onMessagingRequest(XiDeviceChannel device);
     void onTimeSeriesRequest(XiDeviceInfo device);
     void onDevicesRequest();
 }

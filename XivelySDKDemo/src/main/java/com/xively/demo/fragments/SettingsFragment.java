@@ -3,7 +3,6 @@ package com.xively.demo.fragments;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,21 +11,20 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.TextView;
 
+import com.xively.XiSdkConfig;
 import com.xively.demo.MainActivity;
 import com.xively.demo.R;
 import com.xively.demo.XiSettings;
-import com.xively.XiSdkConfig;
 
-import static com.xively.demo.XiSettings.*;
-import static com.xively.XiSdkConfig.*;
+import static com.xively.XiSdkConfig.XI_ENVIRONMENT;
+import static com.xively.demo.XiSettings.PREF_CLEAN_SESSION;
+import static com.xively.demo.XiSettings.PREF_LAST_WILL_CHANNEL;
+import static com.xively.demo.XiSettings.PREF_LAST_WILL_MESSAGE;
+import static com.xively.demo.XiSettings.PREF_LAST_WILL_QOS;
+import static com.xively.demo.XiSettings.PREF_LAST_WILL_RETAIN;
 
 public class SettingsFragment extends Fragment {
-    private TextView envLabel;
-    private TextView envSelect;
-    private TextView logLevelLabel;
-    private TextView logLevelSelect;
     private CheckBox cleanSession;
     private EditText lastWillChannel;
     private EditText lastWillMessage;
@@ -69,10 +67,6 @@ public class SettingsFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        envLabel =  (TextView) view.findViewById(R.id.Settings_buttonEnvLabel);
-        envSelect = (TextView) view.findViewById(R.id.Settings_buttonEnv);
-        logLevelLabel =  (TextView) view.findViewById(R.id.Settings_buttonLogLevelLabel);
-        logLevelSelect = (TextView) view.findViewById(R.id.Settings_buttonLogLevel);
         cleanSession = (CheckBox) view.findViewById(R.id.Settings_checkBox_CleanSession);
         lastWillChannel = (EditText) view.findViewById(R.id.Settings_editText_LastWillChannel);
         lastWillMessage = (EditText) view.findViewById(R.id.Settings_editText_LastWillMessage);
@@ -81,36 +75,6 @@ public class SettingsFragment extends Fragment {
         lastWillRetain = (CheckBox) view.findViewById(R.id.Settings_checkBoxRetain);
         cancelButton = (Button) view.findViewById(R.id.Settings_buttonCancel);
         saveButton = (Button) view.findViewById(R.id.Settings_buttonSave);
-
-        envLabel.setOnClickListener(new View.OnClickListener() {
-                                             @Override
-                                             public void onClick(View v) {
-                                                 environmentSelector();
-                                             }
-                                         }
-        );
-        envSelect.setOnClickListener(new View.OnClickListener() {
-                                              @Override
-                                              public void onClick(View v) {
-                                                  environmentSelector();
-                                              }
-                                          }
-        );
-
-        logLevelLabel.setOnClickListener(new View.OnClickListener() {
-                                             @Override
-                                             public void onClick(View v) {
-                                                 logLevelSelector();
-                                             }
-                                         }
-        );
-        logLevelSelect.setOnClickListener(new View.OnClickListener() {
-                                              @Override
-                                              public void onClick(View v) {
-                                                  logLevelSelector();
-                                              }
-                                          }
-        );
 
         lastWillQoS0Button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -149,39 +113,7 @@ public class SettingsFragment extends Fragment {
         loadSettings();
     }
 
-    private void logLevelSelector(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Select SDK log level")
-                .setItems(logLevels, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        logLevelSelect.setText(logLevels[which]);
-                    }
-                });
-        builder.create().show();
-    }
-
-
-    private void environmentSelector(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Select SDK environment")
-                .setItems(sdkEnvValues, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        envSelect.setText(sdkEnvValues[which]);
-                    }
-                });
-        builder.create().show();
-    }
-
     private void loadSettings(){
-        envSelect.setText(
-                XiSettings.getString(PREF_SDK_ENVIRONMENT, "STAGE")
-        );
-
-        logLevelSelect.setText(
-                XiSettings.getString(PREF_LOG_LEVEL, "INFO")
-        );
 
         cleanSession.setChecked(
                 XiSettings.getBoolean(PREF_CLEAN_SESSION, true)
@@ -210,10 +142,6 @@ public class SettingsFragment extends Fragment {
     }
 
     private void saveSettings(){
-        XiSettings.setString(PREF_SDK_ENVIRONMENT,
-                envSelect.getText().toString());
-        XiSettings.setString(PREF_LOG_LEVEL,
-                logLevelSelect.getText().toString());
         XiSettings.setBoolean(PREF_CLEAN_SESSION,
                 cleanSession.isChecked());
         XiSettings.setString(PREF_LAST_WILL_CHANNEL,

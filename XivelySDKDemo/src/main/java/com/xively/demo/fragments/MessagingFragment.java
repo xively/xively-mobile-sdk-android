@@ -1,27 +1,28 @@
 package com.xively.demo.fragments;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.xively.demo.MainActivity;
-import com.xively.demo.R;
-import com.xively.demo.XiSettings;
 import com.xively.XiException;
 import com.xively.XiServiceCreatorCallback;
 import com.xively.XiSession;
+import com.xively.demo.MainActivity;
+import com.xively.demo.R;
+import com.xively.demo.XiSettings;
 import com.xively.messaging.XiDeviceChannel;
-import com.xively.messaging.XiDeviceInfo;
 import com.xively.messaging.XiLastWill;
 import com.xively.messaging.XiMessaging;
 import com.xively.messaging.XiMessagingCreator;
@@ -30,42 +31,31 @@ import com.xively.messaging.XiMessagingStateListener;
 import com.xively.messaging.XiMessagingSubscriptionListener;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 
 public class MessagingFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "MessagingFragment.deviceId";
     private static final String ARG_PARAM2 = "MessagingFragment.deviceChannels";
 
-    private String mDeviceId;
-    private CharSequence[] mDeviceChannels;
+    private RadioButton lastWillQoS0Button;
+    private RadioButton lastWillQoS1Button;
+    private CheckBox lastWillRetain;
 
     private OnFragmentInteractionListener mListener;
 
-    private TextView tvDeviceSelector;
-    private TextView tvChannelSelector;
     private TextView tvMessages;
     private String tvChannel;
     private ScrollView messagesScroll;
-    private TextView tvStatus;
     private EditText editText;
     private Button btSend;
 
+    public XiDeviceChannel deviceChannel;
     private XiMessaging xivelyMessaging;
 
-    public static MessagingFragment newInstance(XiDeviceInfo device) {
+    public static MessagingFragment newInstance(XiDeviceChannel channel) {
         MessagingFragment fragment = new MessagingFragment();
         Bundle args = new Bundle();
-
-        ArrayList<String> channels = new ArrayList<>();
-        for (XiDeviceChannel channel: device.deviceChannels){
-            channels.add(channel.channelId);
-        }
-
-        args.putString(ARG_PARAM1, device.deviceId);
-        args.putStringArrayList(ARG_PARAM2, channels);
-
-        fragment.setArguments(args);
+        fragment.deviceChannel = channel;
         return fragment;
     }
 
@@ -76,14 +66,6 @@ public class MessagingFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mDeviceId = getArguments().getString(ARG_PARAM1);
-            ArrayList<String> channelsArray = getArguments().getStringArrayList(ARG_PARAM2);
-            mDeviceChannels = new CharSequence[channelsArray.size()];
-            for(int i=0; i<channelsArray.size(); i++){
-                mDeviceChannels[i] = channelsArray.get(i);
-            }
-        }
     }
 
     @Override
@@ -97,39 +79,14 @@ public class MessagingFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        tvDeviceSelector = (TextView) view.findViewById(R.id.Message_TextViewDeviceSelector);
-        tvChannelSelector = (TextView) view.findViewById(R.id.Message_textViewChannelSelector);
+        tvChannel = deviceChannel.channelId;
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(tvChannel);
+
         tvMessages = (TextView) view.findViewById(R.id.Message_tvMessages);
-        tvStatus = (TextView) view.findViewById(R.id.Message_Status);
         editText = (EditText) view.findViewById(R.id.Message_editTextMessage);
         btSend = (Button) view.findViewById(R.id.Message_buttonSend);
         messagesScroll = (ScrollView) view.findViewById(R.id.Message_messages_scroll);
-
-        if (TextUtils.isEmpty(mDeviceId)){
-            tvDeviceSelector.setText("Tap here to select a device...");
-            tvStatus.setText("");
-            tvChannelSelector.setText("");
-        } else {
-            tvStatus.setText("");
-            tvDeviceSelector.setText("Id: " + mDeviceId);
-            tvChannelSelector.setText("Tap here to select a channel...");
-        }
-
-        tvDeviceSelector.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mListener != null){
-                    mListener.onDevicesRequest();
-                }
-            }
-        });
-
-        tvChannelSelector.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectChannel();
-            }
-        });
 
         disableSend();
 
@@ -142,17 +99,58 @@ public class MessagingFragment extends Fragment {
                         xivelyMessaging.publish(
                                 tvChannel,
                                 editText.getText().toString().getBytes(),
-                                XiMessaging.XiMessagingQoS.AtLeastOnce
+                                XiMessaging.XiMessagingQoS.AtLeastOnce,
+                                lastWillRetain.isChecked()
                         );
                         editText.setText("");
                     } catch (XiException.NotConnectedException e) {
-                        tvStatus.setText("Failed to send message");
                     }
                 }
             }
         });
 
         messagesScroll.setSmoothScrollingEnabled(true);
+
+
+        lastWillQoS0Button = (RadioButton) view.findViewById(R.id.messaging_qos0);
+        lastWillQoS1Button = (RadioButton) view.findViewById(R.id.messaging_qos1);
+        lastWillRetain = (CheckBox) view.findViewById(R.id.messaging_retain);
+
+        lastWillQoS0Button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    lastWillQoS1Button.setChecked(false);
+                }
+                else if ( xivelyMessaging != null )
+                {
+                    try {
+                        xivelyMessaging.unsubscribe(tvChannel);
+                        xivelyMessaging.subscribe(tvChannel,XiMessaging.XiMessagingQoS.AtLeastOnce);
+                    } catch (XiException e) {
+                        addMessage("Failed to unsubscribe: " + e);
+                    }
+                }
+            }
+        });
+
+        lastWillQoS1Button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    lastWillQoS0Button.setChecked(false);
+                }
+                else if ( xivelyMessaging != null )
+                {
+                    try {
+                        xivelyMessaging.unsubscribe(tvChannel);
+                        xivelyMessaging.subscribe(tvChannel,XiMessaging.XiMessagingQoS.AtMostOnce);
+                    } catch (XiException e) {
+                        addMessage("Failed to unsubscribe: " + e);
+                    }
+                }
+            }
+        });
 
         connectMessaging();
     }
@@ -210,12 +208,12 @@ public class MessagingFragment extends Fragment {
             @Override
             public void onServiceCreated(XiMessaging xiMessaging) {
                 xivelyMessaging = xiMessaging;
-                tvChannelSelector.setEnabled(true);
+                subscribeToChannel( tvChannel );
 
                 xivelyMessaging.addStateListener(new XiMessagingStateListener() {
                     @Override
                     public void onStateChanged(XiMessaging.State state) {
-                        tvStatus.setText(state.toString());
+                        addMessage( state.toString() );
 
                         if (state.equals(XiMessaging.State.Running)) {
                             enableSend();
@@ -226,7 +224,7 @@ public class MessagingFragment extends Fragment {
 
                     @Override
                     public void onError() {
-                        tvStatus.setText("Failed to connect");
+                        addMessage("Failed to connect");
                     }
                 });
 
@@ -246,7 +244,7 @@ public class MessagingFragment extends Fragment {
 
             @Override
             public void onServiceCreateFailed() {
-                tvStatus.setText("Failed to connect");
+                addMessage("Failed to connect");
             }
         });
 
@@ -261,29 +259,27 @@ public class MessagingFragment extends Fragment {
     }
 
     private void subscribeToChannel(final String channel){
-        tvChannel = channel;
         XiMessagingSubscriptionListener subscriptionListener =
                 new XiMessagingSubscriptionListener() {
                     @Override
                     public void onSubscribed(String s) {
-                        tvChannelSelector.setText("Channel: " + tvChannel);
-                        tvStatus.setText("Connected");
+                        addMessage("Connected");
                         enableSend();
                     }
 
                     @Override
                     public void onSubscribeFailed(String s) {
-                        tvStatus.setText("Failed to subscribe");
+                        addMessage("Failed to subscribe");
                     }
 
                     @Override
                     public void onUnsubscribed(String s) {
-                        tvStatus.setText("Disconnected");
+                        addMessage("Disconnected");
                     }
 
                     @Override
                     public void onUnsubscribeFailed(String s) {
-                        tvStatus.setText("Failed to unsubscribe");
+                        addMessage("Failed to unsubscribe");
                     }
                 };
 
@@ -294,20 +290,8 @@ public class MessagingFragment extends Fragment {
                     XiMessaging.XiMessagingQoS.AtLeastOnce
             );
         } catch (XiException e) {
-            tvStatus.setText("Failed to unsubscribe: " + e);
+            addMessage("Failed to unsubscribe: " + e);
         }
-    }
-
-    private void selectChannel(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Select channel")
-                .setItems(mDeviceChannels, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        subscribeToChannel(mDeviceChannels[which].toString());
-                    }
-                });
-        builder.create().show();
     }
 
     private XiLastWill buildLastWillObject(){
