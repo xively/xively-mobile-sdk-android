@@ -6,6 +6,7 @@ import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -47,13 +48,14 @@ public class MainActivity extends AppCompatActivity
      */
     private String xivelyAccountId = "";
 
-    private enum UiState {unknown, login, DevicesFragment, MessagingFragment, TimeSeriesFragment, SettingsFragment}
+    private enum UiState {unknown, login, DevicesFragment, ChannelsFragment, MessagingFragment, SettingsFragment}
     private UiState currentUiState = UiState.login;
 
     private XiSession xivelySession;
 
     private AlertDialog alertDialog;
     private ProgressBar progressBar;
+    private XiDeviceInfo deviceInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +105,9 @@ public class MainActivity extends AppCompatActivity
                 case DevicesFragment:
                     changeFragment(new DevicesFragment(), false);
                     break;
+                case ChannelsFragment:
+                    changeFragment(new ChannelsFragment(), false);
+                    break;
                 case MessagingFragment:
                     changeFragment(new MessagingFragment(), false);
                     break;
@@ -122,7 +127,15 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+
+
+            Fragment fragment = getActiveFragmentObject();
+
+            if ( fragment instanceof DevicesFragment )
+            {
+                DevicesFragment devices = (DevicesFragment) fragment;
+                devices.onBackPressed();
+            }
         }
     }
 
@@ -163,8 +176,14 @@ public class MainActivity extends AppCompatActivity
             } else {
                 showAlert("Error", "You must login to use this feature.", null);
             }
-
-        } else if (id == R.id.nav_messaging) {
+        } else if (id == R.id.nav_channel_list) {
+            if (isXivelyActive()){
+                changeFragment(ChannelsFragment.newInstance(deviceInfo), false);
+            } else {
+                showAlert("Error", "You must login to use this feature.", null);
+            }
+        }
+        else if (id == R.id.nav_messaging) {
             if (isXivelyActive()){
                 changeFragment(new MessagingFragment(), false);
             } else {
@@ -196,6 +215,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onChannelsRequest(XiDeviceInfo device) {
+        deviceInfo = device;
         changeFragment(ChannelsFragment.newInstance(device), false);
     }
 

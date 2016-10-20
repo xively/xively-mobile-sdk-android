@@ -6,6 +6,8 @@
             android:title="Login" />
         <item android:id="@+id/nav_device_list" android:icon="@android:drawable/ic_menu_agenda"
             android:title="Device List" />
+        <item android:id="@+id/nav_channel_list" android:icon="@android:drawable/ic_menu_agenda"
+            android:title="Channel List" />
         <item android:id="@+id/nav_messaging" android:icon="@android:drawable/ic_menu_send"
             android:title="Messaging" />
         <item android:id="@+id/nav_timeseries" android:icon="@android:drawable/ic_menu_recent_history"

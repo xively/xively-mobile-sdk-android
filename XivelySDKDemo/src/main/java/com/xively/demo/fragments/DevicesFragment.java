@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,8 @@ import com.xively.demo.MainActivity;
 import com.xively.demo.R;
 import com.xively.messaging.XiDeviceInfo;
 import com.xively.messaging.XiDeviceInfoListCallback;
+import com.xively.messaging.XiOrganizationInfo;
+import com.xively.messaging.XiOrganizationListCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,19 +44,24 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
 
     private TextView tvStatus;
     private AlertDialog alertDialog;
-    private List<XiDeviceInfo> deviceInfoList;
 
     /**
      * The fragment's ListView/GridView.
      */
     private AbsListView mListView;
 
+    private List<XiDeviceInfo> deviceInfoList;
+    private List<XiOrganizationInfo> orgInfoList;
+
     /**
      * The Adapter which will be used to populate the ListView/GridView with
      * Views.
      */
+    private SimpleAdapter adapter;
     private ArrayAdapter<DeviceItem> mAdapter;
     private List<Map<String,String>> mapData;
+    private ArrayList<Object> items;
+    private String actualOrg;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -66,10 +74,20 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        actualOrg = null;
+
         mAdapter = new ArrayAdapter<DeviceItem>(getActivity(),
                 android.R.layout.simple_list_item_2, android.R.id.text1);
 
         mapData = new ArrayList<Map<String, String>>();
+
+        items = new ArrayList<Object>();
+
+        adapter = new SimpleAdapter(getActivity(), mapData,
+                android.R.layout.simple_list_item_2,
+                new String[] {"title", "date"},
+                new int[] {android.R.id.text1,
+                        android.R.id.text2});
     }
 
     @Override
@@ -80,6 +98,8 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
         // Set the adapter
         mListView = (AbsListView) view.findViewById(android.R.id.list);
         mListView.setOnItemClickListener(this);
+
+        mListView.setAdapter( adapter );
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Devices");
 
@@ -104,7 +124,106 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
                     + " must implement OnFragmentInteractionListener");
         }
 
-        queryXivelyDevices();
+        queryXivelyOrganizations( );
+    }
+
+    private void queryXivelyOrganizations( )
+    {
+        XiSession session = ((MainActivity) getActivity()).getXivelySession();
+        if (session == null || !session.getState().equals(XiSession.State.Active)){
+            return;
+        }
+
+        session.requestXiOrganizationList(new XiOrganizationListCallback() {
+            @Override
+            public void onOrganizationListReceived(List<XiOrganizationInfo> list)
+            {
+                if (list == null || list.size() == 0){
+                    tvStatus.setText("No devices found for your account.");
+                    return;
+                }
+
+                orgInfoList = list;
+                queryXivelyDevices();
+            }
+
+            @Override
+            public void onOrganizationListFailed() {
+                tvStatus.setText("Failed to query devices.");
+            }
+        });
+    }
+
+    private void queryXivelyDevices(){
+        XiSession session = ((MainActivity) getActivity()).getXivelySession();
+        if (session == null || !session.getState().equals(XiSession.State.Active)){
+            return;
+        }
+
+        session.requestXiDeviceInfoList(new XiDeviceInfoListCallback() {
+            @Override
+            public void onDeviceInfoListReceived(List<XiDeviceInfo> list) {
+                if (list == null || list.size() == 0){
+                    tvStatus.setText("No devices found for your account.");
+                    return;
+                }
+
+                deviceInfoList = list;
+                filter();
+            }
+
+            @Override
+            public void onDeviceInfoListFailed() {
+                tvStatus.setText("Failed to query devices.");
+            }
+        });
+    }
+
+    private void filter()
+    {
+        if ( items == null ) items = new ArrayList<Object>();
+        items.clear();
+        mapData.clear();
+
+        for (XiOrganizationInfo org : orgInfoList){
+            String orgName = "n/a";
+            if (org.name!= null &&
+                    !org.name.equals("")){
+                orgName = org.name;
+            }
+
+            Map<String, String> datum = new HashMap<String, String>(2);
+            datum.put("title", "ORG : " + org.name);
+            datum.put("date", org.organizationId);
+
+            if ( ( org.parentId == null && actualOrg == null ) || (org.parentId != null && org.parentId.equals(actualOrg) ) )
+            {
+                mapData.add(datum);
+                items.add(org);
+            }
+
+        }
+
+        for (XiDeviceInfo device : deviceInfoList){
+            String deviceName = "n/a";
+            if (device.deviceName != null &&
+                    !device.deviceName.equals("")){
+                deviceName = device.deviceName;
+            }
+
+            Map<String, String> datum = new HashMap<String, String>(2);
+            datum.put("title", "DEV : " + device.deviceName);
+            datum.put("date", device.deviceId);
+
+            if ( device.customFields.get("organizationId").equals(actualOrg)) {
+                mapData.add(datum);
+                items.add(device);
+            }
+        }
+
+        tvStatus.setText(items.size() + " organizations(s) and device(s):");
+        mListView.invalidate();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -119,18 +238,27 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (null != mListener &&
-                null != deviceInfoList) {
-            final XiDeviceInfo deviceInfo = deviceInfoList.get(position);
+        Object info = items.get(position);
+
+        Class myclass = info.getClass();
+        Class otherclass = XiOrganizationInfo.class;
+
+        if (info.getClass().equals(XiOrganizationInfo.class)) {
+            final XiOrganizationInfo orgInfo = (XiOrganizationInfo) info;
+            actualOrg = orgInfo.organizationId;
+            filter();
+        }
+        if (info.getClass().equals(com.xively.messaging.XiDeviceInfo.class)) {
+            final XiDeviceInfo deviceInfo = (XiDeviceInfo)info;
             String deviceInfoTitle = "Device details: ";
             String deviceInfoMessage =
                     "Name: " + deviceInfo.deviceName + "\n" +
-                    "Id: " + deviceInfo.deviceId + "\n" +
-                    "Location: " + deviceInfo.deviceLocation + "\n" +
-                    "Serial number: " + deviceInfo.serialNumber + "\n" +
-                    "Device version: " + deviceInfo.deviceVersion + "\n" +
-                    "Purchase date: " + deviceInfo.purchaseDate + "\n" +
-                    "Provisioning state: " + deviceInfo.provisioningState;
+                            "Id: " + deviceInfo.deviceId + "\n" +
+                            "Location: " + deviceInfo.deviceLocation + "\n" +
+                            "Serial number: " + deviceInfo.serialNumber + "\n" +
+                            "Device version: " + deviceInfo.deviceVersion + "\n" +
+                            "Purchase date: " + deviceInfo.purchaseDate + "\n" +
+                            "Provisioning state: " + deviceInfo.provisioningState;
 
             //mListener.onDialogRequest(deviceInfoHeader, deviceInfoText);
 
@@ -159,8 +287,19 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
             // create alert dialog
             alertDialog = alertDialogBuilder.create();
             alertDialog.show();
-
         }
+
+    }
+
+    public void onBackPressed()
+    {
+        if ( actualOrg != null )
+        {
+            int index = actualOrg.lastIndexOf('/');
+            if ( index > -1 ) actualOrg = actualOrg.substring( 0  , index );
+            else  actualOrg = null;
+        }
+        filter();
     }
 
     /**
@@ -176,60 +315,6 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
         }
     }
 
-    private void queryXivelyDevices(){
-        XiSession session = ((MainActivity) getActivity()).getXivelySession();
-        if (session == null || !session.getState().equals(XiSession.State.Active)){
-            return;
-        }
-
-
-        session.requestXiDeviceInfoList(new XiDeviceInfoListCallback() {
-            @Override
-            public void onDeviceInfoListReceived(List<XiDeviceInfo> list) {
-                if (list == null || list.size() == 0){
-                    tvStatus.setText("No devices found for your account.");
-                    return;
-                }
-
-                tvStatus.setText("You have access to " + list.size() + " device(s):");
-
-                deviceInfoList = list;
-
-                for (XiDeviceInfo device : list){
-                    String deviceName = "n/a";
-                    if (device.deviceName != null &&
-                            !device.deviceName.equals("")){
-                        deviceName = device.deviceName;
-                    }
-
-                    mAdapter.add(
-                            new DeviceItem(device.deviceId,
-                                    deviceName + " - " + device.deviceId)
-                    );
-
-                    Map<String, String> datum = new HashMap<String, String>(2);
-                    datum.put("title", device.deviceName);
-                    datum.put("date", device.deviceId);
-                    mapData.add(datum);
-
-                }
-
-                SimpleAdapter adapter = new SimpleAdapter(getActivity(), mapData,
-                        android.R.layout.simple_list_item_2,
-                        new String[] {"title", "date"},
-                        new int[] {android.R.id.text1,
-                                android.R.id.text2});
-
-                mListView.setAdapter( adapter );
-                mListView.invalidate();
-            }
-
-            @Override
-            public void onDeviceInfoListFailed() {
-                tvStatus.setText("Failed to query devices.");
-            }
-        });
-    }
 
     /**
      * An item representing a device in the list.
