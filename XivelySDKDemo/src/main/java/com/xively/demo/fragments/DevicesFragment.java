@@ -185,6 +185,13 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
         items.clear();
         mapData.clear();
 
+        Map<String, String> datum = new HashMap<String, String>(2);
+        datum.put("title", "ORGANIZATIONS" );
+
+        mapData.add(datum);
+        items.add("ORGS");
+
+
         for (XiOrganizationInfo org : orgInfoList){
             String orgName = "n/a";
             if (org.name!= null &&
@@ -192,8 +199,8 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
                 orgName = org.name;
             }
 
-            Map<String, String> datum = new HashMap<String, String>(2);
-            datum.put("title", "ORG : " + org.name);
+            datum = new HashMap<String, String>(2);
+            datum.put("title", org.name);
             datum.put("date", org.organizationId);
 
             if ( ( org.parentId == null && actualOrg == null ) || (org.parentId != null && org.parentId.equals(actualOrg) ) )
@@ -204,6 +211,12 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
 
         }
 
+        datum = new HashMap<String, String>(2);
+        datum.put("title", "DEVICES" );
+
+        mapData.add(datum);
+        items.add("ORGS");
+
         for (XiDeviceInfo device : deviceInfoList){
             String deviceName = "n/a";
             if (device.deviceName != null &&
@@ -211,8 +224,8 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
                 deviceName = device.deviceName;
             }
 
-            Map<String, String> datum = new HashMap<String, String>(2);
-            datum.put("title", "DEV : " + device.deviceName);
+            datum = new HashMap<String, String>(2);
+            datum.put("title", device.deviceName);
             datum.put("date", device.deviceId);
 
             if ( device.customFields.get("organizationId").equals(actualOrg)) {
