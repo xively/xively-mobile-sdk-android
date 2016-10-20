@@ -12,6 +12,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.xively.demo.R;
@@ -19,7 +20,9 @@ import com.xively.messaging.XiDeviceChannel;
 import com.xively.messaging.XiDeviceInfo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A fragment representing a list of Items.
@@ -57,6 +60,7 @@ public class ChannelsFragment extends Fragment implements AbsListView.OnItemClic
      * Views.
      */
     private ArrayAdapter<ChannelItem> mAdapter;
+    private List<Map<String,String>> mapData;
 
     public static ChannelsFragment newInstance(XiDeviceInfo device) {
         ChannelsFragment fragment = new ChannelsFragment();
@@ -88,6 +92,8 @@ public class ChannelsFragment extends Fragment implements AbsListView.OnItemClic
 
         mAdapter = new ArrayAdapter<ChannelItem>(getActivity(),
                 android.R.layout.simple_list_item_1, android.R.id.text1);
+
+        mapData = new ArrayList<Map<String, String>>();
     }
 
     @Override
@@ -120,10 +126,25 @@ public class ChannelsFragment extends Fragment implements AbsListView.OnItemClic
                 XiDeviceChannel channel = deviceChannels.get(i);
                 mAdapter.add(
                         new ChannelItem(channel.channelId,channel.channelId));
+
+                Map<String, String> datum = new HashMap<String, String>(2);
+                datum.put("title", channel.channelId.substring(channel.channelId.lastIndexOf('/') + 1) );
+                datum.put("date", channel.persistenceType == XiDeviceInfo.PersistenceTypeEnum.simple ? "Simple" : "TimeSeries" );
+                mapData.add(datum);
+
             }
-            mAdapter.notifyDataSetChanged();
-            mListView.invalidate();
+
+            //mAdapter.notifyDataSetChanged();
             tvStatus.setText("This device has access to " + deviceChannels.size() + " channels(s):");
+
+            SimpleAdapter adapter = new SimpleAdapter(getActivity(), mapData,
+                    android.R.layout.simple_list_item_2,
+                    new String[] {"title", "date"},
+                    new int[] {android.R.id.text1,
+                            android.R.id.text2});
+
+            mListView.setAdapter( adapter );
+            mListView.invalidate();
         }
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mDeviceId);

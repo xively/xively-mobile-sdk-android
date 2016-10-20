@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
-import com.xively.demo.R;
 import com.xively.XiSdkConfig;
 import com.xively.XiSession;
 import com.xively.demo.fragments.ChannelsFragment;
@@ -27,14 +26,12 @@ import com.xively.demo.fragments.DevicesFragment;
 import com.xively.demo.fragments.MessagingFragment;
 import com.xively.demo.fragments.OnFragmentInteractionListener;
 import com.xively.demo.fragments.SettingsFragment;
-import com.xively.demo.fragments.TimeSeriesFragment;
 import com.xively.auth.XiAuthentication;
 import com.xively.auth.XiAuthenticationCallback;
 import com.xively.auth.XiAuthenticationFactory;
 import com.xively.messaging.XiDeviceChannel;
 import com.xively.messaging.XiDeviceInfo;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -109,9 +106,6 @@ public class MainActivity extends AppCompatActivity
                 case MessagingFragment:
                     changeFragment(new MessagingFragment(), false);
                     break;
-                case TimeSeriesFragment:
-                    changeFragment(new TimeSeriesFragment(), false);
-                    break;
                 case SettingsFragment:
                     changeFragment(new SettingsFragment(), false);
                     break;
@@ -177,12 +171,6 @@ public class MainActivity extends AppCompatActivity
                 showAlert("Error", "You must login to use this feature.", null);
             }
 
-        } else if (id == R.id.nav_timeseries) {
-            if (isXivelyActive()){
-                changeFragment(new TimeSeriesFragment(), false);
-            } else {
-                showAlert("Error", "You must login to use this feature.", null);
-            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -209,11 +197,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onChannelsRequest(XiDeviceInfo device) {
         changeFragment(ChannelsFragment.newInstance(device), false);
-    }
-
-    @Override
-    public void onTimeSeriesRequest(XiDeviceInfo device) {
-        changeFragment(TimeSeriesFragment.newInstance(device), false);
     }
 
     @Override

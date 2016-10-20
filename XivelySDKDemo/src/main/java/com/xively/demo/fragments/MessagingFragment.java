@@ -23,14 +23,20 @@ import com.xively.demo.MainActivity;
 import com.xively.demo.R;
 import com.xively.demo.XiSettings;
 import com.xively.messaging.XiDeviceChannel;
+import com.xively.messaging.XiDeviceInfo;
 import com.xively.messaging.XiLastWill;
 import com.xively.messaging.XiMessaging;
 import com.xively.messaging.XiMessagingCreator;
 import com.xively.messaging.XiMessagingDataListener;
 import com.xively.messaging.XiMessagingStateListener;
 import com.xively.messaging.XiMessagingSubscriptionListener;
+import com.xively.timeseries.TimeSeriesItem;
+import com.xively.timeseries.XiTimeSeries;
+import com.xively.timeseries.XiTimeSeriesCallback;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class MessagingFragment extends Fragment {
 
@@ -51,6 +57,7 @@ public class MessagingFragment extends Fragment {
 
     public XiDeviceChannel deviceChannel;
     private XiMessaging xivelyMessaging;
+    private XiTimeSeries xivelyTimeSeries;
 
     public static MessagingFragment newInstance(XiDeviceChannel channel) {
         MessagingFragment fragment = new MessagingFragment();
@@ -152,6 +159,7 @@ public class MessagingFragment extends Fragment {
             }
         });
 
+        if ( deviceChannel.persistenceType == XiDeviceInfo.PersistenceTypeEnum.timeSeries ) requestTimeSeries();
         connectMessaging();
     }
 
@@ -198,6 +206,62 @@ public class MessagingFragment extends Fragment {
                 messagesScroll.fullScroll(View.FOCUS_DOWN);
             }
         });
+
+    }
+
+    private void requestTimeSeries()
+    {
+        XiSession session = ((MainActivity) getActivity()).getXivelySession();
+        xivelyTimeSeries = session.timeSeries();
+
+        Date endDate = new Date(System.currentTimeMillis());
+        Date startDate = new Date(endDate.getTime() - 100 * 24 * 60 * 60 * 1000);
+
+        xivelyTimeSeries.requestTimeSeriesItemsForChannel(
+                tvChannel,
+                startDate, endDate,
+                new XiTimeSeriesCallback() {
+                    @Override
+                    public void onTimeSeriesItemsRetrieved(ArrayList<TimeSeriesItem> arrayList) {
+                        if (getActivity() == null){
+                            return;
+                        }
+                        addMessage( arrayList.size() + " item(s) found for the last 7 days" );
+
+                        for (TimeSeriesItem item: arrayList){
+                            String message = item.time + " / " + item.category + " / Value: '";
+                            if (!TextUtils.isEmpty(item.numericValue)){
+                                message += item.numericValue;
+                            }
+                            if (!TextUtils.isEmpty(item.stringValue)){
+                                message += item.stringValue;
+                            }
+                            message += "'";
+                            addMessage(message);
+                        }
+                    }
+
+                    @Override
+                    public void onFinishedWithError(XiTimeSeriesError xiTimeSeriesError) {
+                        if (getActivity() == null){
+                            return;
+                        }
+                        if (xiTimeSeriesError == null){
+                            addMessage("Failed to get data for the selected channel");
+                        } else {
+                            addMessage("Failed to get data: " + xiTimeSeriesError);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled() {
+                        if (getActivity() == null){
+                            return;
+                        }
+                        addMessage("Request canceled");
+                    }
+                }
+        );
 
     }
 

@@ -13,6 +13,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.xively.XiSession;
@@ -21,7 +22,10 @@ import com.xively.demo.R;
 import com.xively.messaging.XiDeviceInfo;
 import com.xively.messaging.XiDeviceInfoListCallback;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A fragment representing a list of Items.
@@ -37,7 +41,6 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
 
     private TextView tvStatus;
     private AlertDialog alertDialog;
-    //private List<DeviceItem> xiDevices = new ArrayList<>();
     private List<XiDeviceInfo> deviceInfoList;
 
     /**
@@ -50,6 +53,7 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
      * Views.
      */
     private ArrayAdapter<DeviceItem> mAdapter;
+    private List<Map<String,String>> mapData;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -63,7 +67,9 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
         super.onCreate(savedInstanceState);
 
         mAdapter = new ArrayAdapter<DeviceItem>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1);
+                android.R.layout.simple_list_item_2, android.R.id.text1);
+
+        mapData = new ArrayList<Map<String, String>>();
     }
 
     @Override
@@ -73,9 +79,6 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
 
         // Set the adapter
         mListView = (AbsListView) view.findViewById(android.R.id.list);
-        ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
-
-        // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Devices");
@@ -179,6 +182,7 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
             return;
         }
 
+
         session.requestXiDeviceInfoList(new XiDeviceInfoListCallback() {
             @Override
             public void onDeviceInfoListReceived(List<XiDeviceInfo> list) {
@@ -197,13 +201,26 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
                             !device.deviceName.equals("")){
                         deviceName = device.deviceName;
                     }
+
                     mAdapter.add(
                             new DeviceItem(device.deviceId,
                                     deviceName + " - " + device.deviceId)
                     );
+
+                    Map<String, String> datum = new HashMap<String, String>(2);
+                    datum.put("title", device.deviceName);
+                    datum.put("date", device.deviceId);
+                    mapData.add(datum);
+
                 }
 
-                mAdapter.notifyDataSetChanged();
+                SimpleAdapter adapter = new SimpleAdapter(getActivity(), mapData,
+                        android.R.layout.simple_list_item_2,
+                        new String[] {"title", "date"},
+                        new int[] {android.R.id.text1,
+                                android.R.id.text2});
+
+                mListView.setAdapter( adapter );
                 mListView.invalidate();
             }
 
