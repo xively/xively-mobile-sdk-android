@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A fragment representing a list of Items.
@@ -185,12 +186,10 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
         items.clear();
         mapData.clear();
 
-        Map<String, String> datum = new HashMap<String, String>(2);
-        datum.put("title", "ORGANIZATIONS" );
-
-        mapData.add(datum);
-        items.add("ORGS");
-
+        ArrayList<Object> orgitems = new ArrayList<Object>();
+        ArrayList<Map<String,String>> orgdatums = new ArrayList<Map<String,String>>();
+        ArrayList<Object> devitems = new ArrayList<Object>();
+        ArrayList<Map<String,String>> devdatums = new ArrayList<Map<String,String>>();
 
         for (XiOrganizationInfo org : orgInfoList){
             String orgName = "n/a";
@@ -199,23 +198,16 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
                 orgName = org.name;
             }
 
-            datum = new HashMap<String, String>(2);
+            Map<String, String> datum = new HashMap<String, String>(2);
             datum.put("title", org.name);
             datum.put("date", org.organizationId);
 
             if ( ( org.parentId == null && actualOrg == null ) || (org.parentId != null && org.parentId.equals(actualOrg) ) )
             {
-                mapData.add(datum);
-                items.add(org);
+                orgdatums.add(datum);
+                orgitems.add(org);
             }
-
         }
-
-        datum = new HashMap<String, String>(2);
-        datum.put("title", "DEVICES" );
-
-        mapData.add(datum);
-        items.add("ORGS");
 
         for (XiDeviceInfo device : deviceInfoList){
             String deviceName = "n/a";
@@ -224,17 +216,37 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
                 deviceName = device.deviceName;
             }
 
-            datum = new HashMap<String, String>(2);
+            Map<String, String> datum = new HashMap<String, String>(2);
             datum.put("title", device.deviceName);
             datum.put("date", device.deviceId);
 
             if ( device.customFields.get("organizationId").equals(actualOrg)) {
-                mapData.add(datum);
-                items.add(device);
+                devdatums.add(datum);
+                devitems.add(device);
             }
         }
 
+        Map<String, String> datum = new HashMap<String, String>(2);
+
+        datum.put("title", "ORGANIZATIONS (" + orgitems.size() + ")" );
+
+        mapData.add(datum);
+        items.add("ORGS");
+
+        mapData.addAll( orgdatums );
+        items.addAll( orgitems );
+
+        datum = new HashMap<String, String>(2);
+        datum.put("title", "DEVICES (" + devitems.size() + ")" );
+
+        mapData.add(datum);
+        items.add("DEVS");
+
+        mapData.addAll( devdatums );
+        items.addAll( devitems );
+
         tvStatus.setText(items.size() + " organizations(s) and device(s):");
+
         mListView.invalidate();
         adapter.notifyDataSetChanged();
     }
