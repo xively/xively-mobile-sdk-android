@@ -178,18 +178,16 @@ public class MainActivity extends AppCompatActivity
             }
         } else if (id == R.id.nav_channel_list) {
             if (isXivelyActive()){
-                changeFragment(ChannelsFragment.newInstance(deviceInfo), false);
+                if ( deviceInfo != null ) {
+                    changeFragment(ChannelsFragment.newInstance(deviceInfo), false);
+                }
+                else
+                {
+                    showAlert("Error", "Select a device first.", null);
+                }
             } else {
                 showAlert("Error", "You must login to use this feature.", null);
             }
-        }
-        else if (id == R.id.nav_messaging) {
-            if (isXivelyActive()){
-                changeFragment(new MessagingFragment(), false);
-            } else {
-                showAlert("Error", "You must login to use this feature.", null);
-            }
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
