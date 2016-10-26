@@ -102,7 +102,7 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
 
         mListView.setAdapter( adapter );
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Devices");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Organizations / Devices");
 
         return view;
     }
@@ -271,19 +271,13 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
         if (info.getClass().equals(XiOrganizationInfo.class)) {
             final XiOrganizationInfo orgInfo = (XiOrganizationInfo) info;
             actualOrg = orgInfo.organizationId;
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(orgInfo.name);
             filter();
         }
         if (info.getClass().equals(com.xively.messaging.XiDeviceInfo.class)) {
             final XiDeviceInfo deviceInfo = (XiDeviceInfo)info;
             String deviceInfoTitle = "Device details: ";
-            String deviceInfoMessage =
-                    "Name: " + deviceInfo.deviceName + "\n" +
-                            "Id: " + deviceInfo.deviceId + "\n" +
-                            "Location: " + deviceInfo.deviceLocation + "\n" +
-                            "Serial number: " + deviceInfo.serialNumber + "\n" +
-                            "Device version: " + deviceInfo.deviceVersion + "\n" +
-                            "Purchase date: " + deviceInfo.purchaseDate + "\n" +
-                            "Provisioning state: " + deviceInfo.provisioningState;
+            String deviceInfoMessage = deviceInfo.toString();
 
             //mListener.onDialogRequest(deviceInfoHeader, deviceInfoText);
 
@@ -320,6 +314,8 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
     {
         if ( actualOrg != null )
         {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Organizations / Devices");
+
             int index = actualOrg.lastIndexOf('/');
             if ( index > -1 ) actualOrg = actualOrg.substring( 0  , index );
             else  actualOrg = null;

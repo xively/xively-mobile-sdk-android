@@ -88,7 +88,7 @@ public class MessagingFragment extends Fragment {
 
         tvChannel = deviceChannel.channelId;
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(tvChannel);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(tvChannel.substring(tvChannel.lastIndexOf('/') + 1));
 
         tvMessages = (TextView) view.findViewById(R.id.Message_tvMessages);
         editText = (EditText) view.findViewById(R.id.Message_editTextMessage);
@@ -201,7 +201,7 @@ public class MessagingFragment extends Fragment {
             @Override
             public void run() {
                 String messages = tvMessages.getText().toString();
-                tvMessages.setText(messages + "\n" + newMessage);
+                tvMessages.setText(messages + "\n" + (new Date().toString()) + " : " + newMessage);
                 messagesScroll.invalidate();
                 messagesScroll.fullScroll(View.FOCUS_DOWN);
             }

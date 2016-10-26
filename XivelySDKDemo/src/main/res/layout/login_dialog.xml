@@ -12,18 +12,27 @@
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
+        android:id="@+id/accountId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:textColor="@android:color/primary_text_light"
+        android:textColorHint="@android:color/tertiary_text_light"
+        android:hint="Account Id"
+        >
+
+    <requestFocus />
+    </EditText>
+
+
+    <EditText
         android:id="@+id/loginUserName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
         android:textColor="@android:color/primary_text_light"
         android:textColorHint="@android:color/tertiary_text_light"
-        android:hint="@string/login_dialog_username_hint"
-        >
-
-        <requestFocus />
-
-    </EditText>
+        android:hint="@string/login_dialog_username_hint" />
 
     <EditText
         android:id="@+id/loginPassword"

@@ -46,8 +46,6 @@ public class MainActivity extends AppCompatActivity
      * Insert your account Id here before using the app.
      * **************************************************
      */
-    private String xivelyAccountId = "";
-
     private enum UiState {unknown, login, DevicesFragment, ChannelsFragment, MessagingFragment, SettingsFragment}
     private UiState currentUiState = UiState.login;
 
@@ -232,7 +230,7 @@ public class MainActivity extends AppCompatActivity
     private void xivelyLogin(){
         requestLogin(new LoginDialogResult() {
             @Override
-            public void onSubmitCredentials(String userName, String password) {
+            public void onSubmitCredentials(String accountId, String userName, String password) {
                 progressBar.setVisibility(View.VISIBLE);
 
                 XiSdkConfig customConfig = new XiSdkConfig();
@@ -258,7 +256,7 @@ public class MainActivity extends AppCompatActivity
                         XiAuthenticationFactory.createAuthenticationService(getApplicationContext(), customConfig);
 
                 xiAuthentication.requestAuth(userName, password,
-                        xivelyAccountId, new XiAuthenticationCallback() {
+                        accountId, new XiAuthenticationCallback() {
                             @Override
                             public void sessionCreated(XiSession xiSession) {
                                 progressBar.setVisibility(View.GONE);
@@ -306,6 +304,9 @@ public class MainActivity extends AppCompatActivity
         alertDialogBuilder.setView(promptsView);
 
         final EditText userInput = (EditText) promptsView
+                .findViewById(R.id.accountId);
+
+        final EditText userInput1 = (EditText) promptsView
                 .findViewById(R.id.loginUserName);
 
         final EditText userInput2 = (EditText) promptsView
@@ -320,10 +321,12 @@ public class MainActivity extends AppCompatActivity
                                 // get user input and set it to result
                                 loginDialogResult.onSubmitCredentials(
                                         userInput.getText().toString(),
+                                        userInput1.getText().toString(),
                                         userInput2.getText().toString());
 
                                 //clear credentials from ui elements
                                 userInput.setText("");
+                                userInput1.setText("");
                                 userInput2.setText("");
                             }
                         })
@@ -352,7 +355,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private interface LoginDialogResult {
-        void onSubmitCredentials(String userName, String password);
+        void onSubmitCredentials(String accountId, String userName, String password);
 
         void onCanceled();
     }

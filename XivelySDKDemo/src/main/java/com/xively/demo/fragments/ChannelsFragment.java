@@ -41,6 +41,7 @@ public class ChannelsFragment extends Fragment implements AbsListView.OnItemClic
     private OnFragmentInteractionListener mListener;
 
     private String mDeviceId;
+    private String mDeviceName;
     private CharSequence[] mDeviceChannels;
     public ArrayList<XiDeviceChannel> deviceChannels;
 
@@ -67,6 +68,7 @@ public class ChannelsFragment extends Fragment implements AbsListView.OnItemClic
         Bundle args = new Bundle();
 
         fragment.deviceChannels = device.deviceChannels;
+        fragment.mDeviceName = device.deviceName;
 
         ArrayList<String> channels = new ArrayList<>();
         for (XiDeviceChannel channel: device.deviceChannels){
@@ -147,7 +149,7 @@ public class ChannelsFragment extends Fragment implements AbsListView.OnItemClic
             mListView.invalidate();
         }
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mDeviceId);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mDeviceName);
     }
 
     @Override
