@@ -7,3 +7,4 @@ XivelySDKAndroid/build
 .idea
 .gradle
 build
+local.properties
