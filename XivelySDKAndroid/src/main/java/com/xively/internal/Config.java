@@ -33,7 +33,7 @@ public abstract class Config {
 
     private static final String BLUEPRINT_WS_ENDPOINT = "blueprint";
     private static final String AUTH_WS_ENDPOINT = "id";
-    private static final String PROVISION_WS_ENDPOINT = "provision";
+    private static final String PROVISION_WS_ENDPOINT = "blueprint";
     private static final String TIMESERIES_WS_ENDPOINT = "timeseries";
 
     public static final String ACCESS_WS_ENDPOINT = "access" + XIVELY_HOST;

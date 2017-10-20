@@ -1,6 +1,7 @@
 package com.xively.internal.rest.blueprint;
 
 import android.util.Base64;
+import android.util.Log;
 
 import com.google.gson.internal.LinkedTreeMap;
 import com.xively.XiSdkConfig;
@@ -353,15 +354,15 @@ public class BlueprintWebServices {
 
                         EndUser resultEndUser = null;
 
-                        ArrayList<Object> endUserList = (ArrayList<Object>)response.endUsers.get("results");
+                        ArrayList<Object> endUserList = (ArrayList<Object>) response.endUsers.get("results");
 
                         for(Object data: endUserList) {
-
                             LinkedTreeMap<String, Object> endUserMap = (LinkedTreeMap<String, Object>) data;
-                            String userId = (String)endUserMap.get("id");
+                            String userId = (String) endUserMap.get("userId");
+
                             if ( userId.endsWith(idmUserId)) {
                                 resultEndUser = new EndUser();
-                                resultEndUser.id = (String)endUserMap.get("id");
+                                resultEndUser.id = (String) endUserMap.get("id");
                                 resultEndUser.emailAddress = (String)endUserMap.get("emailAddress");
                                 break;
                             }

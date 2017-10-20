@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         OnFragmentInteractionListener {
 
+    private static final String TAG = "MainAcitivty";
+
     /**
      * **************************************************
      * Important!
@@ -125,8 +127,6 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-
-
             Fragment fragment = getActiveFragmentObject();
 
             if ( fragment instanceof DevicesFragment )
