@@ -40,8 +40,9 @@ dependencies {
         exclude group: 'commons-logging', module: 'commons-logging'
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }
-    compile files('libs/org.eclipse.paho.android.service-1.0.1.jar')
-    compile files('libs/org.eclipse.paho.client.mqttv3-1.0.1.jar')
+
+    compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
+    compile 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
     compile files('libs/retrofit-1.7.1.jar')
     compile files('libs/gson-2.3.jar')
 }
