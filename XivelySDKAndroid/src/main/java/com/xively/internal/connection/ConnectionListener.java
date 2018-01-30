@@ -8,19 +8,19 @@ public interface ConnectionListener {
     /**
      * Error types used in the <code>onError</code> event.
      */
-	public enum ConnectionError {
-		FAILED_TO_CONNECT, DISCONNECT_ERROR, CONNECTION_LOST, TIMED_OUT
-	}
+    public enum ConnectionError {
+        FAILED_TO_CONNECT, DISCONNECT_ERROR, CONNECTION_LOST, TIMED_OUT
+    }
 
     /**
      * Event raised when the connection has been established and it is ready for send and receive.
      */
-	public void onConnected();
+    public void onConnected();
 
     /**
      * Event raised when the connection has been reestablished after an unexpected connection loss.
      * To enable different workflows after reconnection the <code>onConnected</code> event is not raised.
-     *
+     * <p>
      * <code>onReconnecting</code> will always be raised before <code>onReconnected</code>.
      */
     public void onReconnected();
@@ -35,12 +35,12 @@ public interface ConnectionListener {
      * The connection is not receiving or sending messages any more. Cleanup may be still in progress
      * until <code>onClosed</code> is called.
      */
-	public void onDisconnected();
+    public void onDisconnected();
 
     /**
      * The connection with the remote server has ended and the connection object is cleaned up.
      */
-	public void onClosed();
+    public void onClosed();
 
     /**
      * If the connection has been unexpectedly lost, {@param error} will signal the probable cause.
@@ -48,5 +48,5 @@ public interface ConnectionListener {
      *
      * @param error The error details.
      */
-	public void onError(ConnectionError error);
+    public void onError(ConnectionError error);
 }

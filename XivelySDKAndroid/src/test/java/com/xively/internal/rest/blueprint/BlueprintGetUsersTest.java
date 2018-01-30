@@ -10,8 +10,8 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import retrofit.Callback;
-import retrofit.RestAdapter;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
 
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 public class BlueprintGetUsersTest extends TestCase {
 
     @Mock
-    RestAdapter mockRestAdapter;
+    Retrofit mockRestAdapter;
 
     @Override
     protected void setUp() throws Exception {

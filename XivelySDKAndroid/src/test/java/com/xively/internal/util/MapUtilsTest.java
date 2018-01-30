@@ -8,7 +8,10 @@ import java.util.Map;
 public class MapUtilsTest extends TestCase {
 
     private Map<testValues, String> testMap;
-    private enum  testValues {ONE, TWO, THREE, FOUR};
+
+    private enum testValues {ONE, TWO, THREE, FOUR}
+
+    ;
 
     @Override
     protected void setUp() throws Exception {

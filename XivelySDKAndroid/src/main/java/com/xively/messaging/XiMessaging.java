@@ -12,23 +12,27 @@ public interface XiMessaging extends XiService {
      * Internal state of the Messaging service.
      * Running      - The service is connected and ready for all operations.
      * Reconnecting - The underlying connection was lost and it is reconnecting.
-     *                No publish or subscribe operation can be made in this state.
+     * No publish or subscribe operation can be made in this state.
      * Closed       - The service is closed an no operations are available any more.
      * Error        - The service is terminated in an error state and no operations
-     *                are available any more.
+     * are available any more.
      */
-    enum State {Running, Reconnecting, Closed, Error}
+    enum State {
+        Running, Reconnecting, Closed, Error
+    }
 
     /**
      * QoS values channel subscribe and data publish.
      * AtMostOnce  - Data is delivered at most once. Delivery is not guaranteed to all subscribers,
-     *               some data occasionally might not be delivered.
+     * some data occasionally might not be delivered.
      * AtLeastOnce - Data is delivered at least once. Delivery is guaranteed for all subscribers,
-     *               however some data occasionally might be delivered more then once.
+     * however some data occasionally might be delivered more then once.
      * ExactlyOnce - Data is delivered exactly once. The delivery of all data is guaranteed for
-     *               all subscribers and all data is delivered exactly once.
+     * all subscribers and all data is delivered exactly once.
      */
-    enum XiMessagingQoS {AtMostOnce, AtLeastOnce, ExactlyOnce}
+    enum XiMessagingQoS {
+        AtMostOnce, AtLeastOnce, ExactlyOnce
+    }
 
     /**
      * Returns the current state of the Messaging service.
@@ -48,7 +52,7 @@ public interface XiMessaging extends XiService {
     /**
      * Removes a registered data listener instance.
      * No further event callbacks will be made to this data listener.
-     *
+     * <p>
      * This method does nothing if a listener has been already removed or has never been added
      * to the current messaging service instance.
      *
@@ -67,7 +71,7 @@ public interface XiMessaging extends XiService {
     /**
      * Removes a registered state listener instance.
      * No further status event callbacks will be made to this data listener.
-     *
+     * <p>
      * This method does nothing if a listener has been already removed or has never been added
      * to the current messaging service instance.
      *
@@ -86,7 +90,7 @@ public interface XiMessaging extends XiService {
     /**
      * Removes a subscription listener from the current messaging service instance.
      * The listener will receive no further subscription event callbacks.
-     *
+     * <p>
      * This method does nothing if a listener has been already removed or has never been added
      * to the current messaging service instance.
      *
@@ -99,16 +103,14 @@ public interface XiMessaging extends XiService {
      *
      * @param channel The messaging channel for the message.
      * @param message The message as a byte array.
-     * @param qos The QoS value of the publish. For details see {@link XiMessagingQoS}.
-     *
+     * @param qos     The QoS value of the publish. For details see {@link XiMessagingQoS}.
      * @return The id of the message is returned or -1 if delivery confirmation is not supported
      * for the current connection or messaging channel.
      * The delivery confirmation event can be monitored using the {@link XiMessagingDataListener}'s
      * onDataSent callback.
-     *
      * @throws XiException.NotConnectedException Publish will throw a {@link com.xively.XiException.NotConnectedException}
-     * exception if the underlying connection is not connected, respectively the Messaging service
-     * is not in Running state.
+     *                                           exception if the underlying connection is not connected, respectively the Messaging service
+     *                                           is not in Running state.
      */
     int publish(String channel, byte[] message, XiMessagingQoS qos) throws XiException.NotConnectedException;
 
@@ -117,17 +119,15 @@ public interface XiMessaging extends XiService {
      *
      * @param channel The messaging channel for the message.
      * @param message The message as a byte array.
-     * @param qos The QoS value of the publish. For details see {@link XiMessagingQoS}.
-     * @param retain The retain flag of the message.
-     *
+     * @param qos     The QoS value of the publish. For details see {@link XiMessagingQoS}.
+     * @param retain  The retain flag of the message.
      * @return The id of the message is returned or -1 if delivery confirmation is not supported
      * for the current connection or messaging channel.
      * The delivery confirmation event can be monitored using the {@link XiMessagingDataListener}'s
      * onDataSent callback.
-     *
      * @throws XiException.NotConnectedException Publish will throw a {@link com.xively.XiException.NotConnectedException}
-     * exception if the underlying connection is not connected, respectively the Messaging service
-     * is not in Running state.
+     *                                           exception if the underlying connection is not connected, respectively the Messaging service
+     *                                           is not in Running state.
      */
     int publish(String channel, byte[] message, XiMessagingQoS qos, boolean retain) throws XiException.NotConnectedException;
 
@@ -137,33 +137,29 @@ public interface XiMessaging extends XiService {
      * of the subscribe operation.
      *
      * @param channel The channel of your IoT device.
-     * @param qos The QoS value for the current subscription.
-     *            For details see {@link XiMessagingQoS}.
-     *
+     * @param qos     The QoS value for the current subscription.
+     *                For details see {@link XiMessagingQoS}.
      * @throws XiException.NotConnectedException This method will throw
-     * a {@link com.xively.XiException.NotConnectedException} if the underlying connection
-     * is not connected, respectively the Messaging service is not in Running state.
-     *
-     * @throws XiException.ConnectionException This method will throw
-     * a {@link com.xively.XiException.ConnectionException} if the subscribe operation has immediately failed.
+     *                                           a {@link com.xively.XiException.NotConnectedException} if the underlying connection
+     *                                           is not connected, respectively the Messaging service is not in Running state.
+     * @throws XiException.ConnectionException   This method will throw
+     *                                           a {@link com.xively.XiException.ConnectionException} if the subscribe operation has immediately failed.
      */
     void subscribe(String channel, XiMessagingQoS qos) throws XiException.NotConnectedException, XiException.ConnectionException;
 
     /**
      * Unsubscribes from the specified IoT device messaging channel.
      * No further data events will be monitored on this channel.
-     *
+     * <p>
      * XiMessagingSubscriptionListener listeners can be used to monitor the success or failure
      * of the unsubscribe operation.
      *
      * @param channel The device messaging channel.
-     *
      * @throws XiException.NotConnectedException This method will throw
-     * a {@link com.xively.XiException.NotConnectedException} if the underlying connection
-     * is not connected, respectively the Messaging service is not in Running state.
-     *
-     * @throws XiException.ConnectionException This method will throw
-     * a {@link com.xively.XiException.ConnectionException} if the unsubscribe operation has immediately failed.
+     *                                           a {@link com.xively.XiException.NotConnectedException} if the underlying connection
+     *                                           is not connected, respectively the Messaging service is not in Running state.
+     * @throws XiException.ConnectionException   This method will throw
+     *                                           a {@link com.xively.XiException.ConnectionException} if the unsubscribe operation has immediately failed.
      */
     void unsubscribe(String channel) throws XiException.NotConnectedException, XiException.ConnectionException;
 

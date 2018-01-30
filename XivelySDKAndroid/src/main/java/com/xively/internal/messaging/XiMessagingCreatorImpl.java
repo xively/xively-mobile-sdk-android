@@ -1,7 +1,7 @@
 package com.xively.internal.messaging;
 
-import com.xively.internal.connection.impl.XiMqttConnectionPool;
 import com.xively.internal.DependencyInjector;
+import com.xively.internal.connection.impl.XiMqttConnectionPool;
 import com.xively.messaging.XiLastWill;
 import com.xively.messaging.XiMessaging;
 import com.xively.messaging.XiMessagingCreator;
@@ -11,7 +11,7 @@ public class XiMessagingCreatorImpl extends XiMessagingCreator {
 
     private XiMqttConnectionPool connectionPool;
 
-    public XiMessagingCreatorImpl(XiMqttConnectionPool connectionPool){
+    public XiMessagingCreatorImpl(XiMqttConnectionPool connectionPool) {
         this.connectionPool = connectionPool;
     }
 
@@ -48,7 +48,7 @@ public class XiMessagingCreatorImpl extends XiMessagingCreator {
 
         try {
             ((XiMessagingImpl) messagingService).init(cleanSession, lastWill);
-        }catch (IllegalArgumentException exception) {
+        } catch (IllegalArgumentException exception) {
             serviceCreateFailed();
         }
     }

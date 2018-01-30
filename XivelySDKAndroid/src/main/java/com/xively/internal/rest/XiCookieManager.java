@@ -11,6 +11,7 @@ import java.util.Map;
 public class XiCookieManager extends CookieManager {
     private static final String TAG = "XiCookieManager";
     private static final LMILog log = new LMILog(TAG);
+
     static {
         log.getClass();
     }
@@ -20,11 +21,11 @@ public class XiCookieManager extends CookieManager {
     private String accessToken = null;
     private AccessTokenUpdateListener accessTokenUpdateListener;
 
-    public String getCurrentAccessToken(){
+    public String getCurrentAccessToken() {
         return accessToken;
     }
 
-    public void setAccessTokenListener(AccessTokenUpdateListener accessTokenUpdateListener){
+    public void setAccessTokenListener(AccessTokenUpdateListener accessTokenUpdateListener) {
         this.accessTokenUpdateListener = accessTokenUpdateListener;
     }
 
@@ -38,7 +39,8 @@ public class XiCookieManager extends CookieManager {
                 for (String newAccessToken : responseHeaders.get(xiAccessTokenLabel)) {
                     if (!newAccessToken.equals(accessToken)) {
                         accessToken = newAccessToken;
-                        if (accessTokenUpdateListener != null) accessTokenUpdateListener.onAccessTokenUpdated(accessToken);
+                        if (accessTokenUpdateListener != null)
+                            accessTokenUpdateListener.onAccessTokenUpdated(accessToken);
                         log.d("New access token set.");
                     }
                 }
@@ -49,12 +51,13 @@ public class XiCookieManager extends CookieManager {
                     if (string.startsWith(xiAccessTokenLabel)) {
                         String newAccessToken = string.substring(xiAccessTokenLabel.length() + 1);
                         int idx = newAccessToken.indexOf(";");
-                        if (idx >= 0){
+                        if (idx >= 0) {
                             newAccessToken = newAccessToken.substring(0, idx);
                         }
                         if (!newAccessToken.equals(accessToken)) {
                             accessToken = newAccessToken;
-                            if (accessTokenUpdateListener != null) accessTokenUpdateListener.onAccessTokenUpdated(accessToken);
+                            if (accessTokenUpdateListener != null)
+                                accessTokenUpdateListener.onAccessTokenUpdated(accessToken);
                             log.d("New access token set.");
                         }
                     }
@@ -64,7 +67,7 @@ public class XiCookieManager extends CookieManager {
 
     }
 
-    public interface AccessTokenUpdateListener{
+    public interface AccessTokenUpdateListener {
         void onAccessTokenUpdated(String newAccessToken);
     }
 }

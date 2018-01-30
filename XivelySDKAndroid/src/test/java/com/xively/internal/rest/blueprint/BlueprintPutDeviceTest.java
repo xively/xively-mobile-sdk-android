@@ -2,8 +2,6 @@ package com.xively.internal.rest.blueprint;
 
 import com.xively.XiSdkConfig;
 import com.xively.internal.logger.LMILog;
-import com.xively.internal.rest.blueprint.devicesQuery.XiDeviceData;
-import com.xively.messaging.XiDeviceUpdateInfo;
 
 import junit.framework.TestCase;
 
@@ -13,8 +11,8 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.HashMap;
 
-import retrofit.Callback;
-import retrofit.RestAdapter;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -26,7 +24,7 @@ import static org.mockito.Mockito.when;
 public class BlueprintPutDeviceTest extends TestCase {
 
     @Mock
-    RestAdapter mockRestAdapter;
+    Retrofit mockRestAdapter;
 
     @Override
     protected void setUp() throws Exception {
@@ -43,12 +41,12 @@ public class BlueprintPutDeviceTest extends TestCase {
 
         final String deviceId = "mock account id";
         final String version = "ef";
-        HashMap<String,Object> data = new HashMap<String,Object>();
-        data.put("connected","true");
-        testWS.putDevice( deviceId , version, data, mockCallback );
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("connected", "true");
+        testWS.putDevice(deviceId, version, data, mockCallback);
 
         verify(mockRestAdapter, times(1)).create(Matchers.<Class<CreateCredentials>>anyObject());
-        verify(mockPutDevice, timeout(500).times(1)).putDevice(eq(deviceId),eq(version),eq(data), eq(mockCallback));
+        verify(mockPutDevice, timeout(500).times(1)).putDevice(eq(deviceId), eq(version), eq(data), eq(mockCallback));
 
     }
 

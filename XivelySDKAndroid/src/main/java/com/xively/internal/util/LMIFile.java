@@ -1,9 +1,9 @@
 package com.xively.internal.util;
 
+import com.xively.internal.logger.LMILog;
+
 import java.io.File;
 import java.util.ArrayList;
-
-import com.xively.internal.logger.LMILog;
 
 public class LMIFile {
 

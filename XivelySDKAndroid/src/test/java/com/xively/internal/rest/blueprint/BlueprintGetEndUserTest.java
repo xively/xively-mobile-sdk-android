@@ -9,8 +9,8 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import retrofit.Callback;
-import retrofit.RestAdapter;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -19,12 +19,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * Created by milgra on 27/07/16.
- */
 public class BlueprintGetEndUserTest extends TestCase {
     @Mock
-    RestAdapter mockRestAdapter;
+    Retrofit mockRestAdapter;
 
     @Override
     protected void setUp() throws Exception {
@@ -40,10 +37,10 @@ public class BlueprintGetEndUserTest extends TestCase {
         when(mockRestAdapter.create(Matchers.<Class<Object>>anyObject())).thenReturn(mockGetEndUser);
 
         final String userId = "mock user id";
-        testWS.getEndUser( userId, mockCallback );
+        testWS.getEndUser(userId, mockCallback);
 
         verify(mockRestAdapter, times(1)).create(Matchers.<Class<CreateCredentials>>anyObject());
-        verify(mockGetEndUser, timeout(500).times(1)).getEndUser(eq(userId),eq(mockCallback));
+        verify(mockGetEndUser, timeout(500).times(1)).getEndUser(eq(userId), eq(mockCallback));
 
     }
 }

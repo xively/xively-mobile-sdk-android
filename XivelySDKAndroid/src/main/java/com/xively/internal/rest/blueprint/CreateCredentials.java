@@ -2,14 +2,14 @@ package com.xively.internal.rest.blueprint;
 
 import com.xively.internal.rest.blueprint.credentialsCreate.Credential;
 
-import retrofit.Callback;
-import retrofit.http.Body;
-import retrofit.http.POST;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.POST;
 
 public interface CreateCredentials {
 
     @POST("/api/v1/access/mqtt-credentials")
-    void createCredentials(@Body Request body, Callback<Response> callback);
+    Call<Response> createCredentials(@Body Request body);
 
     /**
      * entityId - endUserId

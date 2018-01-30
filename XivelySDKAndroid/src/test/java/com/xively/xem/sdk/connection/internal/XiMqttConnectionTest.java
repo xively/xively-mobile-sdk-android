@@ -3,12 +3,12 @@ package com.xively.xem.sdk.connection.internal;
 import android.content.Context;
 
 import com.xively.XiSdkConfig;
-import com.xively.internal.connection.impl.XiMqttConnectionImpl;
 import com.xively.internal.Config;
 import com.xively.internal.DependencyInjector;
 import com.xively.internal.account.XivelyAccount;
 import com.xively.internal.connection.ConnectionListener;
 import com.xively.internal.connection.PublishListener;
+import com.xively.internal.connection.impl.XiMqttConnectionImpl;
 import com.xively.internal.device.DeviceInfo;
 import com.xively.internal.logger.LMILog;
 import com.xively.internal.util.AsyncTimerTask;
@@ -26,7 +26,6 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -116,7 +115,7 @@ public class XiMqttConnectionTest extends TestCase {
         }
         expectedUri += Config.xi_mqtt_host() + ":";
         expectedUri += Config.CONN_USE_SSL ?
-                        Config.CONN_XI_MQTT_SECURE_PORT : Config.CONN_XI_MQTT_PORT;
+                Config.CONN_XI_MQTT_SECURE_PORT : Config.CONN_XI_MQTT_PORT;
         verify(mockDependencyInjector).createMqttAndroidClient(any(Context.class),
                 eq(expectedUri), eq(mockXivelyAccount.getUserName()));
 
@@ -154,9 +153,13 @@ public class XiMqttConnectionTest extends TestCase {
 
         verify(mockMqttClient).registerResources(any(Context.class));
         verify(mockMqttClient).connect(argThat(new BaseMatcher<MqttConnectOptions>() {
-            public boolean matches(Object options) {
-                return !((MqttConnectOptions) options).isCleanSession();
-            } public void describeTo(Description var1) {}})
+                    public boolean matches(Object options) {
+                        return !((MqttConnectOptions) options).isCleanSession();
+                    }
+
+                    public void describeTo(Description var1) {
+                    }
+                })
 
                 , any(Context.class),
                 any(IMqttActionListener.class));
@@ -185,12 +188,16 @@ public class XiMqttConnectionTest extends TestCase {
         verify(mockMqttClient).registerResources(any(Context.class));
         verify(mockMqttClient).connect(argThat(new BaseMatcher<MqttConnectOptions>() {
                     public boolean matches(Object options) {
-                        MqttConnectOptions o = (MqttConnectOptions)options;
+                        MqttConnectOptions o = (MqttConnectOptions) options;
                         return o.getWillDestination().equals("aaaaaa") &&
                                 Arrays.equals(o.getWillMessage().getPayload(), "bbbb".getBytes()) &&
                                 o.getWillMessage().getQos() == 1 &&
                                 !o.getWillMessage().isRetained();
-                    } public void describeTo(Description var1) {}})
+                    }
+
+                    public void describeTo(Description var1) {
+                    }
+                })
 
                 , any(Context.class),
                 any(IMqttActionListener.class));
@@ -215,12 +222,12 @@ public class XiMqttConnectionTest extends TestCase {
         Config.resetConfig();
     }
 
-    
+
     public void testConnectMqttCallsOnErrorOnMqttException() throws Exception {
         Config.CONN_MQTT_MAX_RECONNECT = 0;
 
         doThrow(new MqttException(1)).
-            when(mockMqttClient).connect(any(MqttConnectOptions.class), any(Context.class),
+                when(mockMqttClient).connect(any(MqttConnectOptions.class), any(Context.class),
                 any(IMqttActionListener.class));
 
         XiMqttConnectionImpl testObject = new XiMqttConnectionImpl();
@@ -234,7 +241,6 @@ public class XiMqttConnectionTest extends TestCase {
     }
 
 
-    
     public void testConnectMqttReconnectsOnError() throws Exception {
         Config.CONN_MQTT_MAX_RECONNECT = 10;
         Config.CONN_MQTT_RECONNECT_DELAY = 0;
@@ -255,7 +261,7 @@ public class XiMqttConnectionTest extends TestCase {
         Config.resetConfig();
     }
 
-    
+
     public void testConnectMqttOptionsValid() throws Exception {
         XiMqttConnectionImpl testObject = new XiMqttConnectionImpl();
         ConnectionListener mockConnectionListener = mock(ConnectionListener.class);
@@ -277,7 +283,7 @@ public class XiMqttConnectionTest extends TestCase {
         assertEquals(options.getKeepAliveInterval(), Config.CONN_KEEPALIVE);
     }
 
-    public void testConnectTimeoutSetsOnError(){
+    public void testConnectTimeoutSetsOnError() {
         ArgumentCaptor<Runnable> timerRunnable = ArgumentCaptor.forClass(Runnable.class);
         when(mockMqttClient.isConnected()).thenReturn(false);
 
@@ -294,7 +300,7 @@ public class XiMqttConnectionTest extends TestCase {
 
         verify(mockConnectionListener).onError(ConnectionListener.ConnectionError.TIMED_OUT);
     }
-    
+
     public void testIsConnected() throws Exception {
         when(mockMqttClient.isConnected()).thenReturn(true);
         XiMqttConnectionImpl testObject = new XiMqttConnectionImpl();
@@ -303,7 +309,7 @@ public class XiMqttConnectionTest extends TestCase {
         assertTrue(testObject.isConnected());
     }
 
-    
+
     public void testIsConnectedFalse() throws Exception {
         when(mockMqttClient.isConnected()).thenReturn(false);
         XiMqttConnectionImpl testObject = new XiMqttConnectionImpl();
@@ -312,7 +318,7 @@ public class XiMqttConnectionTest extends TestCase {
         assertFalse(testObject.isConnected());
     }
 
-    
+
     public void testGetClientId() throws Exception {
         XiMqttConnectionImpl testObject = new XiMqttConnectionImpl();
         testObject.connect(mockXivelyAccount, "jwt", true, null);
@@ -320,7 +326,7 @@ public class XiMqttConnectionTest extends TestCase {
         assertEquals(testObject.getClientId(), mockUid);
     }
 
-    
+
     public void testDisconnectWithSuccessClientDisconnectCallback() throws Exception {
         when(mockMqttClient.isConnected()).thenReturn(true);
         XiMqttConnectionImpl testObject = new XiMqttConnectionImpl();
@@ -345,7 +351,7 @@ public class XiMqttConnectionTest extends TestCase {
         verify(mockConnectionListener, atLeastOnce()).onDisconnected();
     }
 
-    
+
     public void testDisconnectWithFailureClientDisconnectCallback() throws Exception {
         when(mockMqttClient.isConnected()).thenReturn(true);
         XiMqttConnectionImpl testObject = new XiMqttConnectionImpl();
@@ -369,7 +375,7 @@ public class XiMqttConnectionTest extends TestCase {
         verify(mockMqttClient).unregisterResources();
     }
 
-    
+
     public void testDisconnectWithClientNotConnected() throws Exception {
         when(mockMqttClient.isConnected()).thenReturn(false);
         XiMqttConnectionImpl testObject = new XiMqttConnectionImpl();
@@ -381,7 +387,7 @@ public class XiMqttConnectionTest extends TestCase {
         verify(mockConnectionListener).onDisconnected();
     }
 
-    
+
     public void testDisconnectCallsOnErrorIfMqttExceptionThrown() throws Exception {
         when(mockMqttClient.isConnected()).thenReturn(true);
         when(mockMqttClient.disconnect(anyLong(), any(Context.class), any(IMqttActionListener.class)))
@@ -397,7 +403,7 @@ public class XiMqttConnectionTest extends TestCase {
         verify(mockConnectionListener).onError(ConnectionListener.ConnectionError.DISCONNECT_ERROR);
     }
 
-    
+
     public void testPublish() throws Exception {
         when(mockMqttClient.isConnected()).thenReturn(true);
         XiMqttConnectionImpl testObject = new XiMqttConnectionImpl();
@@ -409,7 +415,7 @@ public class XiMqttConnectionTest extends TestCase {
                 eq(Config.CONN_XI_MQTT_QOS), eq(false));
     }
 
-    
+
     public void testPublishNoInteractionOnPublishException() throws Exception {
         when(mockMqttClient.isConnected()).thenReturn(true);
         when(mockMqttClient.publish(anyString(), (byte[]) any(), anyInt(), anyBoolean()))
@@ -419,11 +425,11 @@ public class XiMqttConnectionTest extends TestCase {
 
         String testMessage = "some test message";
         testObject.publish(testMessage, mockTopic1);
-        verify(mockMqttClient).publish( eq(mockTopic1), eq(testMessage.getBytes()),
-                eq(Config.CONN_XI_MQTT_QOS), eq(false) );
+        verify(mockMqttClient).publish(eq(mockTopic1), eq(testMessage.getBytes()),
+                eq(Config.CONN_XI_MQTT_QOS), eq(false));
     }
 
-    
+
     public void testMessageArrived() throws Exception {
         when(mockMqttClient.isConnected()).thenReturn(true);
         XiMqttConnectionImpl testObject = new XiMqttConnectionImpl();
@@ -440,7 +446,7 @@ public class XiMqttConnectionTest extends TestCase {
         verify(mockPublishListener).onPublishReceived(eq(testString), eq(mockTopic1));
     }
 
-    public void testPublishReturnsExpectedId(){
+    public void testPublishReturnsExpectedId() {
         when(mockMqttClient.isConnected()).thenReturn(true);
         XiMqttConnectionImpl testObject = new XiMqttConnectionImpl();
         testObject.connect(mockXivelyAccount, "jwt", true, null);
@@ -448,7 +454,7 @@ public class XiMqttConnectionTest extends TestCase {
         String testMessage = "some test message";
         assertEquals(mockMqttMessageId, testObject.publish(testMessage, mockTopic1));
     }
-    
+
     public void testExpectDisconnectedAndErrorCallbackOnConnectionLost() throws Exception {
         Config.CONN_MQTT_MAX_RECONNECT = 0;
 
@@ -468,7 +474,7 @@ public class XiMqttConnectionTest extends TestCase {
         Config.resetConfig();
     }
 
-    
+
     public void testRemoveConnectionListener() throws Exception {
         when(mockMqttClient.isConnected()).thenReturn(true);
         XiMqttConnectionImpl testObject = new XiMqttConnectionImpl();
@@ -484,7 +490,7 @@ public class XiMqttConnectionTest extends TestCase {
         verifyNoMoreInteractions(mockPublishListener);
     }
 
-    
+
     public void testRemovePublishListener() throws Exception {
         when(mockMqttClient.isConnected()).thenReturn(true);
         XiMqttConnectionImpl testObject = new XiMqttConnectionImpl();

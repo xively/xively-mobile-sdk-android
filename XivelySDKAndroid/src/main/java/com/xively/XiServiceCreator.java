@@ -17,7 +17,7 @@ public abstract class XiServiceCreator<T extends XiService> {
      *
      * @return A {@link com.xively.XiServiceCreator.State} value.
      */
-    public State getState(){
+    public State getState() {
         return state;
     }
 
@@ -25,12 +25,12 @@ public abstract class XiServiceCreator<T extends XiService> {
      * Cancels the creation of the service.
      * After cancel has been invoked the Creator Callbacks will never be invoked and
      * the service eventually being created is always discarded.
-     *
+     * <p>
      * If the Creator has already reached a terminal state (Created, Error or Canceled),
      * the invocation of cancel has no effect whatsoever.
      */
-    public void cancel(){
-        synchronized (cancelSync){
+    public void cancel() {
+        synchronized (cancelSync) {
             if (state == State.Idle || state == State.Creating) {
                 state = State.Canceled;
             }
@@ -46,8 +46,8 @@ public abstract class XiServiceCreator<T extends XiService> {
      *                 Each service creator instance expects to specify its matching service type
      *                 in this parameter.
      */
-    public void addServiceCreatorCallback(XiServiceCreatorCallback<T> callback){
-        if (! creatorListeners.contains(callback)){
+    public void addServiceCreatorCallback(XiServiceCreatorCallback<T> callback) {
+        if (!creatorListeners.contains(callback)) {
             creatorListeners.add(callback);
         }
     }
@@ -58,15 +58,14 @@ public abstract class XiServiceCreator<T extends XiService> {
      *
      * @param callback An {@link XiServiceCreatorCallback} instance.
      */
-    public void removeServiceCreatorCallback(XiServiceCreatorCallback<T> callback){
+    public void removeServiceCreatorCallback(XiServiceCreatorCallback<T> callback) {
         creatorListeners.remove(callback);
     }
 
     /**
-     *
      * Clears all callback listeners registered to this creator instance.
      */
-    public void removeAllCallbacks(){
+    public void removeAllCallbacks() {
         creatorListeners.clear();
     }
 
@@ -75,7 +74,7 @@ public abstract class XiServiceCreator<T extends XiService> {
      *
      * @param service The service instance to be passed to clients.
      */
-    protected void serviceCreated(T service){
+    protected void serviceCreated(T service) {
         synchronized (cancelSync) {
             if (state != State.Canceled) {
                 this.state = State.Created;
@@ -89,7 +88,7 @@ public abstract class XiServiceCreator<T extends XiService> {
     /**
      * Fire failed event on all listeners.
      */
-    protected void serviceCreateFailed(){
+    protected void serviceCreateFailed() {
         synchronized (cancelSync) {
             if (state != State.Canceled) {
                 this.state = State.Error;

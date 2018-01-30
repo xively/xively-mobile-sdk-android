@@ -7,43 +7,60 @@ import com.xively.internal.logger.LMILog;
 import com.xively.internal.rest.XiCookieManager;
 import com.xively.sdk.BuildConfig;
 
+import java.io.IOException;
 import java.net.CookieHandler;
 import java.net.CookiePolicy;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import retrofit.Callback;
-import retrofit.RequestInterceptor;
-import retrofit.RestAdapter;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
 
 public class TimeSeriesWebServices {
 
     private static final String TAG = "TimeSeriesWebServices";
     private static final LMILog log = new LMILog(TAG);
+
     static {
         log.getClass();
     }
 
     private String authorizationHeader;
-    private final RestAdapter restAdapter;
+    private final Retrofit retrofit;
 
     public TimeSeriesWebServices() {
         String wsEndpoint;
-        if (Config.CONN_USE_SSL){
+        if (Config.CONN_USE_SSL) {
             wsEndpoint = "https://";
         } else {
             wsEndpoint = "http://";
         }
         wsEndpoint += Config.timeseries_endpoint();
-        RequestInterceptor requestInterceptor = new RequestInterceptor() {
+
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        Interceptor requestInterceptor = new Interceptor() {
+
             @Override
-            public void intercept(RequestFacade request) {
-                if (authorizationHeader != null){
-                    request.addHeader("Authorization", authorizationHeader);
+            public Response intercept(Chain chain) throws IOException {
+                Request original = chain.request();
+
+                Request.Builder requestBuilder = original.newBuilder();
+
+                if (authorizationHeader != null) {
+                    requestBuilder.header("authorization", authorizationHeader);
                 }
+
+                Request request = requestBuilder.method(original.method(), original.body()).build();
+
+                return chain.proceed(request);
             }
         };
+        httpClient.addInterceptor(requestInterceptor);
 
         XiCookieManager cookieManager = new XiCookieManager();
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
@@ -56,28 +73,29 @@ public class TimeSeriesWebServices {
             }
         });
 
-        restAdapter = new RestAdapter.Builder()
-                .setEndpoint(wsEndpoint)
-                .setRequestInterceptor(requestInterceptor)
+        OkHttpClient client = httpClient.build();
+        retrofit = new Retrofit.Builder()
+                .baseUrl(wsEndpoint)
+                .client(client)
                 .build();
 
         if (BuildConfig.DEBUG) {
-            restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
-        } else if (LMILog.getMinLogLevel() != XiSdkConfig.LogLevel.OFF){
-            restAdapter.setLogLevel(RestAdapter.LogLevel.BASIC);
+//            retrofit.setLogLevel(RestAdapter.LogLevel.FULL);
+        } else if (LMILog.getMinLogLevel() != XiSdkConfig.LogLevel.OFF) {
+//            retrofit.setLogLevel(RestAdapter.LogLevel.BASIC);
         } else {
-            restAdapter.setLogLevel(RestAdapter.LogLevel.NONE);
+//            retrofit.setLogLevel(RestAdapter.LogLevel.NONE);
         }
     }
 
-    public void setBearerAuthorizationHeader(String authorization){
+    public void setBearerAuthorizationHeader(String authorization) {
         this.authorizationHeader = "Bearer " + authorization;
         log.d("Auth header set for TimeSeries ws.");
     }
 
     //for unit testing
-    public TimeSeriesWebServices(RestAdapter restAdapter) {
-        this.restAdapter = restAdapter;
+    public TimeSeriesWebServices(Retrofit retrofit) {
+        this.retrofit = retrofit;
     }
 
 
@@ -89,12 +107,12 @@ public class TimeSeriesWebServices {
     public void getData(final String topic, final Date startDateTime, final Date endDateTime,
                         final Integer pageSize, final String pagingToken, final Boolean omitNull,
                         final String category, final Integer groupType,
-                    final Callback<GetData.Response> callback){
+                        final Callback<GetData.Response> callback) {
 
         final SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ", Locale.US); //ISO 8601
-        final GetData getData = restAdapter.create(GetData.class);
+        final GetData getData = retrofit.create(GetData.class);
 
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 getData.getData(topic,

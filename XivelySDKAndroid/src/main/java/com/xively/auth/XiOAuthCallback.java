@@ -12,7 +12,7 @@ public interface XiOAuthCallback {
      * @param oauthUrl the oauth url
      *                 (ex.: https://accounts.google.com/o/oauth2/auth?client_id=123456789.apps.googleusercontent.com&response_type=code&scope=openid).
      */
-     void oAuthUriReceived(String oauthUrl);
+    void oAuthUriReceived(String oauthUrl);
 
     /**
      * The authentication has failed.

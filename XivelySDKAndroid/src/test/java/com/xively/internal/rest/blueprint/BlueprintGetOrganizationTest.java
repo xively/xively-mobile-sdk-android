@@ -9,8 +9,8 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import retrofit.Callback;
-import retrofit.RestAdapter;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -19,12 +19,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * Created by milgra on 27/07/16.
- */
+
 public class BlueprintGetOrganizationTest extends TestCase {
     @Mock
-    RestAdapter mockRestAdapter;
+    Retrofit mockRestAdapter;
 
     @Override
     protected void setUp() throws Exception {
@@ -40,10 +38,10 @@ public class BlueprintGetOrganizationTest extends TestCase {
         when(mockRestAdapter.create(Matchers.<Class<Object>>anyObject())).thenReturn(mockGetOrganization);
 
         final String organizationId = "mock orgid";
-        testWS.getOrganization( organizationId, mockCallback );
+        testWS.getOrganization(organizationId, mockCallback);
 
         verify(mockRestAdapter, times(1)).create(Matchers.<Class<CreateCredentials>>anyObject());
-        verify(mockGetOrganization, timeout(500).times(1)).getOrganization(eq(organizationId),eq(mockCallback));
+        verify(mockGetOrganization, timeout(500).times(1)).getOrganization(eq(organizationId), eq(mockCallback));
 
     }
 }

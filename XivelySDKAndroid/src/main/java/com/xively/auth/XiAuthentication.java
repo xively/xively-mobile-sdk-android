@@ -2,16 +2,16 @@ package com.xively.auth;
 
 /**
  * This class encapsulates login services for Xively end user and OpenId authentication.
- *
+ * <p>
  * To sign in with Xively end user credentials you can use the <i>requestAuth</i> API
  * and pass the end user's credentials.
- *
+ * <p>
  * The OpenID Authentication with the Xively SDK requires the implementing application
  * to declare an intent-filter in the <code>AndroidManifest.xml</code> in order to enable the
  * transfer of the authorization data from the authentication service to the SDK.
- *
+ * <p>
  * This intent-filter must have the following data:
- *
+ * <p>
  * <pre>
  * {@code
  *     <intent-filter>
@@ -24,10 +24,10 @@ package com.xively.auth;
  *          />
  *      </intent-filter>
  * }
- *</pre>
- *
+ * </pre>
+ * <p>
  * <b>Important!</b>
- *  In the above declaration you must substitute the <i>XIVELY_ACCOUNT_ID</i> with your actual
+ * In the above declaration you must substitute the <i>XIVELY_ACCOUNT_ID</i> with your actual
  * account Id assigned to you in the Xively system.
  */
 public interface XiAuthentication {
@@ -38,10 +38,10 @@ public interface XiAuthentication {
      * A successful login flow will provide an initialized {@link com.xively.XiSession} object
      * ready for all available operations.
      *
-     * @param email End user e-mail address.
-     * @param password End user password.
+     * @param email     End user e-mail address.
+     * @param password  End user password.
      * @param accountId The application builder organization's Xively account Id.
-     * @param callback callback for authentication results.
+     * @param callback  callback for authentication results.
      */
     void requestAuth(String email, String password, String accountId, XiAuthenticationCallback callback);
 

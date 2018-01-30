@@ -15,8 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import retrofit.Callback;
-import retrofit.RestAdapter;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
 
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 public class TimeSeriesWebServicesTest extends TestCase {
 
     @Mock
-    private RestAdapter mockRestAdapter;
+    private Retrofit mockRestAdapter;
 
     private final SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ", Locale.US); //ISO 8601
 
@@ -58,7 +58,7 @@ public class TimeSeriesWebServicesTest extends TestCase {
 
         verify(mockRestAdapter, times(1)).create(Matchers.<Class<GetData>>anyObject());
 
-        verify(mockGetData, timeout(1000).times(1)).getData( eq(mockTopic),
+        verify(mockGetData, timeout(1000).times(1)).getData(eq(mockTopic),
                 eq(expectedStartDate), eq(expectedEndDate), anyInt(), anyString(), anyBoolean(),
                 anyString(), anyInt(), eq(mockCallback));
     }

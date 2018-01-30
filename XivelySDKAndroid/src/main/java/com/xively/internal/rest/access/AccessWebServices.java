@@ -5,48 +5,49 @@ import com.xively.internal.Config;
 import com.xively.internal.logger.LMILog;
 import com.xively.sdk.BuildConfig;
 
-import retrofit.Callback;
-import retrofit.RestAdapter;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
 
 public class AccessWebServices {
     private static final String TAG = "AccessWebServices";
     private static final LMILog log = new LMILog(TAG);
+
     static {
         log.getClass();
     }
 
-    private final RestAdapter restAdapter;
+    private final Retrofit retrofit;
 
     public AccessWebServices() {
         String wsEndpoint;
 
-        if (Config.CONN_USE_SSL){
+        if (Config.CONN_USE_SSL) {
             wsEndpoint = "https://";
         } else {
             wsEndpoint = "http://";
         }
         wsEndpoint += Config.ACCESS_WS_ENDPOINT;
-        restAdapter = new RestAdapter.Builder().setEndpoint(wsEndpoint).build();
+        retrofit = new Retrofit.Builder().baseUrl(wsEndpoint).build();
 
         if (BuildConfig.DEBUG) {
-            restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
-        } else if (LMILog.getMinLogLevel() != XiSdkConfig.LogLevel.OFF){
-            restAdapter.setLogLevel(RestAdapter.LogLevel.BASIC);
+//            retrofit.setLogLevel(RestAdapter.LogLevel.FULL);
+        } else if (LMILog.getMinLogLevel() != XiSdkConfig.LogLevel.OFF) {
+//            retrofit.setLogLevel(RestAdapter.LogLevel.BASIC);
         } else {
-            restAdapter.setLogLevel(RestAdapter.LogLevel.NONE);
+//            retrofit.setLogLevel(RestAdapter.LogLevel.NONE);
         }
 
     }
 
     //for unit testing
-    public AccessWebServices(RestAdapter restAdapter) {
-        this.restAdapter = restAdapter;
+    public AccessWebServices(Retrofit retrofit) {
+        this.retrofit = retrofit;
     }
 
     /**
      * //FIXME: this is deprecated
      */
-    public void getOAuthUrl(final String providerId, final Callback<GetOAuthUrl.Response> callback){
+    public void getOAuthUrl(final String providerId, final Callback<GetOAuthUrl.Response> callback) {
         //FIXME: set callback schema once service is defined
         //redirectUri = "xi:" + sdkUserAccountId;
 
@@ -57,6 +58,7 @@ public class AccessWebServices {
         response.location = "https://access.dev.xively.us/api/authentication/oauth/authenticate" +
                 "?provider_id=" + providerId +
                 "&redirect_uri=" + redirectUri;
-        callback.success(response, null);
+        // TODO
+//     callback.success(response, null);
     }
 }

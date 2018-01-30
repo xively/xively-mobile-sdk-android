@@ -1,17 +1,16 @@
 package com.xively.internal.logger;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-
 import android.util.Log;
 
 import com.xively.XiSdkConfig;
 import com.xively.internal.util.LMIFile;
 import com.xively.internal.util.LMITime;
-import com.xively.internal.Config;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 public class LMILog {
 
@@ -81,22 +80,22 @@ public class LMILog {
                 return;
             }
             switch (gLogType) {
-            case CONSOLE:
-                writeConsoleLog(level, tag, msg);
-                break;
-            case FILE:
-                final String fileLine = new LMITime().getFormatted("%1$tD %1$tT") + " [" + tag + "] " + msg + "\r\n";
-                if (gLogOut != null) {
-                    try {
-                        gLogOut.write(fileLine);
-                        gLogOut.flush();
-                    } catch (final IOException e) {
-                        System.err.println("log file write error: " + e);
+                case CONSOLE:
+                    writeConsoleLog(level, tag, msg);
+                    break;
+                case FILE:
+                    final String fileLine = new LMITime().getFormatted("%1$tD %1$tT") + " [" + tag + "] " + msg + "\r\n";
+                    if (gLogOut != null) {
+                        try {
+                            gLogOut.write(fileLine);
+                            gLogOut.flush();
+                        } catch (final IOException e) {
+                            System.err.println("log file write error: " + e);
+                        }
                     }
-                }
-                break;
-            case NONE:
-                break;
+                    break;
+                case NONE:
+                    break;
             }
         }
     }
@@ -110,23 +109,23 @@ public class LMILog {
         }
 
         switch (level) {
-        case WARNING:
-            Log.w(gAppTag, message);
-            break;
-        case ERROR:
-            Log.e(gAppTag, message);
-            break;
-        case INFO:
-            Log.i(gAppTag, message);
-            break;
-        case DEBUG:
-        case TRACE:
-            Log.d(gAppTag, message);
-            break;
+            case WARNING:
+                Log.w(gAppTag, message);
+                break;
+            case ERROR:
+                Log.e(gAppTag, message);
+                break;
+            case INFO:
+                Log.i(gAppTag, message);
+                break;
+            case DEBUG:
+            case TRACE:
+                Log.d(gAppTag, message);
+                break;
 
-        default:
-            Log.i(gAppTag, message);
-            break;
+            default:
+                Log.i(gAppTag, message);
+                break;
         }
     }
 
@@ -142,11 +141,11 @@ public class LMILog {
         gLogEvent = logEvent;
     }
 
-    public static void setMinLogLevel(XiSdkConfig.LogLevel logLevel){
+    public static void setMinLogLevel(XiSdkConfig.LogLevel logLevel) {
         gMinLevel = logLevel;
     }
 
-    public static XiSdkConfig.LogLevel getMinLogLevel(){
+    public static XiSdkConfig.LogLevel getMinLogLevel() {
         return gMinLevel;
     }
 

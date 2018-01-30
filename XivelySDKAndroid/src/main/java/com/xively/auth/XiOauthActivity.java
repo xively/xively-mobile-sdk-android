@@ -12,7 +12,7 @@ import java.util.Locale;
 
 /**
  * {@hide}
- *
+ * <p>
  * TODO: check if intent scheme callback processing is possible inside the SDK
  */
 public class XiOauthActivity extends Activity {
@@ -33,13 +33,13 @@ public class XiOauthActivity extends Activity {
         processIntent(intent);
     }
 
-    private void processIntent(Intent intent){
-        if (intent.getData() != null){
+    private void processIntent(Intent intent) {
+        if (intent.getData() != null) {
             Uri data = intent.getData();
 
-            if (data.getScheme().toLowerCase(Locale.US).startsWith("xi")){
+            if (data.getScheme().toLowerCase(Locale.US).startsWith("xi")) {
                 String value = data.getEncodedSchemeSpecificPart().substring(2);//skip leading //
-                if (!value.equals("")){
+                if (!value.equals("")) {
                     //TODO: validate token?
                     DependencyInjector.get().provisionWebServices().setBearerAuthorizationHeader(value);
                     DependencyInjector.get().timeSeriesWebServices().setBearerAuthorizationHeader(value);

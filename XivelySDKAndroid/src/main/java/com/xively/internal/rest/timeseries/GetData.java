@@ -2,10 +2,10 @@ package com.xively.internal.rest.timeseries;
 
 import com.xively.timeseries.TimeSeriesItem;
 
-import retrofit.Callback;
-import retrofit.http.GET;
-import retrofit.http.Path;
-import retrofit.http.Query;
+import retrofit2.Callback;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface GetData {
 

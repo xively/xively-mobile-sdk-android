@@ -6,7 +6,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Calendar;
-import static org.mockito.Mockito.*;
+
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class LMITimeTest extends TestCase {
 
@@ -14,7 +17,7 @@ public class LMITimeTest extends TestCase {
     Calendar mockCalendar;
 
     LMITime testObject;
-    private final int expectedYear  = 2015;
+    private final int expectedYear = 2015;
     private final int expectedMonth = 3;
     private final int expectedDay = 5;
     private final int expectedHour = 22;

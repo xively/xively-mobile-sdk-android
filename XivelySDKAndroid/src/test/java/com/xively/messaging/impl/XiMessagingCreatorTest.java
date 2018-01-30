@@ -1,11 +1,8 @@
 package com.xively.messaging.impl;
 
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
-
 import com.xively.XiServiceCreatorCallback;
-import com.xively.internal.connection.impl.XiMqttConnectionPool;
 import com.xively.internal.DependencyInjector;
+import com.xively.internal.connection.impl.XiMqttConnectionPool;
 import com.xively.internal.messaging.XiMessagingCreatorImpl;
 import com.xively.internal.messaging.XiMessagingImpl;
 import com.xively.messaging.XiLastWill;
@@ -19,6 +16,12 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class XiMessagingCreatorTest extends TestCase {
 

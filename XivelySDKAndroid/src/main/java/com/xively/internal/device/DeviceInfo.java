@@ -11,5 +11,5 @@ public interface DeviceInfo {
      *
      * @return A unique user id.
      */
-	String getUUId();
+    String getUUId();
 }

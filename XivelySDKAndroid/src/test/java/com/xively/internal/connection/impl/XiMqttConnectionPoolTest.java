@@ -38,7 +38,7 @@ public class XiMqttConnectionPoolTest extends TestCase {
 
     }
 
-    public void testGetConnectionWithConnectionReady(){
+    public void testGetConnectionWithConnectionReady() {
         when(mockConn.isConnected()).thenReturn(true);
         when(mockConn.isCleanSession()).thenReturn(true);
         when(mockConn.getLastWill()).thenReturn(null);
@@ -47,11 +47,12 @@ public class XiMqttConnectionPoolTest extends TestCase {
         connPool.setTestConnectionObject(mockConn);
         try {
             connPool.requestConnection(mockXiService2, "jwt", true, null, mockRequestCallback);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         verify(mockRequestCallback).onConnectionReady(eq(mockConn));
     }
 
-    public void testGetConnectionWithConnectionReadyButDifferentCleanSession(){
+    public void testGetConnectionWithConnectionReadyButDifferentCleanSession() {
         when(mockConn.isConnected()).thenReturn(true);
         when(mockConn.isCleanSession()).thenReturn(true);
         when(mockConn.getLastWill()).thenReturn(null);
@@ -62,11 +63,12 @@ public class XiMqttConnectionPoolTest extends TestCase {
         try {
             connPool.requestConnection(mockXiService, "jwt", false, null, mockRequestCallback);
             fail();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
     }
 
-    public void testGetConnectionWithConnectionReadyButWithLastWill(){
+    public void testGetConnectionWithConnectionReadyButWithLastWill() {
         when(mockConn.isConnected()).thenReturn(true);
         when(mockConn.isCleanSession()).thenReturn(true);
         when(mockConn.getLastWill()).thenReturn(null);
@@ -77,10 +79,11 @@ public class XiMqttConnectionPoolTest extends TestCase {
         try {
             connPool.requestConnection(mockXiService, "jwt", true, lastWill, mockRequestCallback);
             fail();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
-    public void testGetConnectionWithConnectionReadyButWithDifferentLastWill(){
+    public void testGetConnectionWithConnectionReadyButWithDifferentLastWill() {
         when(mockConn.isConnected()).thenReturn(true);
         when(mockConn.isCleanSession()).thenReturn(true);
         XiLastWill firstLastWill =
@@ -95,10 +98,11 @@ public class XiMqttConnectionPoolTest extends TestCase {
         try {
             connPool.requestConnection(mockXiService, "jwt", true, secondLastWill, mockRequestCallback);
             fail();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
-    public void testReleaseLastServiceClosesConnection(){
+    public void testReleaseLastServiceClosesConnection() {
         when(mockConn.isConnected()).thenReturn(true);
         when(mockConn.isCleanSession()).thenReturn(true);
         when(mockConn.getLastWill()).thenReturn(null);
@@ -111,13 +115,14 @@ public class XiMqttConnectionPoolTest extends TestCase {
             connPool.requestConnection(mockXiService2, "jwt", true, null, mockRequestCallback);
             connPool.releaseConnection(mockXiService2);
             connPool.releaseConnection(mockXiService);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
 
         verify(mockConn).disconnect();
     }
 
-    public void testReleaseService(){
+    public void testReleaseService() {
         when(mockConn.isConnected()).thenReturn(true);
 
         XiMqttConnectionPool connPool = new XiMqttConnectionPool(mockAccount);
@@ -127,20 +132,21 @@ public class XiMqttConnectionPoolTest extends TestCase {
             connPool.requestConnection(mockXiService2, "jwt", true, null, mockRequestCallback);
             connPool.requestConnection(mockXiService2, "jwt", true, null, mockRequestCallback);
             connPool.releaseConnection(mockXiService);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         verify(mockConn, never()).disconnect();
     }
 
-    public void testGetConnectionCallbackWithDisconnectedConnection(){
+    public void testGetConnectionCallbackWithDisconnectedConnection() {
         //TODO: implement
     }
 
-    public void testGetConnectionCallbackOnConnectionError(){
+    public void testGetConnectionCallbackOnConnectionError() {
         //TODO: implement
     }
 
-    public void testGetConnectionCallbackOnConnectionClosed(){
+    public void testGetConnectionCallbackOnConnectionClosed() {
         //TODO: implement
     }
 
