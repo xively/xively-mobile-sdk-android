@@ -5,27 +5,24 @@ import com.xively.internal.logger.LMILog;
 
 import junit.framework.TestCase;
 
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.HashMap;
 
+import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
+import retrofit2.Response;
 
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 
 public class BlueprintPutEndUserTest extends TestCase {
 
     @Mock
-    Retrofit mockRestAdapter;
+    private PutEndUser mockPutEndUser;
 
     @Override
     protected void setUp() throws Exception {
@@ -34,22 +31,26 @@ public class BlueprintPutEndUserTest extends TestCase {
     }
 
     public void testPutDeviceCallsService() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
+        BlueprintWebServices testWS = new BlueprintWebServices();
 
-        Callback<PutEndUser.Response> mockCallback = mock(Callback.class);
-        PutEndUser mockPutEndUser = mock(PutEndUser.class);
-        when(mockRestAdapter.create(Matchers.<Class<Object>>anyObject())).thenReturn(mockPutEndUser);
 
         final String userId = "mock user id";
         final String version = "ef";
 
         HashMap<String, Object> data = new HashMap<String, Object>();
         data.put("emailAddress", "anotheremail");
-        testWS.putEndUser(userId, version, data, mockCallback);
+        testWS.putEndUser(userId, version, data, new Callback<PutEndUser.Response>() {
+            @Override
+            public void onResponse(Call<PutEndUser.Response> call, Response<PutEndUser.Response> response) {
 
-        verify(mockRestAdapter, times(1)).create(Matchers.<Class<CreateCredentials>>anyObject());
-        verify(mockPutEndUser, timeout(500).times(1)).putEndUser(eq(userId), eq(version), eq(data), eq(mockCallback));
+            }
 
+            @Override
+            public void onFailure(Call<PutEndUser.Response> call, Throwable t) {
+
+            }
+        });
+
+        verify(mockPutEndUser, timeout(500).times(1)).putEndUser(eq(userId), eq(version), eq(data));
     }
-
 }

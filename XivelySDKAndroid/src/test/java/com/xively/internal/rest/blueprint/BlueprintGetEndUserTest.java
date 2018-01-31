@@ -14,7 +14,6 @@ import retrofit2.Retrofit;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,7 +29,7 @@ public class BlueprintGetEndUserTest extends TestCase {
     }
 
     public void testGetEndUserCallsService() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
+        BlueprintWebServices testWS = new BlueprintWebServices();
 
         Callback<GetEndUser.Response> mockCallback = mock(Callback.class);
         GetEndUser mockGetEndUser = mock(GetEndUser.class);
@@ -40,7 +39,6 @@ public class BlueprintGetEndUserTest extends TestCase {
         testWS.getEndUser(userId, mockCallback);
 
         verify(mockRestAdapter, times(1)).create(Matchers.<Class<CreateCredentials>>anyObject());
-        verify(mockGetEndUser, timeout(500).times(1)).getEndUser(eq(userId), eq(mockCallback));
-
+        verify(mockGetEndUser, times(1)).getEndUser(eq(userId));
     }
 }

@@ -6,25 +6,22 @@ import com.xively.messaging.XiDeviceInfo.ProvisioningStateEnum;
 
 import junit.framework.TestCase;
 
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
+import retrofit2.Response;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class BlueprintGetDevicesTest extends TestCase {
 
     @Mock
-    Retrofit mockRestAdapter;
+    private GetDevices mockGetDevices;
 
     @Override
     protected void setUp() throws Exception {
@@ -33,11 +30,7 @@ public class BlueprintGetDevicesTest extends TestCase {
     }
 
     public void testGetDevicesCallsService() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
-
-        Callback<GetDevices.Response> mockCallback = mock(Callback.class);
-        GetDevices mockGetDevices = mock(GetDevices.class);
-        when(mockRestAdapter.create(Matchers.<Class<Object>>anyObject())).thenReturn(mockGetDevices);
+        BlueprintWebServices SUT = new BlueprintWebServices();
 
         final String accountId = "mock account id";
         final String deviceTemplateId = "mock device template id";
@@ -46,19 +39,25 @@ public class BlueprintGetDevicesTest extends TestCase {
         final int page = 66;
         final int pageSize = 99;
 
-        testWS.getDevices(
+        SUT.getDevices(
                 accountId, deviceTemplateId, organizationId, provisioningState, page, pageSize,
-                mockCallback
+                new Callback<GetDevices.Response>() {
+                    @Override
+                    public void onResponse(Call<GetDevices.Response> call, Response<GetDevices.Response> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<GetDevices.Response> call, Throwable t) {
+
+                    }
+                }
         );
 
-        verify(mockRestAdapter, times(1)).create(Matchers.<Class<CreateCredentials>>anyObject());
         verify(mockGetDevices, timeout(500).times(1)).getDevices(
                 eq(accountId), eq(deviceTemplateId), eq(organizationId),
                 eq(provisioningState.toString()), eq(Boolean.TRUE), eq(Boolean.TRUE),
-                eq(page), eq(pageSize), anyString(), anyString(),
-                eq(mockCallback)
+                eq(page), eq(pageSize), anyString(), anyString()
         );
-
     }
-
 }

@@ -5,26 +5,23 @@ import com.xively.internal.logger.LMILog;
 
 import junit.framework.TestCase;
 
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.HashMap;
 
+import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
+import retrofit2.Response;
 
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class BlueprintPutDeviceTest extends TestCase {
 
     @Mock
-    Retrofit mockRestAdapter;
+    private PutDevice mockPutDevice;
 
     @Override
     protected void setUp() throws Exception {
@@ -33,20 +30,25 @@ public class BlueprintPutDeviceTest extends TestCase {
     }
 
     public void testPutDeviceCallsService() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
-
-        Callback<PutDevice.Response> mockCallback = mock(Callback.class);
-        PutDevice mockPutDevice = mock(PutDevice.class);
-        when(mockRestAdapter.create(Matchers.<Class<Object>>anyObject())).thenReturn(mockPutDevice);
+        BlueprintWebServices testWS = new BlueprintWebServices();
 
         final String deviceId = "mock account id";
         final String version = "ef";
         HashMap<String, Object> data = new HashMap<String, Object>();
         data.put("connected", "true");
-        testWS.putDevice(deviceId, version, data, mockCallback);
+        testWS.putDevice(deviceId, version, data, new Callback<PutDevice.Response>() {
+            @Override
+            public void onResponse(Call<PutDevice.Response> call, Response<PutDevice.Response> response) {
 
-        verify(mockRestAdapter, times(1)).create(Matchers.<Class<CreateCredentials>>anyObject());
-        verify(mockPutDevice, timeout(500).times(1)).putDevice(eq(deviceId), eq(version), eq(data), eq(mockCallback));
+            }
+
+            @Override
+            public void onFailure(Call<PutDevice.Response> call, Throwable t) {
+
+            }
+        });
+
+        verify(mockPutDevice, times(1)).putDevice(eq(deviceId), eq(version), eq(data));
 
     }
 

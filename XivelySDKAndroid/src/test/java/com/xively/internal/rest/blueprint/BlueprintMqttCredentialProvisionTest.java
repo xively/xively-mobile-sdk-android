@@ -70,7 +70,7 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
     public void testQueryXiAccountFailureCallbackOnNullJwt() throws Exception {
         setUp();
 
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
+        BlueprintWebServices testWS = new BlueprintWebServices();
 
         testWS.queryXivelyAccount(null, mockCallback);
         // TODO
@@ -84,7 +84,7 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
     public void testQueryXiAccountFailureCallbackOnInvalidJwt() throws Exception {
         setUp();
 
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
+        BlueprintWebServices testWS = new BlueprintWebServices();
 
         testWS.queryXivelyAccount("something wrong", mockCallback);
         // TODO
@@ -98,7 +98,7 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
     public void testQueryXiAccountFailureCallbackOnCorruptJwtData() throws Exception {
         setUp();
 
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
+        BlueprintWebServices testWS = new BlueprintWebServices();
 
         testWS.queryXivelyAccount(corruptJwt, mockCallback);
         // TODO
@@ -119,17 +119,17 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
 
         ArgumentCaptor<Callback> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
 
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
+        BlueprintWebServices testWS = new BlueprintWebServices();
         testWS.queryXivelyAccount(testJwt, mockCallback);
 
         verify(mockGetEndUser).getEndUsers(anyString(), anyString(), anyBoolean(), anyBoolean(),
-                anyInt(), anyInt(), anyString(), callbackCaptor.capture());
+                anyInt(), anyInt(), anyString());
         assertNotNull(callbackCaptor.getValue());
         // TODO
 //        callbackCaptor.getValue().failure(null);
 
         verify(mockGetAccountUser, timeout(500)).getAccountUser(anyString(), anyString(), anyBoolean(), anyBoolean(),
-                anyInt(), anyInt(), anyString(), callbackCaptor.capture());
+                anyInt(), anyInt(), anyString());
         assertNotNull(callbackCaptor.getValue());
         // TODO
 //        callbackCaptor.getValue().failure(null);
@@ -174,17 +174,17 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
 //        mockGetEndUserResponse.endUsers.results[0].userId
 //                = "blueprint tudja minek ide prefix/mock user id";//this id must match the one from the jwt
 
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
+        BlueprintWebServices testWS = new BlueprintWebServices();
         testWS.queryXivelyAccount(testJwt, mockCallback);
 
         verify(mockGetEndUser, timeout(500)).getEndUsers(anyString(), anyString(), anyBoolean(), anyBoolean(),
-                anyInt(), anyInt(), anyString(), getEndUserCallbackCaptor.capture());
+                anyInt(), anyInt(), anyString());
 
         assertNotNull(getEndUserCallbackCaptor.getValue());
         // TODO
 //        getEndUserCallbackCaptor.getValue().success(mockGetEndUserResponse, null);
 
-        verify(mockCreateCredentials, timeout(500)).createCredentials(Matchers.<CreateCredentials.Request>anyObject(), createCredentialsCallbackCaptor.capture());
+        verify(mockCreateCredentials, timeout(500)).createCredentials(Matchers.<CreateCredentials.Request>anyObject());
         assertNotNull(createCredentialsCallbackCaptor.getValue());
         // TODO
 //        createCredentialsCallbackCaptor.getValue().failure(null);
@@ -224,22 +224,22 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         mockCredentialsResponse.mqttCredential.entityId = "end user id";
         mockCredentialsResponse.mqttCredential.secret = "end user secret";
 
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
+        BlueprintWebServices testWS = new BlueprintWebServices();
         testWS.queryXivelyAccount(testJwt, mockCallback);
 
         verify(mockGetEndUser, timeout(500)).getEndUsers(anyString(), anyString(), anyBoolean(), anyBoolean(),
-                anyInt(), anyInt(), anyString(), getEndUserCallbackCaptor.capture());
+                anyInt(), anyInt(), anyString());
         assertNotNull(getEndUserCallbackCaptor.getValue());
         // TODO
 //        getEndUserCallbackCaptor.getValue().failure(null);
 
         verify(mockGetAccountUser, timeout(500)).getAccountUser(anyString(), anyString(), anyBoolean(), anyBoolean(),
-                anyInt(), anyInt(), anyString(), getAccountUserCallbackCaptor.capture());
+                anyInt(), anyInt(), anyString());
         assertNotNull(getAccountUserCallbackCaptor.getValue());
         // TODO
 //        getAccountUserCallbackCaptor.getValue().success(mockGetAccountUserResponse, null);
 
-        verify(mockCreateCredentials, timeout(500)).createCredentials(Matchers.<CreateCredentials.Request>anyObject(), createCredentialsCallbackCaptor.capture());
+        verify(mockCreateCredentials, timeout(500)).createCredentials(Matchers.<CreateCredentials.Request>anyObject());
         assertNotNull(createCredentialsCallbackCaptor.getValue());
         // TODO
 //        createCredentialsCallbackCaptor.getValue().success(mockCredentialsResponse, null);
@@ -295,17 +295,17 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         mockCredentialsResponse.mqttCredential.entityId = "end user id";
         mockCredentialsResponse.mqttCredential.secret = "end user secret";
 
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
+        BlueprintWebServices testWS = new BlueprintWebServices();
         testWS.queryXivelyAccount(testJwt, mockCallback);
 
         verify(mockGetEndUser, timeout(500)).getEndUsers(anyString(), anyString(), anyBoolean(), anyBoolean(),
-                anyInt(), anyInt(), anyString(), getEndUserCallbackCaptor.capture());
+                anyInt(), anyInt(), anyString());
 
         assertNotNull(getEndUserCallbackCaptor.getValue());
         // TODO
 //        getEndUserCallbackCaptor.getValue().success(mockGetEndUserResponse, null);
 
-        verify(mockCreateCredentials, timeout(500)).createCredentials(Matchers.<CreateCredentials.Request>anyObject(), createCredentialsCallbackCaptor.capture());
+        verify(mockCreateCredentials, timeout(500)).createCredentials(Matchers.<CreateCredentials.Request>anyObject());
         assertNotNull(createCredentialsCallbackCaptor.getValue());
         // TODO
 //        createCredentialsCallbackCaptor.getValue().success(mockCredentialsResponse, null);

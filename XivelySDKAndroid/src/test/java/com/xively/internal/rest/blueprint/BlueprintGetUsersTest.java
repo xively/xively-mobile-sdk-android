@@ -6,26 +6,28 @@ import com.xively.internal.logger.LMILog;
 import junit.framework.TestCase;
 
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
+import retrofit2.Response;
 
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class BlueprintGetUsersTest extends TestCase {
 
     @Mock
-    Retrofit mockRestAdapter;
+    private GetEndUsers mockGetEndUser;
+    @Mock
+    private GetAccountUser mockGetAccountUser;
+    @Mock
+    private CreateCredentials mockCreateCredentials;
 
     @Override
     protected void setUp() throws Exception {
@@ -34,44 +36,53 @@ public class BlueprintGetUsersTest extends TestCase {
     }
 
     public void testStartGetEndUserQuery() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
+        BlueprintWebServices testWS = new BlueprintWebServices();
 
-        Callback<GetEndUsers.Response> mockCallback = mock(Callback.class);
-        GetEndUsers mockGetEndUser = mock(GetEndUsers.class);
-        when(mockRestAdapter.create(Matchers.<Class<Object>>anyObject())).thenReturn(mockGetEndUser);
 
         String accountId = "mock account id";
         String userId = "mock access user id";
 
-        testWS.getEndUsers(accountId, userId, mockCallback);
+        testWS.getEndUsers(accountId, userId, new Callback<GetEndUsers.Response>() {
+            @Override
+            public void onResponse(Call<GetEndUsers.Response> call, Response<GetEndUsers.Response> response) {
 
-        verify(mockRestAdapter, times(1)).create(Matchers.<Class<GetEndUsers>>anyObject());
-        verify(mockGetEndUser, timeout(1000).times(1)).getEndUsers(
+            }
+
+            @Override
+            public void onFailure(Call<GetEndUsers.Response> call, Throwable t) {
+
+            }
+        });
+
+        verify(mockGetEndUser, times(1)).getEndUsers(
                 eq(accountId),
                 eq(userId),
                 eq(true),
                 eq(true),
                 eq(1),
                 anyInt(),
-                anyString(),
-                eq(mockCallback)
+                anyString()
         );
-
     }
 
     public void testStartGeAccountUserQuery() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
-
-        Callback<GetAccountUser.Response> mockCallback = mock(Callback.class);
-        GetAccountUser mockGetAccountUser = mock(GetAccountUser.class);
-        when(mockRestAdapter.create(Matchers.<Class<Object>>anyObject())).thenReturn(mockGetAccountUser);
+        BlueprintWebServices testWS = new BlueprintWebServices();
 
         String accountId = "mock account id";
         String userId = "mock access user id";
 
-        testWS.getAccountUser(accountId, userId, mockCallback);
+        testWS.getAccountUser(accountId, userId, new Callback<GetAccountUser.Response>() {
+            @Override
+            public void onResponse(Call<GetAccountUser.Response> call, Response<GetAccountUser.Response> response) {
 
-        verify(mockRestAdapter, times(1)).create(Matchers.<Class<GetAccountUser>>anyObject());
+            }
+
+            @Override
+            public void onFailure(Call<GetAccountUser.Response> call, Throwable t) {
+
+            }
+        });
+
         verify(mockGetAccountUser, timeout(1000).times(1)).getAccountUser(
                 eq(accountId),
                 eq(userId),
@@ -79,18 +90,13 @@ public class BlueprintGetUsersTest extends TestCase {
                 eq(true),
                 eq(1),
                 anyInt(),
-                anyString(),
-                eq(mockCallback)
+                anyString()
         );
 
     }
 
     public void testStartCreateCredentialsQuery() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
-
-        Callback<CreateCredentials.Response> mockCallback = mock(Callback.class);
-        CreateCredentials mockCreateCredentials = mock(CreateCredentials.class);
-        when(mockRestAdapter.create(Matchers.<Class<Object>>anyObject())).thenReturn(mockCreateCredentials);
+        BlueprintWebServices testWS = new BlueprintWebServices();
 
         ArgumentCaptor<CreateCredentials.Request> createCredentialsRequestCaptor =
                 ArgumentCaptor.forClass(CreateCredentials.Request.class);
@@ -98,12 +104,20 @@ public class BlueprintGetUsersTest extends TestCase {
         String accountId = "mock account id";
         String userId = "mock access user id";
 
-        testWS.createCredentials(accountId, userId, BlueprintWebServices.BluePrintEntity.endUser, mockCallback);
+        testWS.createCredentials(accountId, userId, BlueprintWebServices.BluePrintEntity.endUser, new Callback<CreateCredentials.Response>() {
+            @Override
+            public void onResponse(Call<CreateCredentials.Response> call, Response<CreateCredentials.Response> response) {
 
-        verify(mockRestAdapter, times(1)).create(Matchers.<Class<CreateCredentials>>anyObject());
+            }
+
+            @Override
+            public void onFailure(Call<CreateCredentials.Response> call, Throwable t) {
+
+            }
+        });
+
         verify(mockCreateCredentials, timeout(1000).times(1)).createCredentials(
-                createCredentialsRequestCaptor.capture(),
-                eq(mockCallback)
+                createCredentialsRequestCaptor.capture()
         );
 
         CreateCredentials.Request request = createCredentialsRequestCaptor.getValue();

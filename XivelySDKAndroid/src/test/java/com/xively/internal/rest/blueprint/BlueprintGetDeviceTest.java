@@ -5,23 +5,21 @@ import com.xively.internal.logger.LMILog;
 
 import junit.framework.TestCase;
 
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
+import retrofit2.Response;
 
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class BlueprintGetDeviceTest extends TestCase {
+
     @Mock
-    Retrofit mockRestAdapter;
+    private GetDevice mockGetDevice;
 
     @Override
     protected void setUp() throws Exception {
@@ -30,18 +28,21 @@ public class BlueprintGetDeviceTest extends TestCase {
     }
 
     public void testGetDeviceCallsService() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
-
-        Callback<GetDevice.Response> mockCallback = mock(Callback.class);
-        GetDevice mockGetDevice = mock(GetDevice.class);
-        when(mockRestAdapter.create(Matchers.<Class<Object>>anyObject())).thenReturn(mockGetDevice);
+        BlueprintWebServices testWS = new BlueprintWebServices();
 
         final String deviceId = "mock account id";
-        testWS.getDevice(deviceId, mockCallback);
+        testWS.getDevice(deviceId, new Callback<GetDevice.Response>() {
+            @Override
+            public void onResponse(Call<GetDevice.Response> call, Response<GetDevice.Response> response) {
 
-        verify(mockRestAdapter, times(1)).create(Matchers.<Class<CreateCredentials>>anyObject());
-        verify(mockGetDevice, timeout(500).times(1)).getDevice(eq(deviceId), eq(mockCallback));
+            }
 
+            @Override
+            public void onFailure(Call<GetDevice.Response> call, Throwable t) {
+
+            }
+        });
+
+        verify(mockGetDevice, times(1)).getDevice(eq(deviceId));
     }
-
 }

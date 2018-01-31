@@ -1,5 +1,4 @@
-package com.xively.internal.rest.provision;
-
+package com.xively.internal.rest.timeseries;
 
 import com.xively.XiSdkConfig;
 import com.xively.internal.Config;
@@ -12,17 +11,17 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class ProvisioningApiFactory {
-    private StartAssociationWithCode associationApi;
+public class TimesSeriesApiFactory {
+    private GetData timeseriesApi;
 
-    private ProvisioningApiFactory() {
+    private TimesSeriesApiFactory() {
         String wsEndpoint;
         if (Config.CONN_USE_SSL) {
             wsEndpoint = "https://";
         } else {
             wsEndpoint = "http://";
         }
-        wsEndpoint += Config.provision_endpoint();
+        wsEndpoint += Config.timeseries_endpoint();
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
@@ -44,14 +43,14 @@ public class ProvisioningApiFactory {
                 .client(client)
                 .build();
 
-        this.associationApi = retrofit.create(StartAssociationWithCode.class);
+        this.timeseriesApi = retrofit.create(GetData.class);
     }
 
-    public static ProvisioningApiFactory getInstance() {
-        return new ProvisioningApiFactory();
+    public static TimesSeriesApiFactory getInstance() {
+        return new TimesSeriesApiFactory();
     }
 
-    public StartAssociationWithCode getAssociationApi() {
-        return this.associationApi;
+    public GetData getTimeseriesApi() {
+        return timeseriesApi;
     }
 }
