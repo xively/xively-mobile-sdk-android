@@ -13,40 +13,42 @@ import junit.framework.TestCase;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import okhttp3.Request;
+import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Retrofit;
+import retrofit2.Response;
 
 import static org.mockito.Mockito.anyBoolean;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-@RunWith(RobolectricTestRunner.class)
 public class BlueprintMqttCredentialProvisionTest extends TestCase {
 
     @Mock
-    private Retrofit mockRestAdapter;
-    @Mock
     private Callback<XivelyAccount> mockCallback;
     @Mock
-    private GetEndUsers mockGetEndUser;
+    private GetEndUsers mockGetEndUsers;
     @Mock
     private GetAccountUser mockGetAccountUser;
     @Mock
     private CreateCredentials mockCreateCredentials;
+    @Captor
+    private ArgumentCaptor<Response<XivelyAccount>> captorXivelyAccountResponse;
 
     private final String corruptJwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.somethingUnexpected.MHJi37FA0L1omJenUb-9oie7MyD_dK7K_OzZLfX_Wjr7NC07Yc8EtlnUPDa3uvn5rnDn-CLfn5-8gpHSnZC8wVUbB8axVdReaIOrbVxrMF5DWWrfT2sur71XO0O2Fiihb51DKiTv99nQeBQ0i9N_lfz9XPHdKeavlt32dS14dK3dkFQ_JDd3t7ua3QyVdT4MehOshW7KEvKYzkNLEIRYjgkTocafFnLgA0Bvc-YBWvhZDNuh5GsHCBNu0KTe3dUo2WVrVwTAOtEoUG0CpUzhKvbdYs4Okz8PqLaa9hnZKgIlXHpTxbW4Y8JvvWtqmIZakGPovEYqw9Qm1Dpz0rLM9g";
     private final String testJwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9." +
@@ -69,148 +71,238 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
 
     @Test
     public void testQueryXiAccountFailureCallbackOnNullJwt() throws Exception {
-        setUp();
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                mockCreateCredentials,
+                mockGetAccountUser,
+                null,
+                null,
+                null,
+                null,
+                null,
+                mockGetEndUsers,
+                null,
+                null
+        );
 
-        BlueprintWebServices testWS = new BlueprintWebServices();
+        SUT.queryXivelyAccount(null, mockCallback);
 
-        testWS.queryXivelyAccount(null, mockCallback);
-        // TODO
-//        verify(mockCallback, times(1)).failure(Matchers.<RetrofitError>any());
-//        verify(mockCallback, never()).success(
-//                Matchers.<XivelyAccount>anyObject(),
-//                Matchers.<Response>anyObject());
+        verify(mockCallback, times(1)).onFailure(
+                Matchers.<Call<XivelyAccount>>any(),
+                Matchers.<Throwable>any()
+        );
+
+        verify(mockCallback, never()).onResponse(
+                Matchers.<Call<XivelyAccount>>anyObject(),
+                Matchers.<Response<XivelyAccount>>anyObject()
+        );
     }
 
     @Test
     public void testQueryXiAccountFailureCallbackOnInvalidJwt() throws Exception {
-        setUp();
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                mockCreateCredentials,
+                mockGetAccountUser,
+                null,
+                null,
+                null,
+                null,
+                null,
+                mockGetEndUsers,
+                null,
+                null
+        );
 
-        BlueprintWebServices testWS = new BlueprintWebServices();
+        SUT.queryXivelyAccount("something wrong", mockCallback);
 
-        testWS.queryXivelyAccount("something wrong", mockCallback);
-        // TODO
-//        verify(mockCallback, times(1)).failure(Matchers.<RetrofitError>any());
-//        verify(mockCallback, never()).success(
-//                Matchers.<XivelyAccount>anyObject(),
-//                Matchers.<Response>anyObject());
+        verify(mockCallback, times(1)).onFailure(
+                Matchers.<Call<XivelyAccount>>any(),
+                Matchers.<Throwable>any()
+        );
+
+        verify(mockCallback, never()).onResponse(
+                Matchers.<Call<XivelyAccount>>anyObject(),
+                Matchers.<Response<XivelyAccount>>anyObject()
+        );
     }
 
     @Test
     public void testQueryXiAccountFailureCallbackOnCorruptJwtData() throws Exception {
-        setUp();
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                mockCreateCredentials,
+                mockGetAccountUser,
+                null,
+                null,
+                null,
+                null,
+                null,
+                mockGetEndUsers,
+                null,
+                null
+        );
 
-        BlueprintWebServices testWS = new BlueprintWebServices();
+        SUT.queryXivelyAccount(corruptJwt, mockCallback);
 
-        testWS.queryXivelyAccount(corruptJwt, mockCallback);
-        // TODO
-//        verify(mockCallback, times(1)).failure(Matchers.<RetrofitError>any());
-//        verify(mockCallback, never()).success(
-//                Matchers.<XivelyAccount>anyObject(),
-//                Matchers.<Response>anyObject());
+        verify(mockCallback, times(1)).onFailure(
+                Matchers.<Call<XivelyAccount>>any(),
+                Matchers.<Throwable>any()
+        );
+
+        verify(mockCallback, never()).onResponse(
+                Matchers.<Call<XivelyAccount>>anyObject(),
+                Matchers.<Response<XivelyAccount>>anyObject()
+        );
     }
 
     @Test
     public void testQueryXiAccountFailureCallbackOnGetEndUserFailure() throws Exception {
-        setUp();
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                mockCreateCredentials,
+                mockGetAccountUser,
+                null,
+                null,
+                null,
+                null,
+                null,
+                mockGetEndUsers,
+                null,
+                null
+        );
 
-        when(mockRestAdapter.create(Matchers.argThat(new ClassMatcher<GetEndUsers>(GetEndUsers.class))))
-                .thenReturn(mockGetEndUser);
-        when(mockRestAdapter.create(Matchers.argThat(new ClassMatcher<GetAccountUser>(GetAccountUser.class))))
-                .thenReturn(mockGetAccountUser);
+        when(mockGetEndUsers.getEndUsers(
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString()
+        )).thenReturn(new FailureEndUsersStubCall());
 
-        ArgumentCaptor<Callback> callbackCaptor = ArgumentCaptor.forClass(Callback.class);
+        when(mockGetAccountUser.getAccountUser(
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString()
+        )).thenReturn(new FailureAccountUserStubCall());
 
-        BlueprintWebServices testWS = new BlueprintWebServices();
-        testWS.queryXivelyAccount(testJwt, mockCallback);
+        SUT.queryXivelyAccount(testJwt, mockCallback);
 
-        verify(mockGetEndUser).getEndUsers(anyString(), anyString(), anyBoolean(), anyBoolean(),
-                anyInt(), anyInt(), anyString());
-        assertNotNull(callbackCaptor.getValue());
-        // TODO
-//        callbackCaptor.getValue().failure(null);
+        verify(mockGetEndUsers).getEndUsers(
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString()
+        );
 
-        verify(mockGetAccountUser, timeout(500)).getAccountUser(anyString(), anyString(), anyBoolean(), anyBoolean(),
-                anyInt(), anyInt(), anyString());
-        assertNotNull(callbackCaptor.getValue());
-        // TODO
-//        callbackCaptor.getValue().failure(null);
+        verify(mockGetAccountUser).getAccountUser(
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString()
+        );
 
-//        verify(mockCallback, times(1)).failure(Matchers.<RetrofitError>any());
-//        verify(mockCallback, never()).success(
-//                Matchers.<XivelyAccount>anyObject(),
-//                Matchers.<Response>anyObject());
+        verify(mockCallback, times(1)).onFailure(
+                Matchers.<Call<XivelyAccount>>any(),
+                Matchers.<Throwable>any()
+        );
+        verify(mockCallback, never()).onResponse(
+                Matchers.<Call<XivelyAccount>>anyObject(),
+                Matchers.<Response<XivelyAccount>>anyObject()
+        );
     }
 
     @Test
     public void testQueryXiAccountFailureCallbackOnCreateCredentialsFailure() throws Exception {
-        setUp();
-
-        when(mockRestAdapter.create(Matchers.argThat(new ClassMatcher<GetEndUsers>(GetEndUsers.class))))
-                .thenReturn(mockGetEndUser);
-
-        when(mockRestAdapter.create(Matchers.argThat(new ClassMatcher<CreateCredentials>(CreateCredentials.class))))
-                .thenReturn(mockCreateCredentials);
-
-        ArgumentCaptor<Callback> getEndUserCallbackCaptor = ArgumentCaptor.forClass(Callback.class);
-        ArgumentCaptor<Callback> createCredentialsCallbackCaptor = ArgumentCaptor.forClass(Callback.class);
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                mockCreateCredentials,
+                mockGetAccountUser,
+                null,
+                null,
+                null,
+                null,
+                null,
+                mockGetEndUsers,
+                null,
+                null
+        );
 
         GetEndUsers.Response mockGetEndUserResponse = new GetEndUsers.Response();
-        mockGetEndUserResponse.endUsers = new HashMap<String, Object>();
+        mockGetEndUserResponse.endUsers = new HashMap<>();
+        mockGetEndUserResponse.endUsers = new HashMap<>();
 
-        mockGetEndUserResponse.endUsers = new HashMap<String, Object>();
-
-        LinkedTreeMap<String, Object> endUserMap = new LinkedTreeMap<String, Object>();
+        LinkedTreeMap<String, Object> endUserMap = new LinkedTreeMap<>();
         endUserMap.put("id", "mock user id");
         endUserMap.put("userId", "mock user id");
 
-        ArrayList<Object> endUserList = new ArrayList<Object>();
+        ArrayList<LinkedTreeMap<String, Object>> endUserList = new ArrayList<>();
         endUserList.add(endUserMap);
 
         mockGetEndUserResponse.endUsers.put("results", endUserList);
 
-        // NOT TODO
-//        mockGetEndUserResponse.endUsers.results = new EndUser[1];
-//        mockGetEndUserResponse.endUsers.results[0] = new EndUser();
-//        mockGetEndUserResponse.endUsers.results[0].id = "Béla";
-//        mockGetEndUserResponse.endUsers.results[0].userId
-//                = "blueprint tudja minek ide prefix/mock user id";//this id must match the one from the jwt
+        when(mockGetEndUsers.getEndUsers(
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString()
+        )).thenReturn(new SuccessEndUsersStubCall(mockGetEndUserResponse));
 
-        BlueprintWebServices testWS = new BlueprintWebServices();
-        testWS.queryXivelyAccount(testJwt, mockCallback);
+        when(mockCreateCredentials.createCredentials(
+                Matchers.<CreateCredentials.Request>any()
+        )).thenReturn(new FailureCredentialStubCall());
 
-        verify(mockGetEndUser, timeout(500)).getEndUsers(anyString(), anyString(), anyBoolean(), anyBoolean(),
-                anyInt(), anyInt(), anyString());
+        SUT.queryXivelyAccount(testJwt, mockCallback);
 
-        assertNotNull(getEndUserCallbackCaptor.getValue());
-        // TODO
-//        getEndUserCallbackCaptor.getValue().success(mockGetEndUserResponse, null);
+        verify(mockGetEndUsers).getEndUsers(
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString()
+        );
 
-        verify(mockCreateCredentials, timeout(500)).createCredentials(Matchers.<CreateCredentials.Request>anyObject());
-        assertNotNull(createCredentialsCallbackCaptor.getValue());
-        // TODO
-//        createCredentialsCallbackCaptor.getValue().failure(null);
+        verify(mockCreateCredentials).createCredentials(
+                Matchers.<CreateCredentials.Request>anyObject()
+        );
 
-//        verify(mockCallback, times(1)).failure(Matchers.<RetrofitError>any());
-//        verify(mockCallback, never()).success(
-//                Matchers.<XivelyAccount>anyObject(),
-//                Matchers.<Response>anyObject());
+        verify(mockCallback, times(1)).onFailure(
+                Matchers.<Call<XivelyAccount>>any(),
+                Matchers.<Throwable>any()
+        );
+
+        verify(mockCallback, never()).onResponse(
+                Matchers.<Call<XivelyAccount>>anyObject(),
+                Matchers.<Response<XivelyAccount>>anyObject()
+        );
     }
 
     @Test
     public void testQueryXiEndUserAccountSuccess() throws Exception {
-        setUp();
-
-        when(mockRestAdapter.create(Matchers.argThat(new ClassMatcher<GetEndUsers>(GetEndUsers.class))))
-                .thenReturn(mockGetEndUser);
-        when(mockRestAdapter.create(Matchers.argThat(new ClassMatcher<GetAccountUser>(GetAccountUser.class))))
-                .thenReturn(mockGetAccountUser);
-        when(mockRestAdapter.create(Matchers.argThat(new ClassMatcher<CreateCredentials>(CreateCredentials.class))))
-                .thenReturn(mockCreateCredentials);
-
-        ArgumentCaptor<Callback> getEndUserCallbackCaptor = ArgumentCaptor.forClass(Callback.class);
-        ArgumentCaptor<Callback> getAccountUserCallbackCaptor = ArgumentCaptor.forClass(Callback.class);
-        ArgumentCaptor<Callback> createCredentialsCallbackCaptor = ArgumentCaptor.forClass(Callback.class);
-        ArgumentCaptor<XivelyAccount> xivelyAccountCaptor = ArgumentCaptor.forClass(XivelyAccount.class);
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                mockCreateCredentials,
+                mockGetAccountUser,
+                null,
+                null,
+                null,
+                null,
+                null,
+                mockGetEndUsers,
+                null,
+                null
+        );
 
         GetAccountUser.Response mockGetAccountUserResponse = new GetAccountUser.Response();
         mockGetAccountUserResponse.accountUsers = new AccountUsersList();
@@ -225,32 +317,67 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         mockCredentialsResponse.mqttCredential.entityId = "end user id";
         mockCredentialsResponse.mqttCredential.secret = "end user secret";
 
-        BlueprintWebServices testWS = new BlueprintWebServices();
-        testWS.queryXivelyAccount(testJwt, mockCallback);
+        when(mockGetEndUsers.getEndUsers(
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString()
+        )).thenReturn(new FailureEndUsersStubCall());
 
-        verify(mockGetEndUser, timeout(500)).getEndUsers(anyString(), anyString(), anyBoolean(), anyBoolean(),
-                anyInt(), anyInt(), anyString());
-        assertNotNull(getEndUserCallbackCaptor.getValue());
-        // TODO
-//        getEndUserCallbackCaptor.getValue().failure(null);
+        when(mockGetAccountUser.getAccountUser(
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString()
+        )).thenReturn(new SuccessAccountUserStubCall(mockGetAccountUserResponse));
 
-        verify(mockGetAccountUser, timeout(500)).getAccountUser(anyString(), anyString(), anyBoolean(), anyBoolean(),
-                anyInt(), anyInt(), anyString());
-        assertNotNull(getAccountUserCallbackCaptor.getValue());
-        // TODO
-//        getAccountUserCallbackCaptor.getValue().success(mockGetAccountUserResponse, null);
+        when(mockCreateCredentials.createCredentials(
+                Matchers.<CreateCredentials.Request>any()
+        )).thenReturn(new SuccessCredentialStubCall(mockCredentialsResponse));
 
-        verify(mockCreateCredentials, timeout(500)).createCredentials(Matchers.<CreateCredentials.Request>anyObject());
-        assertNotNull(createCredentialsCallbackCaptor.getValue());
-        // TODO
-//        createCredentialsCallbackCaptor.getValue().success(mockCredentialsResponse, null);
+        SUT.queryXivelyAccount(testJwt, mockCallback);
 
-//        verify(mockCallback, never()).failure(Matchers.<RetrofitError>any());
-//        verify(mockCallback, times(1)).success(
-//                xivelyAccountCaptor.capture(),
-//                Matchers.<Response>anyObject());
+        verify(mockGetEndUsers).getEndUsers(
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString()
+        );
 
-        XivelyAccount result = xivelyAccountCaptor.getValue();
+        verify(mockGetAccountUser).getAccountUser(
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString()
+        );
+
+        verify(mockCreateCredentials).createCredentials(
+                Matchers.<CreateCredentials.Request>anyObject()
+        );
+
+        verify(mockCallback, never()).onFailure(
+                Matchers.<Call<XivelyAccount>>any(),
+                Matchers.<Throwable>any()
+        );
+
+        verify(mockCallback, times(1)).onResponse(
+                Matchers.<Call<XivelyAccount>>anyObject(),
+                captorXivelyAccountResponse.capture()
+        );
+
+        XivelyAccount result = captorXivelyAccountResponse.getValue().body();
         assertNotNull(result);
         assertEquals("mock account id", result.getClientId());
         assertNull(result.getDisplayName());
@@ -260,63 +387,77 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
 
     @Test
     public void testQueryXiAccountUserSuccess() throws Exception {
-        setUp();
-
-        when(mockRestAdapter.create(Matchers.argThat(new ClassMatcher<GetEndUsers>(GetEndUsers.class))))
-                .thenReturn(mockGetEndUser);
-
-        when(mockRestAdapter.create(Matchers.argThat(new ClassMatcher<CreateCredentials>(CreateCredentials.class))))
-                .thenReturn(mockCreateCredentials);
-
-        ArgumentCaptor<Callback> getEndUserCallbackCaptor = ArgumentCaptor.forClass(Callback.class);
-        ArgumentCaptor<Callback> createCredentialsCallbackCaptor = ArgumentCaptor.forClass(Callback.class);
-        ArgumentCaptor<XivelyAccount> xivelyAccountCaptor = ArgumentCaptor.forClass(XivelyAccount.class);
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                mockCreateCredentials,
+                mockGetAccountUser,
+                null,
+                null,
+                null,
+                null,
+                null,
+                mockGetEndUsers,
+                null,
+                null
+        );
 
         GetEndUsers.Response mockGetEndUserResponse = new GetEndUsers.Response();
-        mockGetEndUserResponse.endUsers = new HashMap<String, Object>();
+        mockGetEndUserResponse.endUsers = new HashMap<>();
 
-        LinkedTreeMap<String, Object> endUserMap = new LinkedTreeMap<String, Object>();
+        LinkedTreeMap<String, Object> endUserMap = new LinkedTreeMap<>();
         endUserMap.put("id", "mock user id");
         endUserMap.put("userId", "blueprint tudja minek ide prefix/mock user id");
 
-        ArrayList<Object> endUserList = new ArrayList<Object>();
+        ArrayList<Object> endUserList = new ArrayList<>();
         endUserList.add(endUserMap);
 
         mockGetEndUserResponse.endUsers.put("results", endUserList);
-
-        // NOT TODO
-//        mockGetEndUserResponse.endUsers.results = new EndUser[1];
-//        mockGetEndUserResponse.endUsers.results[0] = new EndUser();
-//        mockGetEndUserResponse.endUsers.results[0].id = "Béla";
-//        mockGetEndUserResponse.endUsers.results[0].userId
-//                = "blueprint tudja minek ide prefix/mock user id";//this id must match the one from the jwt
 
         CreateCredentials.Response mockCredentialsResponse = new CreateCredentials.Response();
         mockCredentialsResponse.mqttCredential = new Credential();
         mockCredentialsResponse.mqttCredential.entityId = "end user id";
         mockCredentialsResponse.mqttCredential.secret = "end user secret";
 
-        BlueprintWebServices testWS = new BlueprintWebServices();
-        testWS.queryXivelyAccount(testJwt, mockCallback);
+        when(mockGetEndUsers.getEndUsers(
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString()
+        )).thenReturn(new SuccessEndUsersStubCall(mockGetEndUserResponse));
 
-        verify(mockGetEndUser, timeout(500)).getEndUsers(anyString(), anyString(), anyBoolean(), anyBoolean(),
-                anyInt(), anyInt(), anyString());
+        when(mockCreateCredentials.createCredentials(
+                Matchers.<CreateCredentials.Request>any()
+        )).thenReturn(new SuccessCredentialStubCall(mockCredentialsResponse));
 
-        assertNotNull(getEndUserCallbackCaptor.getValue());
-        // TODO
-//        getEndUserCallbackCaptor.getValue().success(mockGetEndUserResponse, null);
+        SUT.queryXivelyAccount(testJwt, mockCallback);
 
-        verify(mockCreateCredentials, timeout(500)).createCredentials(Matchers.<CreateCredentials.Request>anyObject());
-        assertNotNull(createCredentialsCallbackCaptor.getValue());
-        // TODO
-//        createCredentialsCallbackCaptor.getValue().success(mockCredentialsResponse, null);
+        verify(mockGetEndUsers).getEndUsers(
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString()
+        );
 
-//        verify(mockCallback, never()).failure(Matchers.<RetrofitError>any());
-//        verify(mockCallback, times(1)).success(
-//                xivelyAccountCaptor.capture(),
-//                Matchers.<Response>anyObject());
+        verify(mockCreateCredentials).createCredentials(
+                Matchers.<CreateCredentials.Request>anyObject()
+        );
 
-        XivelyAccount result = xivelyAccountCaptor.getValue();
+        verify(mockCallback, never()).onFailure(
+                Matchers.<Call<XivelyAccount>>any(),
+                Matchers.<Throwable>any()
+        );
+
+        verify(mockCallback, times(1)).onResponse(
+                Matchers.<Call<XivelyAccount>>anyObject(),
+                captorXivelyAccountResponse.capture()
+        );
+
+        XivelyAccount result = captorXivelyAccountResponse.getValue().body();
         assertNotNull(result);
         assertEquals("mock account id", result.getClientId());
         assertNull(result.getDisplayName());
@@ -344,6 +485,266 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         @Override
         public void describeTo(Description description) {
             description.appendText("Is instance of the specified class.");
+        }
+    }
+
+    private class SuccessEndUsersStubCall implements Call<GetEndUsers.Response> {
+
+        GetEndUsers.Response response;
+
+        public SuccessEndUsersStubCall() {
+            this.response = new GetEndUsers.Response();
+        }
+
+        public SuccessEndUsersStubCall(GetEndUsers.Response response) {
+            this.response = response;
+        }
+
+        @Override
+        public Response<GetEndUsers.Response> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<GetEndUsers.Response> callback) {
+            Response<GetEndUsers.Response> retrofitResponse = Response.success(response);
+            callback.onResponse(this, retrofitResponse);
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<GetEndUsers.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
+    }
+
+    private class FailureEndUsersStubCall implements Call<GetEndUsers.Response> {
+
+        @Override
+        public Response<GetEndUsers.Response> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<GetEndUsers.Response> callback) {
+            callback.onFailure(this, new Throwable("Just and error message"));
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<GetEndUsers.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
+    }
+
+    private class SuccessAccountUserStubCall implements Call<GetAccountUser.Response> {
+
+        GetAccountUser.Response response;
+
+        public SuccessAccountUserStubCall() {
+            this.response = new GetAccountUser.Response();
+        }
+
+        public SuccessAccountUserStubCall(GetAccountUser.Response response) {
+            this.response = response;
+        }
+
+        @Override
+        public Response<GetAccountUser.Response> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<GetAccountUser.Response> callback) {
+            Response<GetAccountUser.Response> retrofitResponse = Response.success(response);
+            callback.onResponse(this, retrofitResponse);
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<GetAccountUser.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
+    }
+
+    private class FailureAccountUserStubCall implements Call<GetAccountUser.Response> {
+
+        @Override
+        public Response<GetAccountUser.Response> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<GetAccountUser.Response> callback) {
+            callback.onFailure(this, new Throwable("Just and error message"));
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<GetAccountUser.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
+    }
+
+    private class SuccessCredentialStubCall implements Call<CreateCredentials.Response> {
+
+        CreateCredentials.Response response;
+
+        public SuccessCredentialStubCall() {
+            this.response = new CreateCredentials.Response();
+        }
+
+        public SuccessCredentialStubCall(CreateCredentials.Response response) {
+            this.response = response;
+        }
+
+        @Override
+        public Response<CreateCredentials.Response> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<CreateCredentials.Response> callback) {
+            Response<CreateCredentials.Response> retrofitResponse = Response.success(response);
+            callback.onResponse(this, retrofitResponse);
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<CreateCredentials.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
+    }
+
+    private class FailureCredentialStubCall implements Call<CreateCredentials.Response> {
+        @Override
+        public Response<CreateCredentials.Response> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<CreateCredentials.Response> callback) {
+            callback.onFailure(this, new Throwable("Just and error message"));
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<CreateCredentials.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
         }
     }
 }

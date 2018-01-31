@@ -1,16 +1,16 @@
 package com.xively.internal.rest.blueprint;
 
-import android.util.Base64;
-
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.LinkedTreeMap;
 import com.xively.internal.account.XivelyAccount;
+import com.xively.internal.auth.XivelyJWT;
 import com.xively.internal.logger.LMILog;
 import com.xively.internal.rest.blueprint.accountUserQuery.AccountUser;
 import com.xively.internal.rest.blueprint.endUserQuery.EndUser;
 import com.xively.messaging.XiDeviceInfo;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.apache.commons.codec.binary.Base64;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,8 +101,20 @@ public class BlueprintWebServices {
      * @param accessUserId *ID user id!*
      * @param callback
      */
-    public void getEndUsers(final String accountId, final String accessUserId, final Callback<GetEndUsers.Response> callback) {
-        this.getEndUsersApi.getEndUsers(accountId, accessUserId, Boolean.TRUE, Boolean.TRUE, 1, 10, "asc").enqueue(callback);
+    public void getEndUsers(
+            final String accountId,
+            final String accessUserId,
+            final Callback<GetEndUsers.Response> callback
+    ) {
+        this.getEndUsersApi.getEndUsers(
+                accountId,
+                accessUserId,
+                Boolean.TRUE,
+                Boolean.TRUE,
+                1,
+                10,
+                "asc"
+        ).enqueue(callback);
     }
 
     /**
@@ -110,14 +122,28 @@ public class BlueprintWebServices {
      * @param accessUserId access user id
      * @param callback
      */
-    public void getAccountUser(final String accountId, final String accessUserId, final Callback<GetAccountUser.Response> callback) {
-        this.getAccountUserApi.getAccountUser(accountId, accessUserId, Boolean.TRUE, Boolean.TRUE, 1, 10, "asc").enqueue(callback);
+    public void getAccountUser(
+            final String accountId,
+            final String accessUserId,
+            final Callback<GetAccountUser.Response> callback
+    ) {
+        this.getAccountUserApi.getAccountUser(
+                accountId,
+                accessUserId,
+                Boolean.TRUE,
+                Boolean.TRUE,
+                1,
+                10,
+                "asc"
+        ).enqueue(callback);
     }
 
-    public void createCredentials(final String accountId, final String userId,
-                                  BluePrintEntity entityType,
-                                  final Callback<CreateCredentials.Response> callback) {
-
+    public void createCredentials(
+            final String accountId,
+            final String userId,
+            BluePrintEntity entityType,
+            final Callback<CreateCredentials.Response> callback
+    ) {
         final CreateCredentials.Request request = new CreateCredentials.Request();
         request.accountId = accountId;
         request.entityId = userId;
@@ -126,42 +152,101 @@ public class BlueprintWebServices {
         this.createMqttCredentialsApi.createCredentials(request).enqueue(callback);
     }
 
-    public void getEndUserList(final String accountId, final String accountUserId, final int page, final int pageSize, final Callback<GetEndUsers.Response> callback) {
-        this.getEndUsersApi.getEndUsers(accountId, null, Boolean.TRUE, Boolean.TRUE, page, pageSize, null).enqueue(callback);
+    public void getEndUserList(
+            final String accountId,
+            final String accountUserId,
+            final int page,
+            final int pageSize,
+            final Callback<GetEndUsers.Response> callback
+    ) {
+        this.getEndUsersApi.getEndUsers(
+                accountId,
+                null,
+                Boolean.TRUE,
+                Boolean.TRUE,
+                page,
+                pageSize,
+                null
+        ).enqueue(callback);
     }
 
     public void getEndUser(final String userId, final Callback<GetEndUser.Response> callback) {
         this.getEndUserApi.getEndUser(userId).enqueue(callback);
     }
 
-    public void putEndUser(final String userId, final String version, final HashMap<String, Object> userData, final Callback<PutEndUser.Response> callback) {
+    public void putEndUser(
+            final String userId,
+            final String version,
+            final HashMap<String, Object> userData,
+            final Callback<PutEndUser.Response> callback
+    ) {
         this.putEndUserApi.putEndUser(userId, version, userData).enqueue(callback);
     }
 
-    public void getOrganizations(final String accountId, final String parentId, final String deviceTemplateId,
-                                 final String organizationTemplateId,
-                                 final int page, final int pageSize, final Callback<GetOrganizations.Response> callback) {
-        this.getOrganizationsApi.getOrganizations(accountId, parentId, deviceTemplateId, organizationTemplateId,
-                null, Boolean.TRUE, Boolean.TRUE, page, pageSize, null, null).enqueue(callback);
+    public void getOrganizations(
+            final String accountId,
+            final String parentId,
+            final String deviceTemplateId,
+            final String organizationTemplateId,
+            final int page,
+            final int pageSize,
+            final Callback<GetOrganizations.Response> callback
+    ) {
+        this.getOrganizationsApi.getOrganizations(
+                accountId,
+                parentId,
+                deviceTemplateId,
+                organizationTemplateId,
+                null,
+                Boolean.TRUE,
+                Boolean.TRUE,
+                page,
+                pageSize,
+                null,
+                null
+        ).enqueue(callback);
     }
 
-    public void getOrganization(final String organizationId, final Callback<GetOrganization.Response> callback) {
+    public void getOrganization(
+            final String organizationId,
+            final Callback<GetOrganization.Response> callback
+    ) {
         this.getOrganizationApi.getOrganization(organizationId).enqueue(callback);
     }
 
-    public void getDevices(final String accountId, final String deviceTemplateId, final String organizationId,
-                           final XiDeviceInfo.ProvisioningStateEnum provisioningState,
-                           final int page, final int pageSize, final Callback<GetDevices.Response> callback) {
-        this.getDevicesApi.getDevices(accountId, deviceTemplateId, organizationId,
+    public void getDevices(
+            final String accountId,
+            final String deviceTemplateId,
+            final String organizationId,
+            final XiDeviceInfo.ProvisioningStateEnum provisioningState,
+            final int page,
+            final int pageSize,
+            final Callback<GetDevices.Response> callback
+    ) {
+        this.getDevicesApi.getDevices(
+                accountId,
+                deviceTemplateId,
+                organizationId,
                 provisioningState == null ? null : provisioningState.toString(),
-                Boolean.TRUE, Boolean.TRUE, page, pageSize, null, null).enqueue(callback);
+                Boolean.TRUE,
+                Boolean.TRUE,
+                page,
+                pageSize,
+                null,
+                null
+        ).enqueue(callback);
     }
 
     public void getDevice(final String deviceId, final Callback<GetDevice.Response> callback) {
         this.getDeviceApi.getDevice(deviceId).enqueue(callback);
     }
 
-    public void putDevice(final String deviceId, final String version, final HashMap<String, Object> deviceData, final Callback<PutDevice.Response> callback) {
+    public void putDevice(
+            final String deviceId,
+            final String version,
+            final HashMap<String, Object> deviceData,
+            final Callback<PutDevice.Response> callback
+    ) {
         this.putDeviceApi.putDevice(deviceId, version, deviceData).enqueue(callback);
     }
 
@@ -169,39 +254,38 @@ public class BlueprintWebServices {
 
     public void queryXivelyAccount(String jwt, final Callback<XivelyAccount> callback) {
         if (jwt == null) {
-            // TODO double check
-            callback.onFailure(null, new Throwable("Missing JWT"));
             log.e("Failed to acquire credentials: missing token.");
+            callback.onFailure(null, new Throwable("Missing JWT"));
             return;
         }
 
         String[] jwtSplit = jwt.split("\\.");
         if (jwtSplit.length < 2) {
-            // TODO double check
-            callback.onFailure(null, new Throwable("Corrupt Token"));
             log.e("Failed to acquire credentials: corrupt token.");
+            callback.onFailure(null, new Throwable("Corrupt Token"));
             return;
         }
 
-        byte[] jwtData = Base64.decode(jwtSplit[1].getBytes(), Base64.DEFAULT);
+        byte[] jwtData = Base64.decodeBase64(jwtSplit[1]);
         if (jwtData == null || jwtData.length < 1) {
-            // TODO double check
-            callback.onFailure(null, new Throwable("Corrupt Token"));
             log.e("Failed to acquire credentials: corrupt token.");
+            callback.onFailure(null, new Throwable("Corrupt Token"));
             return;
         }
 
         final String idmUserId;
         final String accountId;
 
+        String jsonString = new String(jwtData);
+
         try {
-            JSONObject userData = new JSONObject(new String(jwtData));
-            idmUserId = userData.getString("userId");
-            accountId = userData.getString("accountId");
-        } catch (JSONException ex) {
+            Gson gson = new Gson();
+            XivelyJWT xivelyJWT = gson.fromJson(jsonString, XivelyJWT.class);
+            idmUserId = xivelyJWT.userId;
+            accountId = xivelyJWT.accountId;
+        } catch (JsonSyntaxException ex) {
             log.e("Failed to acquire credentials: corrupt token.");
             log.t(ex.toString());
-            // TODO double check
             callback.onFailure(null, new Throwable("Corrupt Token"));
             return;
         }
@@ -210,7 +294,10 @@ public class BlueprintWebServices {
 
             // TODO double check
             @Override
-            public void onResponse(Call<GetAccountUser.Response> call, retrofit2.Response<GetAccountUser.Response> response) {
+            public void onResponse(
+                    Call<GetAccountUser.Response> call,
+                    retrofit2.Response<GetAccountUser.Response> response
+            ) {
                 GetAccountUser.Response accountUseresResponse = response.body();
 
                 if (accountUseresResponse == null ||
@@ -245,7 +332,10 @@ public class BlueprintWebServices {
 
         getEndUsers(accountId, idmUserId, new Callback<GetEndUsers.Response>() {
             @Override
-            public void onResponse(Call<GetEndUsers.Response> call, retrofit2.Response<GetEndUsers.Response> response) {
+            public void onResponse(
+                    Call<GetEndUsers.Response> call,
+                    retrofit2.Response<GetEndUsers.Response> response
+            ) {
                 GetEndUsers.Response endUsersResponse = response.body();
 
                 if (endUsersResponse == null ||
@@ -287,12 +377,19 @@ public class BlueprintWebServices {
 
     }
 
-    private void queryCredentials(final String accountId, String userId, final String name,
-                                  BluePrintEntity entityType,
-                                  final Callback<XivelyAccount> callback) {
-        this.createCredentials(accountId, userId, entityType, new Callback<CreateCredentials.Response>() {
+    private void queryCredentials(
+            final String accountId,
+            String userId,
+            final String name,
+            BluePrintEntity entityType,
+            final Callback<XivelyAccount> callback
+    ) {
+        createCredentials(accountId, userId, entityType, new Callback<CreateCredentials.Response>() {
             @Override
-            public void onResponse(Call<CreateCredentials.Response> call, retrofit2.Response<CreateCredentials.Response> response) {
+            public void onResponse(
+                    Call<CreateCredentials.Response> call,
+                    retrofit2.Response<CreateCredentials.Response> response
+            ) {
                 CreateCredentials.Response credentialResponse = response.body();
 
                 if (credentialResponse == null ||
