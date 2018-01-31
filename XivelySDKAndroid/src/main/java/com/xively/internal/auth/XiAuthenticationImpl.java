@@ -15,6 +15,7 @@ import com.xively.internal.rest.auth.LoginUser;
 import com.xively.internal.rest.blueprint.BlueprintWebServices;
 import com.xively.sdk.BuildConfig;
 
+import java.io.IOException;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -44,54 +45,45 @@ public class XiAuthenticationImpl implements XiAuthentication {
                 .loginUser(email, password, accountId, new Callback<LoginUser.Response>() {
                     @Override
                     public void onResponse(Call<LoginUser.Response> call, Response<LoginUser.Response> response) {
+                        LoginUser.Response loginResponse = response.body();
 
+                        if (loginResponse != null &&
+                                loginResponse.jwt != null &&
+                                !loginResponse.jwt.equals("")) {
+                            log.i("Authentication success. Acquiring credentials...");
+                            setAuthorizationHeaders(loginResponse.jwt);
+                            acquireCredentials(callback, loginResponse.jwt);
+                        } else {
+                            log.w("Invalid auth response.");
+                            callback.authenticationFailed(
+                                    XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR);
+                        }
                     }
 
                     @Override
                     public void onFailure(Call<LoginUser.Response> call, Throwable t) {
+                        log.i("Authentication failed: " + t);
+                        XiAuthenticationCallback.XiAuthenticationError error =
+                                XiAuthenticationCallback.XiAuthenticationError.UNEXPECTED_ERROR;
 
+                        if (t != null) {
+                            if (t.getCause() instanceof IOException) {
+                                error = XiAuthenticationCallback.XiAuthenticationError.NETWORK_ERROR;
+                            } /*  if (retrofitError.getResponse() != null) {
+                                switch (retrofitError.getResponse().getStatus()) {
+                                    case 401:
+                                        error = XiAuthenticationCallback.XiAuthenticationError.INVALID_CREDENTIALS;
+                                        break;
+                                    case 500:
+                                    case 503:
+                                        error = XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR;
+                                        break;
+                                }
+                            } */
+                        }
+
+                        callback.authenticationFailed(error);
                     }
-
-                    // TODO
-//                    @Override
-//                    public void success(LoginUser.Response response, Response response2) {
-//                        if (response != null &&
-//                                response.jwt != null &&
-//                                !response.jwt.equals("")) {
-//                            log.i("Authentication success. Acquiring credentials...");
-//                            setAuthorizationHeaders(response.jwt);
-//                            acquireCredentials(callback, response.jwt);
-//                        } else {
-//                            log.w("Invalid auth response.");
-//                            callback.authenticationFailed(
-//                                    XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void failure(RetrofitError retrofitError) {
-//                        log.i("Authentication failed: " + retrofitError);
-//                        XiAuthenticationCallback.XiAuthenticationError error =
-//                                XiAuthenticationCallback.XiAuthenticationError.UNEXPECTED_ERROR;
-//
-//                        if (retrofitError != null){
-//                            if (retrofitError.getCause() instanceof IOException){
-//                                error = XiAuthenticationCallback.XiAuthenticationError.NETWORK_ERROR;
-//                            } else if (retrofitError.getResponse() != null) {
-//                                    switch (retrofitError.getResponse().getStatus()) {
-//                                        case 401:
-//                                            error = XiAuthenticationCallback.XiAuthenticationError.INVALID_CREDENTIALS;
-//                                            break;
-//                                        case 500:
-//                                        case 503:
-//                                            error = XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR;
-//                                            break;
-//                                    }
-//                            }
-//                        }
-//
-//                        callback.authenticationFailed(error);
-//                    }
                 });
     }
 
@@ -99,33 +91,24 @@ public class XiAuthenticationImpl implements XiAuthentication {
         Callback<GetOAuthUrl.Response> wsCallback = new Callback<GetOAuthUrl.Response>() {
             @Override
             public void onResponse(Call<GetOAuthUrl.Response> call, Response<GetOAuthUrl.Response> response) {
+                GetOAuthUrl.Response oauthResponse = response.body();
 
+                synchronized (cancelSync) {
+                    if (oauthResponse == null ||
+                            oauthResponse.location == null ||
+                            oauthResponse.location.equals("") ||
+                            canceled) {
+                        onFailure(null, new Throwable("Empty Response"));
+                    } else {
+                        callback.oAuthUriReceived(oauthResponse.location);
+                    }
+                }
             }
 
             @Override
             public void onFailure(Call<GetOAuthUrl.Response> call, Throwable t) {
-
+                callback.authenticationFailed();
             }
-
-//            @Override
-//            public void success(GetOAuthUrl.Response response, Response response2) {
-//                synchronized (cancelSync) {
-//                    if (response == null ||
-//                            response.location == null ||
-//                            response.location.equals("") ||
-//                            canceled) {
-//                        failure(null);
-//                    } else {
-//                        callback.oAuthUriReceived(response.location);
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError retrofitError) {
-//                //TODO: parse error type when service is specified
-//                callback.authenticationFailed();
-//            }
         };
 
         DependencyInjector.get().accessWebServices().getOAuthUrl(providerId, wsCallback);
@@ -169,26 +152,16 @@ public class XiAuthenticationImpl implements XiAuthentication {
                         new Callback<XivelyAccount>() {
                             @Override
                             public void onResponse(Call<XivelyAccount> call, Response<XivelyAccount> response) {
-
+                                XivelyAccount accoutnResponse = response.body();
+                                createSessionObject(callback, accoutnResponse);
                             }
 
                             @Override
                             public void onFailure(Call<XivelyAccount> call, Throwable t) {
-
+                                log.i("Failed to acquire credentials.");
+                                callback.authenticationFailed(
+                                        XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR);
                             }
-
-                            // TODO
-//                            @Override
-//                            public void success(XivelyAccount xivelyAccount, Response response) {
-//                                createSessionObject(callback, xivelyAccount);
-//                            }
-//
-//                            @Override
-//                            public void failure(RetrofitError retrofitError) {
-//                                log.i("Failed to acquire credentials.");
-//                                callback.authenticationFailed(
-//                                        XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR);
-//                            }
                         });
             } else {
                 log.i("Authentication flow canceled.");
