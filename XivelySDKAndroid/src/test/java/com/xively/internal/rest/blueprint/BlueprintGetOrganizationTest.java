@@ -49,7 +49,7 @@ public class BlueprintGetOrganizationTest extends TestCase {
 
         final String organizationId = "mock orgid";
 
-        when(mockGetOrganization.getOrganization(anyString())).thenReturn(new SuccsssStubCall());
+        when(mockGetOrganization.getOrganization(anyString())).thenReturn(new SuccessStubCall());
 
         SUT.getOrganization(organizationId, new Callback<GetOrganization.Response>() {
             @Override
@@ -66,7 +66,7 @@ public class BlueprintGetOrganizationTest extends TestCase {
         verify(mockGetOrganization, times(1)).getOrganization(eq(organizationId));
     }
 
-    private class SuccsssStubCall implements Call<GetOrganization.Response> {
+    private class SuccessStubCall implements Call<GetOrganization.Response> {
         @Override
         public Response<GetOrganization.Response> execute() throws IOException {
             return null;

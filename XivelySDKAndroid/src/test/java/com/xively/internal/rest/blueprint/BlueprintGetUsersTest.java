@@ -9,21 +9,26 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.IOException;
+
+import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class BlueprintGetUsersTest extends TestCase {
 
     @Mock
-    private GetEndUsers mockGetEndUser;
+    private GetEndUsers mockGetEndUsers;
     @Mock
     private GetAccountUser mockGetAccountUser;
     @Mock
@@ -36,13 +41,26 @@ public class BlueprintGetUsersTest extends TestCase {
     }
 
     public void testStartGetEndUserQuery() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices();
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                mockGetEndUsers,
+                null,
+                null
+        );
 
 
         String accountId = "mock account id";
         String userId = "mock access user id";
 
-        testWS.getEndUsers(accountId, userId, new Callback<GetEndUsers.Response>() {
+        when(mockGetEndUsers.getEndUsers(anyString(), anyString(), anyBoolean(), anyBoolean(), anyInt(), anyInt(), anyString())).thenReturn(new SuccessStubCall());
+
+        SUT.getEndUsers(accountId, userId, new Callback<GetEndUsers.Response>() {
             @Override
             public void onResponse(Call<GetEndUsers.Response> call, Response<GetEndUsers.Response> response) {
 
@@ -54,7 +72,7 @@ public class BlueprintGetUsersTest extends TestCase {
             }
         });
 
-        verify(mockGetEndUser, times(1)).getEndUsers(
+        verify(mockGetEndUsers, times(1)).getEndUsers(
                 eq(accountId),
                 eq(userId),
                 eq(true),
@@ -66,12 +84,25 @@ public class BlueprintGetUsersTest extends TestCase {
     }
 
     public void testStartGeAccountUserQuery() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices();
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                null,
+                mockGetAccountUser,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
 
         String accountId = "mock account id";
         String userId = "mock access user id";
 
-        testWS.getAccountUser(accountId, userId, new Callback<GetAccountUser.Response>() {
+        when(mockGetAccountUser.getAccountUser(anyString(), anyString(), anyBoolean(), anyBoolean(), anyInt(), anyInt(), anyString())).thenReturn(new SuccessStubCall());
+
+        SUT.getAccountUser(accountId, userId, new Callback<GetAccountUser.Response>() {
             @Override
             public void onResponse(Call<GetAccountUser.Response> call, Response<GetAccountUser.Response> response) {
 
@@ -83,7 +114,7 @@ public class BlueprintGetUsersTest extends TestCase {
             }
         });
 
-        verify(mockGetAccountUser, timeout(1000).times(1)).getAccountUser(
+        verify(mockGetAccountUser, times(1)).getAccountUser(
                 eq(accountId),
                 eq(userId),
                 eq(true),
@@ -95,7 +126,18 @@ public class BlueprintGetUsersTest extends TestCase {
     }
 
     public void testStartCreateCredentialsQuery() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices();
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                mockCreateCredentials,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
 
         ArgumentCaptor<CreateCredentials.Request> createCredentialsRequestCaptor =
                 ArgumentCaptor.forClass(CreateCredentials.Request.class);
@@ -103,7 +145,9 @@ public class BlueprintGetUsersTest extends TestCase {
         String accountId = "mock account id";
         String userId = "mock access user id";
 
-        testWS.createCredentials(accountId, userId, BlueprintWebServices.BluePrintEntity.endUser, new Callback<CreateCredentials.Response>() {
+        when(mockCreateCredentials.createCredentials(any(CreateCredentials.Request.class))).thenReturn(new SuccessStubCall());
+
+        SUT.createCredentials(accountId, userId, BlueprintWebServices.BluePrintEntity.endUser, new Callback<CreateCredentials.Response>() {
             @Override
             public void onResponse(Call<CreateCredentials.Response> call, Response<CreateCredentials.Response> response) {
 
@@ -115,15 +159,52 @@ public class BlueprintGetUsersTest extends TestCase {
             }
         });
 
-        verify(mockCreateCredentials, timeout(1000).times(1)).createCredentials(
-                createCredentialsRequestCaptor.capture()
-        );
+        verify(mockCreateCredentials, times(1)).createCredentials(createCredentialsRequestCaptor.capture());
 
         CreateCredentials.Request request = createCredentialsRequestCaptor.getValue();
+
         assertNotNull(request);
         assertEquals(accountId, request.accountId);
         assertEquals(userId, request.entityId);
         assertEquals("endUser", request.entityType);
+    }
+
+    private class SuccessStubCall<T> implements Call<T> {
+
+        @Override
+        public Response<T> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<T> callback) {
+
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<T> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
     }
 
 }
