@@ -92,7 +92,6 @@ public class BlueprintGetUsersTest extends TestCase {
                 anyInt(),
                 anyString()
         );
-
     }
 
     public void testStartCreateCredentialsQuery() throws Exception {

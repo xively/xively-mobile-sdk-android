@@ -5,22 +5,25 @@ import com.xively.internal.logger.LMILog;
 
 import junit.framework.TestCase;
 
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import retrofit2.Callback;
-import retrofit2.Retrofit;
+import java.io.IOException;
 
+import okhttp3.Request;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class BlueprintGetEndUserTest extends TestCase {
     @Mock
-    Retrofit mockRestAdapter;
+    private GetEndUser mockGetEndUser;
 
     @Override
     protected void setUp() throws Exception {
@@ -29,16 +32,72 @@ public class BlueprintGetEndUserTest extends TestCase {
     }
 
     public void testGetEndUserCallsService() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices();
-
-        Callback<GetEndUser.Response> mockCallback = mock(Callback.class);
-        GetEndUser mockGetEndUser = mock(GetEndUser.class);
-        when(mockRestAdapter.create(Matchers.<Class<Object>>anyObject())).thenReturn(mockGetEndUser);
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                null,
+                null,
+                null,
+                null,
+                null,
+                mockGetEndUser,
+                null,
+                null,
+                null,
+                null
+        );
 
         final String userId = "mock user id";
-        testWS.getEndUser(userId, mockCallback);
 
-        verify(mockRestAdapter, times(1)).create(Matchers.<Class<CreateCredentials>>anyObject());
+        when(mockGetEndUser.getEndUser(anyString())).thenReturn(new SuccsssStubCall());
+
+        SUT.getEndUser(userId, new Callback<GetEndUser.Response>() {
+            @Override
+            public void onResponse(Call<GetEndUser.Response> call, Response<GetEndUser.Response> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<GetEndUser.Response> call, Throwable t) {
+
+            }
+        });
+
         verify(mockGetEndUser, times(1)).getEndUser(eq(userId));
+    }
+
+    private class SuccsssStubCall implements Call<GetEndUser.Response> {
+        @Override
+        public Response<GetEndUser.Response> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<GetEndUser.Response> callback) {
+
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<GetEndUser.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
     }
 }

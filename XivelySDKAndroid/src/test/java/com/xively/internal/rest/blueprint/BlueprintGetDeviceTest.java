@@ -8,13 +8,18 @@ import junit.framework.TestCase;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.IOException;
+
+import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class BlueprintGetDeviceTest extends TestCase {
 
@@ -28,10 +33,24 @@ public class BlueprintGetDeviceTest extends TestCase {
     }
 
     public void testGetDeviceCallsService() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices();
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                null,
+                null,
+                mockGetDevice,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
 
         final String deviceId = "mock account id";
-        testWS.getDevice(deviceId, new Callback<GetDevice.Response>() {
+
+        when(mockGetDevice.getDevice(anyString())).thenReturn(new SuccsssStubCall());
+
+        SUT.getDevice(deviceId, new Callback<GetDevice.Response>() {
             @Override
             public void onResponse(Call<GetDevice.Response> call, Response<GetDevice.Response> response) {
 
@@ -44,5 +63,42 @@ public class BlueprintGetDeviceTest extends TestCase {
         });
 
         verify(mockGetDevice, times(1)).getDevice(eq(deviceId));
+    }
+
+    private class SuccsssStubCall implements Call<GetDevice.Response> {
+        @Override
+        public Response<GetDevice.Response> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<GetDevice.Response> callback) {
+
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<GetDevice.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
     }
 }
