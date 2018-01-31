@@ -60,6 +60,7 @@ public class XiAuthenticationImpl implements XiAuthentication {
                         }
                     }
 
+                    // TODO
                     @Override
                     public void onFailure(Call<LoginUser.Response> call, Throwable t) {
                         log.i("Authentication failed: " + t);

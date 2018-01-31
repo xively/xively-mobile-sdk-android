@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import retrofit2.Callback;
+import retrofit2.Response;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -79,8 +80,8 @@ public class XiOAuthenticationTest extends TestCase {
 
         GetOAuthUrl.Response response = new GetOAuthUrl.Response();
         response.location = "mock url response";
-// TODO
-//        oAuthCallback.success(response, null);
+
+        oAuthCallback.onResponse(null, Response.success(response));
 
         verify(mockOAuthCallback).oAuthUriReceived(eq("mock url response"));
     }
@@ -95,8 +96,8 @@ public class XiOAuthenticationTest extends TestCase {
         verify(mockAccessWebServices).getOAuthUrl(eq(mockAccountId), oAuthCallbackCaptor.capture());
         Callback<GetOAuthUrl.Response> oAuthCallback = oAuthCallbackCaptor.getValue();
         assertNotNull(oAuthCallback);
-// TODO
-//        oAuthCallback.success(null, null);
+
+        oAuthCallback.onResponse(null, Response.success(new GetOAuthUrl.Response()));
 
         verify(mockOAuthCallback).authenticationFailed();
     }
@@ -115,8 +116,7 @@ public class XiOAuthenticationTest extends TestCase {
         GetOAuthUrl.Response response = new GetOAuthUrl.Response();
         response.location = null;
 
-        // TODO
-//        oAuthCallback.success(response, null);
+        oAuthCallback.onResponse(null, Response.success(response));
 
         verify(mockOAuthCallback).authenticationFailed();
     }
@@ -135,8 +135,7 @@ public class XiOAuthenticationTest extends TestCase {
         GetOAuthUrl.Response response = new GetOAuthUrl.Response();
         response.location = "";
 
-        // TODO
-//        oAuthCallback.success(response, null);
+        oAuthCallback.onResponse(null, Response.success(response));
 
         verify(mockOAuthCallback).authenticationFailed();
     }
@@ -164,8 +163,8 @@ public class XiOAuthenticationTest extends TestCase {
 
         GetOAuthUrl.Response response = new GetOAuthUrl.Response();
         response.location = "mock url response";
-        // TODO
-//        oAuthCallback.success(response, null);
+
+        oAuthCallback.onResponse(null, Response.success(response));
 
         verify(mockOAuthCallback, never()).oAuthUriReceived(anyString());
         verify(mockOAuthCallback).authenticationFailed();
