@@ -52,7 +52,7 @@ public class TimeSeriesWebServicesTest extends TestCase {
         String expectedStartDate = isoFormat.format(mockStartDate);
         String expectedEndDate = isoFormat.format(mockEndDate);
 
-        when(mockGetData.getData(anyString(), anyString(), anyString(), anyInt(), anyString(), anyBoolean(), anyString(), anyInt())).thenReturn(new SuccessStubCall());
+        when(mockGetData.getData(anyString(), anyString(), anyString(), anyString(), anyInt(), anyString(), anyBoolean(), anyString(), anyInt())).thenReturn(new SuccessStubCall());
 
         callback = new Callback<GetData.Response>() {
             @Override
@@ -68,9 +68,17 @@ public class TimeSeriesWebServicesTest extends TestCase {
 
         SUT.getData(mockTopic, mockStartDate, mockEndDate, callback);
 
-        verify(mockGetData, times(1)).getData(eq(mockTopic),
-                eq(expectedStartDate), eq(expectedEndDate), anyInt(), anyString(), anyBoolean(),
-                anyString(), anyInt());
+        verify(mockGetData, times(1)).getData(
+                anyString(),
+                eq(mockTopic),
+                eq(expectedStartDate),
+                eq(expectedEndDate),
+                anyInt(),
+                anyString(),
+                anyBoolean(),
+                anyString(),
+                anyInt()
+        );
     }
 
     public void testTimeSeriesGetDataAllParams() throws Exception {
@@ -87,7 +95,7 @@ public class TimeSeriesWebServicesTest extends TestCase {
         String mockCategory = "mock category";
         Integer mockGroupType = 123456;
 
-        when(mockGetData.getData(anyString(), anyString(), anyString(), anyInt(), anyString(), anyBoolean(), anyString(), anyInt())).thenReturn(new SuccessStubCall());
+        when(mockGetData.getData(anyString(), anyString(), anyString(), anyString(), anyInt(), anyString(), anyBoolean(), anyString(), anyInt())).thenReturn(new SuccessStubCall());
 
         callback = new Callback<GetData.Response>() {
             @Override
@@ -104,9 +112,17 @@ public class TimeSeriesWebServicesTest extends TestCase {
         SUT.getData(mockTopic, mockStartDate, mockEndDate, mockPageSize, mockToken,
                 mockOmitNull, mockCategory, mockGroupType, callback);
 
-        verify(mockGetData, times(1)).getData(eq(mockTopic),
-                eq(expectedStartDate), eq(expectedEndDate), eq(mockPageSize), eq(mockToken),
-                eq(mockOmitNull), eq(mockCategory), eq(mockGroupType));
+        verify(mockGetData, times(1)).getData(
+                anyString(),
+                eq(mockTopic),
+                eq(expectedStartDate),
+                eq(expectedEndDate),
+                eq(mockPageSize),
+                eq(mockToken),
+                eq(mockOmitNull),
+                eq(mockCategory),
+                eq(mockGroupType)
+        );
     }
 
     private class SuccessStubCall implements Call<GetData.Response> {

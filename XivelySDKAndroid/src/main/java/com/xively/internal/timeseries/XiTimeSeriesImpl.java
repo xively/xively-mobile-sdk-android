@@ -10,6 +10,7 @@ import com.xively.timeseries.XiTimeSeries;
 import com.xively.timeseries.XiTimeSeriesCallback;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -52,33 +53,23 @@ public class XiTimeSeriesImpl implements XiTimeSeries {
                 new Callback<GetData.Response>() {
                     @Override
                     public void onResponse(Call<GetData.Response> call, Response<GetData.Response> response) {
+                        GetData.Response getDataResposne = response.body();
 
+                        if (getDataResposne.result != null &&
+                                getDataResposne.result.length > 0) {
+                            ArrayList<TimeSeriesItem> res = new ArrayList<>();
+                            res.addAll(Arrays.asList(getDataResposne.result));
+                            xiTimeSeriesCallback.onTimeSeriesItemsRetrieved(res);
+                        } else {
+                            xiTimeSeriesCallback.onFinishedWithError(null);
+                        }
                     }
 
                     @Override
                     public void onFailure(Call<GetData.Response> call, Throwable t) {
-
+                        log.w("TS get data finished");
+                        xiTimeSeriesCallback.onFinishedWithError(null);
                     }
-
-                    // TODO
-//                    @Override
-//                    public void success(GetData.Response response, Response response2) {
-//
-//                        if (response.result != null &&
-//                                response.result.length > 0) {
-//                            ArrayList<TimeSeriesItem> res = new ArrayList<>();
-//                            res.addAll(Arrays.asList(response.result));
-//                            xiTimeSeriesCallback.onTimeSeriesItemsRetrieved(res);
-//                        } else {
-//                            xiTimeSeriesCallback.onFinishedWithError(null);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void failure(RetrofitError retrofitError) {
-//                        log.w("TS get data finished: " + retrofitError);
-//                        xiTimeSeriesCallback.onFinishedWithError(null);
-//                    }
                 });
     }
 
@@ -100,43 +91,33 @@ public class XiTimeSeriesImpl implements XiTimeSeries {
                     new Callback<GetData.Response>() {
                         @Override
                         public void onResponse(Call<GetData.Response> call, Response<GetData.Response> response) {
+                            GetData.Response getDataResponse = response.body();
 
+                            if (getDataResponse.result != null &&
+                                    getDataResponse.result.length > 0) {
+                                result.addAll(Arrays.asList(getDataResponse.result));
+                            }
+
+                            if (getDataResponse.meta.pagingToken != null &&
+                                    !getDataResponse.meta.pagingToken.equals("")) {
+                                ArrayList<TimeSeriesItem> recursiveResult = null;
+
+                                recursiveResult = getDataQuery(channel, startDate, endDate, category,
+                                        getDataResponse.meta.pagingToken);
+
+                                if (recursiveResult != null) {
+                                    result.addAll(recursiveResult);
+                                }
+                            }
+
+                            resultUpdated.signalAll();
                         }
 
                         @Override
                         public void onFailure(Call<GetData.Response> call, Throwable t) {
-
+                            log.w("TS get data finished");
+                            resultUpdated.signalAll();
                         }
-
-                        // TODO
-//                        @Override
-//                        public void success(GetData.Response response, Response response2) {
-//
-//                            if (response.result != null &&
-//                                    response.result.length > 0) {
-//                                result.addAll(Arrays.asList(response.result));
-//                            }
-//
-//                            if (response.meta.pagingToken != null &&
-//                                    !response.meta.pagingToken.equals("")) {
-//                                ArrayList<TimeSeriesItem> recursiveResult = null;
-//
-//                                recursiveResult = getDataQuery(channel, startDate, endDate, category,
-//                                        response.meta.pagingToken);
-//
-//                                if (recursiveResult != null) {
-//                                    result.addAll(recursiveResult);
-//                                }
-//                            }
-//
-//                            resultUpdated.signalAll();
-//                        }
-//
-//                        @Override
-//                        public void failure(RetrofitError retrofitError) {
-//                            log.w("TS get data finished: " + retrofitError);
-//                            resultUpdated.signalAll();
-//                        }
                     });
 
             try {

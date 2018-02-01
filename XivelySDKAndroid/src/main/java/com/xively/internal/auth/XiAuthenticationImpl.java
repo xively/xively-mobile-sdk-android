@@ -5,12 +5,10 @@ import android.os.Build;
 import com.xively.XiSession;
 import com.xively.auth.XiAuthentication;
 import com.xively.auth.XiAuthenticationCallback;
-import com.xively.auth.XiOAuthCallback;
 import com.xively.internal.DependencyInjector;
 import com.xively.internal.XiSessionImpl;
 import com.xively.internal.account.XivelyAccount;
 import com.xively.internal.logger.LMILog;
-import com.xively.internal.rest.access.GetOAuthUrl;
 import com.xively.internal.rest.auth.LoginUser;
 import com.xively.internal.rest.blueprint.BlueprintWebServices;
 import com.xively.sdk.BuildConfig;
@@ -86,33 +84,6 @@ public class XiAuthenticationImpl implements XiAuthentication {
                         callback.authenticationFailed(error);
                     }
                 });
-    }
-
-    public void requestOAuth(String providerId, final XiOAuthCallback callback) {
-        Callback<GetOAuthUrl.Response> wsCallback = new Callback<GetOAuthUrl.Response>() {
-            @Override
-            public void onResponse(Call<GetOAuthUrl.Response> call, Response<GetOAuthUrl.Response> response) {
-                GetOAuthUrl.Response oauthResponse = response.body();
-
-                synchronized (cancelSync) {
-                    if (oauthResponse == null ||
-                            oauthResponse.location == null ||
-                            oauthResponse.location.equals("") ||
-                            canceled) {
-                        onFailure(null, new Throwable("Empty Response"));
-                    } else {
-                        callback.oAuthUriReceived(oauthResponse.location);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GetOAuthUrl.Response> call, Throwable t) {
-                callback.authenticationFailed();
-            }
-        };
-
-        DependencyInjector.get().accessWebServices().getOAuthUrl(providerId, wsCallback);
     }
 
     public void setOauthToken(String oAuthToken, XiAuthenticationCallback callback) {

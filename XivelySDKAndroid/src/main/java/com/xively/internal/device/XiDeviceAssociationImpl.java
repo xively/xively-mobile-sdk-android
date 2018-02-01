@@ -30,6 +30,7 @@ public class XiDeviceAssociationImpl {
                         XivelyDeviceAssociationCallback.AssociationError error;
                         error = XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR;
 
+                        // TODO
                         switch (1) {
                             case 401:
                                 error = XivelyDeviceAssociationCallback.AssociationError.UNAUTHORIZED;

@@ -48,7 +48,7 @@ public class BlueprintGetDeviceTest extends TestCase {
 
         final String deviceId = "mock account id";
 
-        when(mockGetDevice.getDevice(anyString())).thenReturn(new SuccsssStubCall());
+        when(mockGetDevice.getDevice(anyString(), anyString())).thenReturn(new SuccsssStubCall());
 
         SUT.getDevice(deviceId, new Callback<GetDevice.Response>() {
             @Override
@@ -62,7 +62,7 @@ public class BlueprintGetDeviceTest extends TestCase {
             }
         });
 
-        verify(mockGetDevice, times(1)).getDevice(eq(deviceId));
+        verify(mockGetDevice, times(1)).getDevice(anyString(), eq(deviceId));
     }
 
     private class SuccsssStubCall implements Call<GetDevice.Response> {

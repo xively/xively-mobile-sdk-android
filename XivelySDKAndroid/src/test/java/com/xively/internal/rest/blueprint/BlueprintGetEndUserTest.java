@@ -47,7 +47,7 @@ public class BlueprintGetEndUserTest extends TestCase {
 
         final String userId = "mock user id";
 
-        when(mockGetEndUser.getEndUser(anyString())).thenReturn(new SuccsssStubCall());
+        when(mockGetEndUser.getEndUser(anyString(), anyString())).thenReturn(new SuccsssStubCall());
 
         SUT.getEndUser(userId, new Callback<GetEndUser.Response>() {
             @Override
@@ -61,7 +61,7 @@ public class BlueprintGetEndUserTest extends TestCase {
             }
         });
 
-        verify(mockGetEndUser, times(1)).getEndUser(eq(userId));
+        verify(mockGetEndUser, times(1)).getEndUser(anyString(), eq(userId));
     }
 
     private class SuccsssStubCall implements Call<GetEndUser.Response> {

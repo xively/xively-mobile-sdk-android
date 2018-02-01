@@ -55,7 +55,7 @@ public class BlueprintPutEndUserTest extends TestCase {
         HashMap<String, Object> data = new HashMap<String, Object>();
         data.put("emailAddress", "anotheremail");
 
-        when(mockPutEndUser.putEndUser(anyString(), anyString(), Matchers.<HashMap<String, Object>>any())).thenReturn(new SuccessStubCall());
+        when(mockPutEndUser.putEndUser(anyString(), anyString(), anyString(), Matchers.<HashMap<String, Object>>any())).thenReturn(new SuccessStubCall());
 
         SUT.putEndUser(userId, version, data, new Callback<PutEndUser.Response>() {
             @Override
@@ -69,7 +69,7 @@ public class BlueprintPutEndUserTest extends TestCase {
             }
         });
 
-        verify(mockPutEndUser, timeout(500).times(1)).putEndUser(eq(userId), eq(version), eq(data));
+        verify(mockPutEndUser, timeout(500).times(1)).putEndUser(anyString(), eq(userId), eq(version), eq(data));
     }
 
     private class SuccessStubCall implements Call<PutEndUser.Response> {

@@ -9,7 +9,6 @@ import com.xively.internal.connection.impl.XiMqttConnectionPool;
 import com.xively.internal.device.DeviceInfo;
 import com.xively.internal.device.impl.DeviceInfoImpl;
 import com.xively.internal.messaging.XiMessagingImpl;
-import com.xively.internal.rest.access.AccessWebServices;
 import com.xively.internal.rest.auth.AuthWebServices;
 import com.xively.internal.rest.blueprint.BlueprintWebServices;
 import com.xively.internal.rest.provision.ProvisionWebServices;
@@ -24,7 +23,6 @@ public class DependencyInjector {
     private static DependencyInjector instance;
 
     private Context context;
-    private AccessWebServices accessWebServicesInstance;
     private ProvisionWebServices provisionWebServicesInstance;
     private AuthWebServices authWebServicesInstance;
     private BlueprintWebServices blueprintWebServicesInstance;
@@ -73,14 +71,6 @@ public class DependencyInjector {
         return timeSeriesWebServicesInstance;
     }
 
-    public AccessWebServices accessWebServices() {
-        if (accessWebServicesInstance == null) {
-            accessWebServicesInstance = new AccessWebServices();
-        }
-
-        return accessWebServicesInstance;
-    }
-
     public AuthWebServices authWebServices() {
         if (authWebServicesInstance == null) {
             authWebServicesInstance = new AuthWebServices();
@@ -127,7 +117,6 @@ public class DependencyInjector {
     }
 
     public void resetInstances() {
-        accessWebServicesInstance = null;
         provisionWebServicesInstance = null;
         authWebServicesInstance = null;
         blueprintWebServicesInstance = null;

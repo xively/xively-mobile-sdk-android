@@ -56,7 +56,7 @@ public class BlueprintGetDevicesTest extends TestCase {
         final int page = 66;
         final int pageSize = 99;
 
-        when(mockGetDevices.getDevices(anyString(), anyString(), anyString(), anyString(), anyBoolean(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString())).thenReturn(new SuccessStubCall());
+        when(mockGetDevices.getDevices(anyString(), anyString(), anyString(), anyString(), anyString(), anyBoolean(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString())).thenReturn(new SuccessStubCall());
 
         SUT.getDevices(
                 accountId, deviceTemplateId, organizationId, provisioningState, page, pageSize,
@@ -74,6 +74,7 @@ public class BlueprintGetDevicesTest extends TestCase {
         );
 
         verify(mockGetDevices, times(1)).getDevices(
+                anyString(),
                 eq(accountId),
                 eq(deviceTemplateId),
                 eq(organizationId),

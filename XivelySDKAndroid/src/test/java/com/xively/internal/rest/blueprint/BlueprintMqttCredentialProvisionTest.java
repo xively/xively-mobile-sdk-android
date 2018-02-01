@@ -171,6 +171,7 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         when(mockGetEndUsers.getEndUsers(
                 anyString(),
                 anyString(),
+                anyString(),
                 anyBoolean(),
                 anyBoolean(),
                 anyInt(),
@@ -179,6 +180,7 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         )).thenReturn(new FailureEndUsersStubCall());
 
         when(mockGetAccountUser.getAccountUser(
+                anyString(),
                 anyString(),
                 anyString(),
                 anyBoolean(),
@@ -193,6 +195,7 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         verify(mockGetEndUsers).getEndUsers(
                 anyString(),
                 anyString(),
+                anyString(),
                 anyBoolean(),
                 anyBoolean(),
                 anyInt(),
@@ -201,6 +204,7 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         );
 
         verify(mockGetAccountUser).getAccountUser(
+                anyString(),
                 anyString(),
                 anyString(),
                 anyBoolean(),
@@ -251,6 +255,7 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         when(mockGetEndUsers.getEndUsers(
                 anyString(),
                 anyString(),
+                anyString(),
                 anyBoolean(),
                 anyBoolean(),
                 anyInt(),
@@ -259,12 +264,14 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         )).thenReturn(new SuccessEndUsersStubCall(mockGetEndUserResponse));
 
         when(mockCreateCredentials.createCredentials(
+                anyString(),
                 Matchers.<CreateCredentials.Request>any()
         )).thenReturn(new FailureCredentialStubCall());
 
         SUT.queryXivelyAccount(testJwt, mockCallback);
 
         verify(mockGetEndUsers).getEndUsers(
+                anyString(),
                 anyString(),
                 anyString(),
                 anyBoolean(),
@@ -275,6 +282,7 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         );
 
         verify(mockCreateCredentials).createCredentials(
+                anyString(),
                 Matchers.<CreateCredentials.Request>anyObject()
         );
 
@@ -320,6 +328,7 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         when(mockGetEndUsers.getEndUsers(
                 anyString(),
                 anyString(),
+                anyString(),
                 anyBoolean(),
                 anyBoolean(),
                 anyInt(),
@@ -330,6 +339,7 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         when(mockGetAccountUser.getAccountUser(
                 anyString(),
                 anyString(),
+                anyString(),
                 anyBoolean(),
                 anyBoolean(),
                 anyInt(),
@@ -338,12 +348,14 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         )).thenReturn(new SuccessAccountUserStubCall(mockGetAccountUserResponse));
 
         when(mockCreateCredentials.createCredentials(
+                anyString(),
                 Matchers.<CreateCredentials.Request>any()
         )).thenReturn(new SuccessCredentialStubCall(mockCredentialsResponse));
 
         SUT.queryXivelyAccount(testJwt, mockCallback);
 
         verify(mockGetEndUsers).getEndUsers(
+                anyString(),
                 anyString(),
                 anyString(),
                 anyBoolean(),
@@ -356,6 +368,7 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         verify(mockGetAccountUser).getAccountUser(
                 anyString(),
                 anyString(),
+                anyString(),
                 anyBoolean(),
                 anyBoolean(),
                 anyInt(),
@@ -364,6 +377,7 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         );
 
         verify(mockCreateCredentials).createCredentials(
+                anyString(),
                 Matchers.<CreateCredentials.Request>anyObject()
         );
 
@@ -420,6 +434,7 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         when(mockGetEndUsers.getEndUsers(
                 anyString(),
                 anyString(),
+                anyString(),
                 anyBoolean(),
                 anyBoolean(),
                 anyInt(),
@@ -428,12 +443,14 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         )).thenReturn(new SuccessEndUsersStubCall(mockGetEndUserResponse));
 
         when(mockCreateCredentials.createCredentials(
+                anyString(),
                 Matchers.<CreateCredentials.Request>any()
         )).thenReturn(new SuccessCredentialStubCall(mockCredentialsResponse));
 
         SUT.queryXivelyAccount(testJwt, mockCallback);
 
         verify(mockGetEndUsers).getEndUsers(
+                anyString(),
                 anyString(),
                 anyString(),
                 anyBoolean(),
@@ -444,6 +461,7 @@ public class BlueprintMqttCredentialProvisionTest extends TestCase {
         );
 
         verify(mockCreateCredentials).createCredentials(
+                anyString(),
                 Matchers.<CreateCredentials.Request>anyObject()
         );
 

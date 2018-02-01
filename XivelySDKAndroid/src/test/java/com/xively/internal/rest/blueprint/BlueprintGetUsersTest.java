@@ -58,7 +58,7 @@ public class BlueprintGetUsersTest extends TestCase {
         String accountId = "mock account id";
         String userId = "mock access user id";
 
-        when(mockGetEndUsers.getEndUsers(anyString(), anyString(), anyBoolean(), anyBoolean(), anyInt(), anyInt(), anyString())).thenReturn(new SuccessStubCall());
+        when(mockGetEndUsers.getEndUsers(anyString(), anyString(), anyString(), anyBoolean(), anyBoolean(), anyInt(), anyInt(), anyString())).thenReturn(new SuccessStubCall());
 
         SUT.getEndUsers(accountId, userId, new Callback<GetEndUsers.Response>() {
             @Override
@@ -73,6 +73,7 @@ public class BlueprintGetUsersTest extends TestCase {
         });
 
         verify(mockGetEndUsers, times(1)).getEndUsers(
+                anyString(),
                 eq(accountId),
                 eq(userId),
                 eq(true),
@@ -100,7 +101,7 @@ public class BlueprintGetUsersTest extends TestCase {
         String accountId = "mock account id";
         String userId = "mock access user id";
 
-        when(mockGetAccountUser.getAccountUser(anyString(), anyString(), anyBoolean(), anyBoolean(), anyInt(), anyInt(), anyString())).thenReturn(new SuccessStubCall());
+        when(mockGetAccountUser.getAccountUser(anyString(), anyString(), anyString(), anyBoolean(), anyBoolean(), anyInt(), anyInt(), anyString())).thenReturn(new SuccessStubCall());
 
         SUT.getAccountUser(accountId, userId, new Callback<GetAccountUser.Response>() {
             @Override
@@ -115,6 +116,7 @@ public class BlueprintGetUsersTest extends TestCase {
         });
 
         verify(mockGetAccountUser, times(1)).getAccountUser(
+                anyString(),
                 eq(accountId),
                 eq(userId),
                 eq(true),
@@ -145,7 +147,7 @@ public class BlueprintGetUsersTest extends TestCase {
         String accountId = "mock account id";
         String userId = "mock access user id";
 
-        when(mockCreateCredentials.createCredentials(any(CreateCredentials.Request.class))).thenReturn(new SuccessStubCall());
+        when(mockCreateCredentials.createCredentials(anyString(), any(CreateCredentials.Request.class))).thenReturn(new SuccessStubCall());
 
         SUT.createCredentials(accountId, userId, BlueprintWebServices.BluePrintEntity.endUser, new Callback<CreateCredentials.Response>() {
             @Override
@@ -159,7 +161,7 @@ public class BlueprintGetUsersTest extends TestCase {
             }
         });
 
-        verify(mockCreateCredentials, times(1)).createCredentials(createCredentialsRequestCaptor.capture());
+        verify(mockCreateCredentials, times(1)).createCredentials(anyString(), createCredentialsRequestCaptor.capture());
 
         CreateCredentials.Request request = createCredentialsRequestCaptor.getValue();
 

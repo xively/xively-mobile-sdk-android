@@ -7,7 +7,6 @@ import com.xively.internal.DependencyInjector;
 import com.xively.internal.account.XivelyAccount;
 import com.xively.internal.auth.XiAuthenticationImpl;
 import com.xively.internal.logger.LMILog;
-import com.xively.internal.rest.access.AccessWebServices;
 import com.xively.internal.rest.auth.AuthWebServices;
 import com.xively.internal.rest.auth.LoginUser;
 import com.xively.internal.rest.blueprint.BlueprintWebServices;
@@ -41,8 +40,6 @@ public class XiAuthenticationTest extends TestCase {
     @Mock
     private AuthWebServices mockAuthWebServices;
     @Mock
-    private AccessWebServices mockAccessWebServices;
-    @Mock
     private ProvisionWebServices mockProvisionWebServices;
     @Mock
     private BlueprintWebServices mockBlueprintWebServices;
@@ -70,7 +67,6 @@ public class XiAuthenticationTest extends TestCase {
         MockitoAnnotations.initMocks(this);
 
         when(mockDependencyInjector.authWebServices()).thenReturn(mockAuthWebServices);
-        when(mockDependencyInjector.accessWebServices()).thenReturn(mockAccessWebServices);
         when(mockDependencyInjector.provisionWebServices()).thenReturn(mockProvisionWebServices);
         when(mockDependencyInjector.blueprintWebServices()).thenReturn(mockBlueprintWebServices);
         when(mockDependencyInjector.timeSeriesWebServices()).thenReturn(mockTSWebServices);

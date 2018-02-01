@@ -54,7 +54,7 @@ public class BlueprintPutDeviceTest extends TestCase {
         HashMap<String, Object> data = new HashMap<String, Object>();
         data.put("connected", "true");
 
-        when(mockPutDevice.putDevice(anyString(), anyString(), Matchers.<HashMap<String, Object>>any())).thenReturn(new SuccessStubCall());
+        when(mockPutDevice.putDevice(anyString(), anyString(), anyString(), Matchers.<HashMap<String, Object>>any())).thenReturn(new SuccessStubCall());
 
         SUT.putDevice(deviceId, version, data, new Callback<PutDevice.Response>() {
             @Override
@@ -68,7 +68,7 @@ public class BlueprintPutDeviceTest extends TestCase {
             }
         });
 
-        verify(mockPutDevice, times(1)).putDevice(eq(deviceId), eq(version), eq(data));
+        verify(mockPutDevice, times(1)).putDevice(anyString(), eq(deviceId), eq(version), eq(data));
     }
 
     private class SuccessStubCall implements Call<PutDevice.Response> {

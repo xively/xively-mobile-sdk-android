@@ -55,7 +55,7 @@ public class BlueprintGetOrganizationsTest extends TestCase {
         final int page = 66;
         final int pageSize = 99;
 
-        when(mockGetOrganizations.getOrganizations(anyString(), anyString(), anyString(), anyString(), anyString(), anyBoolean(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString())).thenReturn(new SuccsssStubCall());
+        when(mockGetOrganizations.getOrganizations(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyBoolean(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString())).thenReturn(new SuccsssStubCall());
 
         SUT.getOrganizations(accountId, parentId, deviceTemplateId, organizationTemplateId, page, pageSize, new Callback<GetOrganizations.Response>() {
             @Override
@@ -70,6 +70,7 @@ public class BlueprintGetOrganizationsTest extends TestCase {
         });
 
         verify(mockGetOrganizations, times(1)).getOrganizations(
+                anyString(),
                 eq(accountId),
                 eq(parentId),
                 eq(deviceTemplateId),
