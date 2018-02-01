@@ -8,7 +8,10 @@ import retrofit2.http.POST;
 public interface StartAssociationWithCode {
 
     @POST("/api/v1/association/start-association-with-code")
-    Call<Response> startAssociationWithCode(@Header("Authorization") String credentials, @Body Request body);
+    Call<Response> startAssociationWithCode(
+            @Header("Authorization") String credentials,
+            @Body Request body
+    );
 
     class Request {
         public String associationCode;

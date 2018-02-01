@@ -48,7 +48,9 @@ public class TimeSeriesWebServices {
 
         final SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ", Locale.US); //ISO 8601
 
-        this.timeseriesApi.getData(topic,
+        this.timeseriesApi.getData(
+                authorizationHeader,
+                topic,
                 isoFormat.format(startDateTime),
                 isoFormat.format(endDateTime),
                 pageSize, pagingToken, omitNull,

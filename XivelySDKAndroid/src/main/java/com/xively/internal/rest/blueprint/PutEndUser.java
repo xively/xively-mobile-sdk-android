@@ -11,8 +11,14 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface PutEndUser {
+
     @PUT("/api/v1/end-users/{id}")
-    Call<Response> putEndUser(@Path("id") String userId, @Header("etag") String version, @Body HashMap<String, Object> body);
+    Call<Response> putEndUser(
+            @Header("Authorization") String authHeader,
+            @Path("id") String userId,
+            @Header("etag") String version,
+            @Body HashMap<String, Object> body
+    );
 
     class Response {
         public LinkedTreeMap<String, Object> endUser;

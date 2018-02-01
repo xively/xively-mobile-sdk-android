@@ -4,12 +4,14 @@ import java.util.HashMap;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Query;
 
 public interface GetOrganizations {
 
     @GET("/api/v1/organizations")
     Call<Response> getOrganizations(
+            @Header("Authorization") String authHeader,
             @Query("accountId") String accountId,
             @Query("parentId") String parentId,
             @Query("deviceTemplateId") String deviceTemplateId,

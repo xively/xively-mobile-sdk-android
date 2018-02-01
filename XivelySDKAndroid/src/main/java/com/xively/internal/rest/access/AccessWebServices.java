@@ -36,7 +36,6 @@ public class AccessWebServices {
         } else {
 //            retrofit.setLogLevel(RestAdapter.LogLevel.NONE);
         }
-
     }
 
     //for unit testing

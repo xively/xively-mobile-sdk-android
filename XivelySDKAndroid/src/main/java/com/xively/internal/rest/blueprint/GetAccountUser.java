@@ -4,12 +4,14 @@ import com.xively.internal.rest.blueprint.accountUserQuery.AccountUsersList;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Query;
 
 public interface GetAccountUser {
 
     @GET("/api/v1/account-users")
     Call<Response> getAccountUser(
+            @Header("Authorization") String authHeader,
             @Query("accountId") String accountId,
             @Query("userId") String accessUserId,
             @Query("meta") Boolean meta,

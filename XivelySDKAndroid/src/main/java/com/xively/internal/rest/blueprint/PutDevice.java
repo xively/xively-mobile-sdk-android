@@ -14,7 +14,12 @@ import retrofit2.http.Path;
 public interface PutDevice {
 
     @PUT("/api/v1/devices/{id}")
-    Call<Response> putDevice(@Path("id") String deviceId, @Header("etag") String version, @Body HashMap<String, Object> body);
+    Call<Response> putDevice(
+            @Header("Authorization") String authHeader,
+            @Path("id") String deviceId,
+            @Header("etag") String version,
+            @Body HashMap<String, Object> body
+    );
 
     class Response {
         public LinkedTreeMap<String, Object> device;

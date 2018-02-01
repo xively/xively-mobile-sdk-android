@@ -91,11 +91,6 @@ public class BlueprintWebServices {
         log.d("Auth header set for interactions ws.");
     }
 
-    public void setBasicAuthorizationHeader(String authorization) {
-        this.authorizationHeader = "Basic " + authorization;
-        log.d("Auth header set for interactions ws.");
-    }
-
     /**
      * @param accountId    xively account id
      * @param accessUserId *ID user id!*
@@ -107,6 +102,7 @@ public class BlueprintWebServices {
             final Callback<GetEndUsers.Response> callback
     ) {
         this.getEndUsersApi.getEndUsers(
+                authorizationHeader,
                 accountId,
                 accessUserId,
                 Boolean.TRUE,
@@ -128,6 +124,7 @@ public class BlueprintWebServices {
             final Callback<GetAccountUser.Response> callback
     ) {
         this.getAccountUserApi.getAccountUser(
+                authorizationHeader,
                 accountId,
                 accessUserId,
                 Boolean.TRUE,
@@ -149,7 +146,10 @@ public class BlueprintWebServices {
         request.entityId = userId;
         request.entityType = entityType.toString();
 
-        this.createMqttCredentialsApi.createCredentials(request).enqueue(callback);
+        this.createMqttCredentialsApi.createCredentials(
+                authorizationHeader,
+                request
+        ).enqueue(callback);
     }
 
     public void getEndUserList(
@@ -160,6 +160,7 @@ public class BlueprintWebServices {
             final Callback<GetEndUsers.Response> callback
     ) {
         this.getEndUsersApi.getEndUsers(
+                authorizationHeader,
                 accountId,
                 null,
                 Boolean.TRUE,
@@ -171,7 +172,10 @@ public class BlueprintWebServices {
     }
 
     public void getEndUser(final String userId, final Callback<GetEndUser.Response> callback) {
-        this.getEndUserApi.getEndUser(userId).enqueue(callback);
+        this.getEndUserApi.getEndUser(
+                authorizationHeader,
+                userId
+        ).enqueue(callback);
     }
 
     public void putEndUser(
@@ -180,7 +184,12 @@ public class BlueprintWebServices {
             final HashMap<String, Object> userData,
             final Callback<PutEndUser.Response> callback
     ) {
-        this.putEndUserApi.putEndUser(userId, version, userData).enqueue(callback);
+        this.putEndUserApi.putEndUser(
+                authorizationHeader,
+                userId,
+                version,
+                userData
+        ).enqueue(callback);
     }
 
     public void getOrganizations(
@@ -193,6 +202,7 @@ public class BlueprintWebServices {
             final Callback<GetOrganizations.Response> callback
     ) {
         this.getOrganizationsApi.getOrganizations(
+                authorizationHeader,
                 accountId,
                 parentId,
                 deviceTemplateId,
@@ -211,7 +221,10 @@ public class BlueprintWebServices {
             final String organizationId,
             final Callback<GetOrganization.Response> callback
     ) {
-        this.getOrganizationApi.getOrganization(organizationId).enqueue(callback);
+        this.getOrganizationApi.getOrganization(
+                authorizationHeader,
+                organizationId
+        ).enqueue(callback);
     }
 
     public void getDevices(
@@ -224,6 +237,7 @@ public class BlueprintWebServices {
             final Callback<GetDevices.Response> callback
     ) {
         this.getDevicesApi.getDevices(
+                authorizationHeader,
                 accountId,
                 deviceTemplateId,
                 organizationId,
@@ -238,7 +252,10 @@ public class BlueprintWebServices {
     }
 
     public void getDevice(final String deviceId, final Callback<GetDevice.Response> callback) {
-        this.getDeviceApi.getDevice(deviceId).enqueue(callback);
+        this.getDeviceApi.getDevice(
+                authorizationHeader,
+                deviceId
+        ).enqueue(callback);
     }
 
     public void putDevice(
@@ -247,7 +264,12 @@ public class BlueprintWebServices {
             final HashMap<String, Object> deviceData,
             final Callback<PutDevice.Response> callback
     ) {
-        this.putDeviceApi.putDevice(deviceId, version, deviceData).enqueue(callback);
+        this.putDeviceApi.putDevice(
+                authorizationHeader,
+                deviceId,
+                version,
+                deviceData
+        ).enqueue(callback);
     }
 
     //======================= helper methods ======================================================
@@ -266,7 +288,7 @@ public class BlueprintWebServices {
             return;
         }
 
-        byte[] jwtData = Base64.decodeBase64(jwtSplit[1]);
+        byte[] jwtData = Base64.decodeBase64(jwtSplit[1].getBytes());
         if (jwtData == null || jwtData.length < 1) {
             log.e("Failed to acquire credentials: corrupt token.");
             callback.onFailure(null, new Throwable("Corrupt Token"));
@@ -277,12 +299,15 @@ public class BlueprintWebServices {
         final String accountId;
 
         String jsonString = new String(jwtData);
+        log.d(jsonString);
 
         try {
             Gson gson = new Gson();
             XivelyJWT xivelyJWT = gson.fromJson(jsonString, XivelyJWT.class);
-            idmUserId = xivelyJWT.userId;
-            accountId = xivelyJWT.accountId;
+            log.d(xivelyJWT.toString());
+            idmUserId = xivelyJWT.getUserId();
+            accountId = xivelyJWT.getAccountId();
+            log.d("AccountId: " + accountId + " UserId: " + idmUserId);
         } catch (JsonSyntaxException ex) {
             log.e("Failed to acquire credentials: corrupt token.");
             log.t(ex.toString());
