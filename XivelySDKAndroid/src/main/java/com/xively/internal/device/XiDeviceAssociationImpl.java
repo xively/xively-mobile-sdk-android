@@ -22,46 +22,35 @@ public class XiDeviceAssociationImpl {
                 .associateIoTDevice(associationCode, account.getUserName(), new Callback<StartAssociationWithCode.Response>() {
                     @Override
                     public void onResponse(Call<StartAssociationWithCode.Response> call, Response<StartAssociationWithCode.Response> response) {
-
+                        callback.onAssociationSuccess();
                     }
 
                     @Override
                     public void onFailure(Call<StartAssociationWithCode.Response> call, Throwable t) {
+                        XivelyDeviceAssociationCallback.AssociationError error;
+                        error = XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR;
 
+                        switch (1) {
+                            case 401:
+                                error = XivelyDeviceAssociationCallback.AssociationError.UNAUTHORIZED;
+                                break;
+                            case 400:
+                            case 404:
+                                error = XivelyDeviceAssociationCallback.AssociationError.INVALID_CODE;
+                                break;
+                            case 500:
+                                error = XivelyDeviceAssociationCallback.AssociationError.SERVER_INTERNAL_ERROR;
+                                break;
+                            case 503:
+                                error = XivelyDeviceAssociationCallback.AssociationError.SERVICE_UNAVAILABLE;
+                                break;
+                            default:
+                                error = XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR;
+                                break;
+                        }
+
+                        callback.onAssociationFailure(error);
                     }
-// TODO
-//                    @Override
-//                    public void success(StartAssociationWithCode.Response response, Response response2) {
-//                        callback.onAssociationSuccess();
-//                    }
-//
-//                    @Override
-//                    public void failure(RetrofitError retrofitError) {
-//                        XivelyDeviceAssociationCallback.AssociationError error;
-//                        if (retrofitError == null || retrofitError.getResponse() == null){
-//                            error = XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR;
-//                        } else {
-//                            switch (retrofitError.getResponse().getStatus()) {
-//                                case 401:
-//                                    error = XivelyDeviceAssociationCallback.AssociationError.UNAUTHORIZED;
-//                                    break;
-//                                case 400:
-//                                case 404:
-//                                    error = XivelyDeviceAssociationCallback.AssociationError.INVALID_CODE;
-//                                    break;
-//                                case 500:
-//                                    error = XivelyDeviceAssociationCallback.AssociationError.SERVER_INTERNAL_ERROR;
-//                                    break;
-//                                case 503:
-//                                    error = XivelyDeviceAssociationCallback.AssociationError.SERVICE_UNAVAILABLE;
-//                                    break;
-//                                default:
-//                                    error = XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR;
-//                                    break;
-//                            }
-//                        }
-//                        callback.onAssociationFailure(error);
-//                    }
                 });
     }
 }

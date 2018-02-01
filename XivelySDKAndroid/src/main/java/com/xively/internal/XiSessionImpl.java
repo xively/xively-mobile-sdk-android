@@ -111,45 +111,35 @@ public class XiSessionImpl implements XiSession {
         final Callback<GetEndUsers.Response> blueprintCallback = new Callback<GetEndUsers.Response>() {
             @Override
             public void onResponse(Call<GetEndUsers.Response> call, Response<GetEndUsers.Response> response) {
+                log.i("Get end user list success.");
+                GetEndUsers.Response getEndUsersResponse = response.body();
 
+                if (getEndUsersResponse == null ||
+                        getEndUsersResponse.endUsers == null ||
+                        getEndUsersResponse.error != null) {
+                    onFailure(null, null);
+                    return;
+                }
+
+                parseEndUserResults(aggregatedEndUsersResult, getEndUsersResponse.endUsers);
+
+                LinkedTreeMap<String, Object> metaMap = (LinkedTreeMap<String, Object>) getEndUsersResponse.endUsers.get("meta");
+
+                Double page = (Double) metaMap.get("page");
+                Double pageSize = (Double) metaMap.get("pageSize");
+                Double count = (Double) metaMap.get("count");
+
+                if (page * pageSize < count) {
+                    requestMoreXiEndUserList(callback, page.intValue() + 1);
+                } else callback.onEndUserListReceived(aggregatedEndUsersResult);
             }
 
             @Override
             public void onFailure(Call<GetEndUsers.Response> call, Throwable t) {
-
+                log.w("Failed to get end user list.");
+//                log.w(""+new String(((TypedByteArray) retrofitError.getResponse().getBody()).getBytes()));
+                callback.onEndUserListFailed();
             }
-
-            // TODO
-//            @Override
-//            public void success(GetEndUsers.Response response, Response response2) {
-//                log.i("Get end user list success.");
-//                if (response == null ||
-//                        response.endUsers == null ||
-//                        response.error != null){
-//                    failure(null);
-//                    return;
-//                }
-//
-//                parseEndUserResults(aggregatedEndUsersResult, response.endUsers);
-//
-//                LinkedTreeMap<String,Object> metaMap = (LinkedTreeMap<String,Object>)response.endUsers.get("meta");
-//
-//                Double page = (Double)metaMap.get("page");
-//                Double pageSize = (Double)metaMap.get("pageSize");
-//                Double count = (Double)metaMap.get("count");
-//
-//                if (page * pageSize < count ){
-//                    requestMoreXiEndUserList( callback , page.intValue() + 1 );
-//                }
-//                else callback.onEndUserListReceived(aggregatedEndUsersResult);
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError retrofitError) {
-//                log.w("Failed to get end user list.");
-//                log.w(""+new String(((TypedByteArray)retrofitError.getResponse().getBody()).getBytes()));
-//                callback.onEndUserListFailed();
-//            }
         };
 
         DependencyInjector.get().blueprintWebServices().getEndUserList(
@@ -161,32 +151,23 @@ public class XiSessionImpl implements XiSession {
         final Callback<GetEndUser.Response> blueprintCallback = new Callback<GetEndUser.Response>() {
             @Override
             public void onResponse(Call<GetEndUser.Response> call, Response<GetEndUser.Response> response) {
+                log.i("Get end user success.");
+                GetEndUser.Response getEndUserResponse = response.body();
 
+                if (getEndUserResponse == null || getEndUserResponse.error != null) {
+                    onFailure(null, null);
+                    return;
+                }
+
+                XiEndUserInfo info = parseEndUser(getEndUserResponse.endUser);
+                callback.onEndUserReceived(info);
             }
 
             @Override
             public void onFailure(Call<GetEndUser.Response> call, Throwable t) {
-
+                log.w("Failed to get end user");
+                callback.onEndUserFailed();
             }
-
-            // TODO
-//            @Override
-//            public void success(GetEndUser.Response response, Response response2) {
-//                log.i("Get end user success.");
-//                if (response == null || response.error != null ){
-//                    failure(null);
-//                    return;
-//                }
-//                XiEndUserInfo info = parseEndUser(response.endUser);
-//                callback.onEndUserReceived(info);
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError retrofitError) {
-//                log.w("Failed to get end user " + retrofitError );
-//                log.w(""+new String(((TypedByteArray)retrofitError.getResponse().getBody()).getBytes()));
-//                callback.onEndUserFailed();
-//            }
         };
 
         DependencyInjector.get().blueprintWebServices().getEndUser(endUserId, blueprintCallback);
@@ -197,31 +178,22 @@ public class XiSessionImpl implements XiSession {
         final Callback<PutEndUser.Response> updateCallback = new Callback<PutEndUser.Response>() {
             @Override
             public void onResponse(Call<PutEndUser.Response> call, Response<PutEndUser.Response> response) {
+                log.i("Update end user success.");
+                PutEndUser.Response putEndUserResponse = response.body();
 
+                if (putEndUserResponse == null || putEndUserResponse.error != null) {
+                    onFailure(call, null);
+                    return;
+                }
+                XiEndUserInfo info = parseEndUser(putEndUserResponse.endUser);
+                callback.onEndUserUpdateSuccess(info);
             }
 
             @Override
             public void onFailure(Call<PutEndUser.Response> call, Throwable t) {
-
+                log.w("Failed to update end user");
+                callback.onEndUserUpdateFailed();
             }
-
-//            @Override
-//            public void success(PutEndUser.Response response, Response response2) {
-//                log.i("Update end user success.");
-//                if (response == null || response.error != null ){
-//                    failure(null);
-//                    return;
-//                }
-//                XiEndUserInfo info = parseEndUser(response.endUser);
-//                callback.onEndUserUpdateSuccess(info);
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError retrofitError) {
-//                log.w("Failed to update end user " + retrofitError );
-//                log.w(""+new String(((TypedByteArray)retrofitError.getResponse().getBody()).getBytes()));
-//                callback.onEndUserUpdateFailed();
-//            }
         };
 
         DependencyInjector.get().blueprintWebServices().putEndUser(userId, version, userData, updateCallback);
@@ -239,45 +211,34 @@ public class XiSessionImpl implements XiSession {
         final Callback<GetOrganizations.Response> blueprintCallback = new Callback<GetOrganizations.Response>() {
             @Override
             public void onResponse(Call<GetOrganizations.Response> call, Response<GetOrganizations.Response> response) {
+                log.i("Get organization list success.");
+                GetOrganizations.Response getOrganizationResponse = response.body();
 
+                if (getOrganizationResponse == null ||
+                        getOrganizationResponse.organizations == null ||
+                        getOrganizationResponse.error != null) {
+                    onFailure(call, null);
+                    return;
+                }
+
+                parseOrganizationsResults(aggregatedOrganizationsResult, getOrganizationResponse.organizations);
+
+                LinkedTreeMap<String, Object> metaMap = (LinkedTreeMap<String, Object>) getOrganizationResponse.organizations.get("meta");
+
+                Double page = (Double) metaMap.get("page");
+                Double pageSize = (Double) metaMap.get("pageSize");
+                Double count = (Double) metaMap.get("count");
+
+                if (page * pageSize < count) {
+                    requestMoreXiOrganizationList(callback, page.intValue() + 1);
+                } else callback.onOrganizationListReceived(aggregatedOrganizationsResult);
             }
 
             @Override
             public void onFailure(Call<GetOrganizations.Response> call, Throwable t) {
-
+                log.w("Failed to get organization list.");
+                callback.onOrganizationListFailed();
             }
-
-            // TODO
-//            @Override
-//            public void success(GetOrganizations.Response response, Response response2) {
-//                log.i("Get organization list success.");
-//                if (response == null ||
-//                        response.organizations == null ||
-//                        response.error != null){
-//                    failure(null);
-//                    return;
-//                }
-//
-//                parseOrganizationsResults(aggregatedOrganizationsResult, response.organizations );
-//
-//                LinkedTreeMap<String,Object> metaMap = (LinkedTreeMap<String,Object>)response.organizations.get("meta");
-//
-//                Double page = (Double)metaMap.get("page");
-//                Double pageSize = (Double)metaMap.get("pageSize");
-//                Double count = (Double)metaMap.get("count");
-//
-//                if (page * pageSize < count ){
-//                    requestMoreXiOrganizationList( callback , page.intValue() + 1 );
-//                }
-//                else callback.onOrganizationListReceived(aggregatedOrganizationsResult);
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError retrofitError) {
-//                log.w("Failed to get organization list.");
-//                log.w(""+new String(((TypedByteArray)retrofitError.getResponse().getBody()).getBytes()));
-//                callback.onOrganizationListFailed();
-//            }
         };
 
         DependencyInjector.get().blueprintWebServices().getOrganizations(
@@ -289,33 +250,22 @@ public class XiSessionImpl implements XiSession {
         final Callback<GetOrganization.Response> blueprintCallback = new Callback<GetOrganization.Response>() {
             @Override
             public void onResponse(Call<GetOrganization.Response> call, Response<GetOrganization.Response> response) {
+                log.i("Get organization success." + response);
+                GetOrganization.Response getOrganizationResponse = response.body();
 
+                if (getOrganizationResponse == null || getOrganizationResponse.error != null) {
+                    onFailure(call, null);
+                    return;
+                }
+                XiOrganizationInfo info = parseOrganization(getOrganizationResponse.organization);
+                callback.onOrganizationReceived(info);
             }
 
             @Override
             public void onFailure(Call<GetOrganization.Response> call, Throwable t) {
-
+                log.w("Failed to get organization");
+                callback.onOrganizationFailed();
             }
-
-            // TODO
-//            @Override
-//            public void success(GetOrganization.Response response, Response response2) {
-//                log.i("Get organization success." + response );
-//
-//                if (response == null || response.error != null ){
-//                    failure(null);
-//                    return;
-//                }
-//                XiOrganizationInfo info = parseOrganization(response.organization);
-//                callback.onOrganizationReceived(info);
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError retrofitError) {
-//                log.w("Failed to get organization " + retrofitError );
-//                log.w(""+new String(((TypedByteArray)retrofitError.getResponse().getBody()).getBytes()));
-//                callback.onOrganizationFailed();
-//            }
         };
 
         DependencyInjector.get().blueprintWebServices().getOrganization(organizationId, blueprintCallback);
@@ -334,44 +284,34 @@ public class XiSessionImpl implements XiSession {
         final Callback<GetDevices.Response> blueprintCallback = new Callback<GetDevices.Response>() {
             @Override
             public void onResponse(Call<GetDevices.Response> call, Response<GetDevices.Response> response) {
+                log.i("Get device info list success.");
+                GetDevices.Response getDevicesResponse = response.body();
 
+                if (getDevicesResponse == null ||
+                        getDevicesResponse.devices == null ||
+                        getDevicesResponse.error != null) {
+                    onFailure(call, null);
+                    return;
+                }
+
+                parseDeviceInfoResults(aggregatedDevicesResult, getDevicesResponse.devices);
+
+                LinkedTreeMap<String, Object> metaMap = (LinkedTreeMap<String, Object>) getDevicesResponse.devices.get("meta");
+
+                Double page = (Double) metaMap.get("page");
+                Double pageSize = (Double) metaMap.get("pageSize");
+                Double count = (Double) metaMap.get("count");
+
+                if (page * pageSize < count) {
+                    requestMoreXiDeviceInfoList(callback, page.intValue() + 1);
+                } else callback.onDeviceInfoListReceived(aggregatedDevicesResult);
             }
 
             @Override
             public void onFailure(Call<GetDevices.Response> call, Throwable t) {
-
+                log.w("Failed to get devices info list.");
+                callback.onDeviceInfoListFailed();
             }
-
-            // TODO
-//            @Override
-//            public void success(GetDevices.Response response, Response response2) {
-//                log.i("Get device info list success.");
-//                if (response == null ||
-//                        response.devices == null ||
-//                        response.error != null){
-//                    failure(null);
-//                    return;
-//                }
-//
-//                parseDeviceInfoResults(aggregatedDevicesResult, response.devices);
-//
-//                LinkedTreeMap<String,Object> metaMap = (LinkedTreeMap<String,Object>)response.devices.get("meta");
-//
-//                Double page = (Double)metaMap.get("page");
-//                Double pageSize = (Double)metaMap.get("pageSize");
-//                Double count = (Double)metaMap.get("count");
-//
-//                if (page * pageSize < count ){
-//                    requestMoreXiDeviceInfoList( callback , page.intValue() + 1 );
-//                }
-//                else callback.onDeviceInfoListReceived(aggregatedDevicesResult);
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError retrofitError) {
-//                log.w("Failed to get devices info list.");
-//                callback.onDeviceInfoListFailed();
-//            }
         };
 
         DependencyInjector.get().blueprintWebServices().getDevices(
@@ -384,32 +324,22 @@ public class XiSessionImpl implements XiSession {
         final Callback<GetDevice.Response> blueprintCallback = new Callback<GetDevice.Response>() {
             @Override
             public void onResponse(Call<GetDevice.Response> call, Response<GetDevice.Response> response) {
+                log.i("Get device success.");
+                GetDevice.Response getDeviceResponse = response.body();
 
+                if (getDeviceResponse == null || getDeviceResponse.error != null) {
+                    onFailure(call, null);
+                    return;
+                }
+                XiDeviceInfo info = parseDeviceInfo(getDeviceResponse.device);
+                callback.onDeviceInfoReceived(info);
             }
 
             @Override
             public void onFailure(Call<GetDevice.Response> call, Throwable t) {
-
+                log.w("Failed to get device");
+                callback.onDeviceInfoFailed();
             }
-
-            // TODO
-//            @Override
-//            public void success(GetDevice.Response response, Response response2) {
-//                log.i("Get device success.");
-//                if (response == null || response.error != null ){
-//                    failure(null);
-//                    return;
-//                }
-//                XiDeviceInfo info = parseDeviceInfo(response.device);
-//                callback.onDeviceInfoReceived(info);
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError retrofitError) {
-//                log.w("Failed to get device " + retrofitError );
-//                log.w(""+new String(((TypedByteArray)retrofitError.getResponse().getBody()).getBytes()));
-//                callback.onDeviceInfoFailed();
-//            }
         };
 
         DependencyInjector.get().blueprintWebServices().getDevice(deviceId, blueprintCallback);
@@ -420,32 +350,22 @@ public class XiSessionImpl implements XiSession {
         final Callback<PutDevice.Response> updateCallback = new Callback<PutDevice.Response>() {
             @Override
             public void onResponse(Call<PutDevice.Response> call, Response<PutDevice.Response> response) {
+                log.i("Put device success.");
+                PutDevice.Response putDeviceResponse = response.body();
 
+                if (putDeviceResponse == null || putDeviceResponse.error != null) {
+                    onFailure(call, null);
+                    return;
+                }
+                XiDeviceInfo info = parseDeviceInfo(putDeviceResponse.device);
+                callback.onDevicUpdateSuccess(info);
             }
 
             @Override
             public void onFailure(Call<PutDevice.Response> call, Throwable t) {
-
+                log.w("Failed to update device");
+                callback.onDeviceUpdateFailed();
             }
-
-            // TODO
-//            @Override
-//            public void success(PutDevice.Response response, Response response2) {
-//                log.i("Put device success.");
-//                if (response == null || response.error != null ){
-//                    failure(null);
-//                    return;
-//                }
-//                XiDeviceInfo info = parseDeviceInfo(response.device);
-//                callback.onDevicUpdateSuccess(info);
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError retrofitError) {
-//                log.w("Failed to update device " + retrofitError );
-//                log.w(""+new String(((TypedByteArray)retrofitError.getResponse().getBody()).getBytes()));
-//                callback.onDeviceUpdateFailed();
-//            }
         };
 
         DependencyInjector.get().blueprintWebServices().putDevice(deviceId, version, deviceData, updateCallback);

@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
@@ -29,7 +28,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * A fragment representing a list of Items.
@@ -41,6 +39,7 @@ import java.util.Objects;
  * interface.
  */
 public class DevicesFragment extends Fragment implements AbsListView.OnItemClickListener {
+    private static final String TAG = "DevicesFragment";
     private OnFragmentInteractionListener mListener;
 
     private TextView tvStatus;
@@ -60,7 +59,7 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
      */
     private SimpleAdapter adapter;
     private ArrayAdapter<DeviceItem> mAdapter;
-    private List<Map<String,String>> mapData;
+    private List<Map<String, String>> mapData;
     private ArrayList<Object> items;
     private String actualOrg;
 
@@ -86,8 +85,8 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
 
         adapter = new SimpleAdapter(getActivity(), mapData,
                 android.R.layout.simple_list_item_2,
-                new String[] {"title", "date"},
-                new int[] {android.R.id.text1,
+                new String[]{"title", "date"},
+                new int[]{android.R.id.text1,
                         android.R.id.text2});
     }
 
@@ -100,7 +99,7 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
         mListView = (AbsListView) view.findViewById(android.R.id.list);
         mListView.setOnItemClickListener(this);
 
-        mListView.setAdapter( adapter );
+        mListView.setAdapter(adapter);
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Organizations / Devices");
 
@@ -125,21 +124,21 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
                     + " must implement OnFragmentInteractionListener");
         }
 
-        queryXivelyOrganizations( );
+        queryXivelyOrganizations();
     }
 
-    private void queryXivelyOrganizations( )
-    {
+    private void queryXivelyOrganizations() {
         XiSession session = ((MainActivity) getActivity()).getXivelySession();
-        if (session == null || !session.getState().equals(XiSession.State.Active)){
+        if (session == null || !session.getState().equals(XiSession.State.Active)) {
             return;
         }
 
+        Log.i(TAG, "Requesting Xively Organization");
+
         session.requestXiOrganizationList(new XiOrganizationListCallback() {
             @Override
-            public void onOrganizationListReceived(List<XiOrganizationInfo> list)
-            {
-                if (list == null || list.size() == 0){
+            public void onOrganizationListReceived(List<XiOrganizationInfo> list) {
+                if (list == null || list.size() == 0) {
                     tvStatus.setText("No devices found for your account.");
                     return;
                 }
@@ -155,16 +154,18 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
         });
     }
 
-    private void queryXivelyDevices(){
+    private void queryXivelyDevices() {
         XiSession session = ((MainActivity) getActivity()).getXivelySession();
-        if (session == null || !session.getState().equals(XiSession.State.Active)){
+        if (session == null || !session.getState().equals(XiSession.State.Active)) {
             return;
         }
+
+        Log.i(TAG, "Requesting Xively Device list");
 
         session.requestXiDeviceInfoList(new XiDeviceInfoListCallback() {
             @Override
             public void onDeviceInfoListReceived(List<XiDeviceInfo> list) {
-                if (list == null || list.size() == 0){
+                if (list == null || list.size() == 0) {
                     tvStatus.setText("No devices found for your account.");
                     return;
                 }
@@ -180,21 +181,20 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
         });
     }
 
-    private void filter()
-    {
-        if ( items == null ) items = new ArrayList<Object>();
+    private void filter() {
+        if (items == null) items = new ArrayList<Object>();
         items.clear();
         mapData.clear();
 
         ArrayList<Object> orgitems = new ArrayList<Object>();
-        ArrayList<Map<String,String>> orgdatums = new ArrayList<Map<String,String>>();
+        ArrayList<Map<String, String>> orgdatums = new ArrayList<Map<String, String>>();
         ArrayList<Object> devitems = new ArrayList<Object>();
-        ArrayList<Map<String,String>> devdatums = new ArrayList<Map<String,String>>();
+        ArrayList<Map<String, String>> devdatums = new ArrayList<Map<String, String>>();
 
-        for (XiOrganizationInfo org : orgInfoList){
+        for (XiOrganizationInfo org : orgInfoList) {
             String orgName = "n/a";
-            if (org.name!= null &&
-                    !org.name.equals("")){
+            if (org.name != null &&
+                    !org.name.equals("")) {
                 orgName = org.name;
             }
 
@@ -202,17 +202,16 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
             datum.put("title", org.name);
             datum.put("date", org.organizationId);
 
-            if ( ( org.parentId == null && actualOrg == null ) || (org.parentId != null && org.parentId.equals(actualOrg) ) )
-            {
+            if ((org.parentId == null && actualOrg == null) || (org.parentId != null && org.parentId.equals(actualOrg))) {
                 orgdatums.add(datum);
                 orgitems.add(org);
             }
         }
 
-        for (XiDeviceInfo device : deviceInfoList){
+        for (XiDeviceInfo device : deviceInfoList) {
             String deviceName = "n/a";
             if (device.deviceName != null &&
-                    !device.deviceName.equals("")){
+                    !device.deviceName.equals("")) {
                 deviceName = device.deviceName;
             }
 
@@ -220,7 +219,7 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
             datum.put("title", device.deviceName);
             datum.put("date", device.deviceId);
 
-            if ( device.customFields.get("organizationId").equals(actualOrg)) {
+            if (device.customFields.get("organizationId").equals(actualOrg)) {
                 devdatums.add(datum);
                 devitems.add(device);
             }
@@ -228,22 +227,22 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
 
         Map<String, String> datum = new HashMap<String, String>(2);
 
-        datum.put("title", "ORGANIZATIONS (" + orgitems.size() + ")" );
+        datum.put("title", "ORGANIZATIONS (" + orgitems.size() + ")");
 
         mapData.add(datum);
         items.add("ORGS");
 
-        mapData.addAll( orgdatums );
-        items.addAll( orgitems );
+        mapData.addAll(orgdatums);
+        items.addAll(orgitems);
 
         datum = new HashMap<String, String>(2);
-        datum.put("title", "DEVICES (" + devitems.size() + ")" );
+        datum.put("title", "DEVICES (" + devitems.size() + ")");
 
         mapData.add(datum);
         items.add("DEVS");
 
-        mapData.addAll( devdatums );
-        items.addAll( devitems );
+        mapData.addAll(devdatums);
+        items.addAll(devitems);
 
         tvStatus.setText(items.size() + " organizations(s) and device(s):");
 
@@ -256,7 +255,7 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
         super.onDetach();
         mListener = null;
         if (alertDialog != null &&
-                alertDialog.isShowing()){
+                alertDialog.isShowing()) {
             alertDialog.dismiss();
         }
     }
@@ -275,7 +274,7 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
             filter();
         }
         if (info.getClass().equals(com.xively.messaging.XiDeviceInfo.class)) {
-            final XiDeviceInfo deviceInfo = (XiDeviceInfo)info;
+            final XiDeviceInfo deviceInfo = (XiDeviceInfo) info;
             String deviceInfoTitle = "Device details: ";
             String deviceInfoMessage = deviceInfo.toString();
 
@@ -310,15 +309,13 @@ public class DevicesFragment extends Fragment implements AbsListView.OnItemClick
 
     }
 
-    public void onBackPressed()
-    {
-        if ( actualOrg != null )
-        {
+    public void onBackPressed() {
+        if (actualOrg != null) {
             ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Organizations / Devices");
 
             int index = actualOrg.lastIndexOf('/');
-            if ( index > -1 ) actualOrg = actualOrg.substring( 0  , index );
-            else  actualOrg = null;
+            if (index > -1) actualOrg = actualOrg.substring(0, index);
+            else actualOrg = null;
         }
         filter();
     }
