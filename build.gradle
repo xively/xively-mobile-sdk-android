@@ -11,42 +11,7 @@ buildscript {
 }
 
 allprojects {
-    //FIXME: move to private properties file as static TC resource
-    ext {
-        artifactory_user = "imatko"
-        artifactory_password = "AP7RTgp18gJ91BfwzTEamKwVfno"
-        artifactory_contextUrl = "https://artifactory.intra.3amlabs.net/artifactory"
-    }
-
     repositories {
-        maven {
-            url 'https://artifactory.intra.3amlabs.net/artifactory/repo'
-            credentials {
-                username = "${artifactory_user}"
-                password = "${artifactory_password}"
-            }
-        }
         jcenter()
-    }
-
-    apply plugin: "com.jfrog.artifactory"
-}
-
-artifactory {
-    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
-    publish {
-        repository {
-            repoKey = 'xively'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-
-        }
-    }
-    resolve {
-        repository {
-            repoKey = 'repo'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-        }
     }
 }
