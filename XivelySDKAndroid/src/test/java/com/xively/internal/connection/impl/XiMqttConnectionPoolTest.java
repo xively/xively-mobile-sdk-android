@@ -139,15 +139,14 @@ public class XiMqttConnectionPoolTest extends TestCase {
     }
 
     public void testGetConnectionCallbackWithDisconnectedConnection() {
-        //TODO: implement
+        //TODO: implement test
     }
 
     public void testGetConnectionCallbackOnConnectionError() {
-        //TODO: implement
+        //TODO: implement test
     }
 
     public void testGetConnectionCallbackOnConnectionClosed() {
-        //TODO: implement
+        //TODO: implement test
     }
-
 }

@@ -44,7 +44,6 @@ public class BlueprintWebServices {
     private GetOrganization getOrganizationApi;
     private GetOrganizations getOrganizationsApi;
 
-    //FIXME: remove header once service accepts proper ID service jwt.
     private String authorizationHeader = null;
 
     public BlueprintWebServices() {
@@ -317,7 +316,6 @@ public class BlueprintWebServices {
 
         final Callback<GetAccountUser.Response> accountUsersCallback = new Callback<GetAccountUser.Response>() {
 
-            // TODO double check
             @Override
             public void onResponse(
                     Call<GetAccountUser.Response> call,
@@ -348,7 +346,6 @@ public class BlueprintWebServices {
                 }
             }
 
-            // TODO double check
             @Override
             public void onFailure(Call<GetAccountUser.Response> call, Throwable t) {
                 callback.onFailure(null, t);

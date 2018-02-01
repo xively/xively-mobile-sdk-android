@@ -45,51 +45,36 @@ public class XiAuthenticationImpl implements XiAuthentication {
                     public void onResponse(Call<LoginUser.Response> call, Response<LoginUser.Response> response) {
                         LoginUser.Response loginResponse = response.body();
 
-                        if (loginResponse != null &&
-                                loginResponse.jwt != null &&
-                                !loginResponse.jwt.equals("")) {
+                        if (loginResponse != null && loginResponse.jwt != null && !loginResponse.jwt.equals("")) {
                             log.i("Authentication success. Acquiring credentials...");
                             setAuthorizationHeaders(loginResponse.jwt);
                             acquireCredentials(callback, loginResponse.jwt);
+                        } else if (loginResponse.error != null && loginResponse.error.equals("Unathorized")) {
+                            log.w("Invalid Credentials");
+                            callback.authenticationFailed(XiAuthenticationCallback.XiAuthenticationError.INVALID_CREDENTIALS);
                         } else {
                             log.w("Invalid auth response.");
-                            callback.authenticationFailed(
-                                    XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR);
+                            callback.authenticationFailed(XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR);
                         }
                     }
 
-                    // TODO
                     @Override
                     public void onFailure(Call<LoginUser.Response> call, Throwable t) {
-                        log.i("Authentication failed: " + t);
+                        log.i("Authentication failed");
                         XiAuthenticationCallback.XiAuthenticationError error =
                                 XiAuthenticationCallback.XiAuthenticationError.UNEXPECTED_ERROR;
 
                         if (t != null) {
-                            if (t.getCause() instanceof IOException) {
+                            log.d("Exception: " + t.getMessage());
+
+                            if (t instanceof IOException) {
                                 error = XiAuthenticationCallback.XiAuthenticationError.NETWORK_ERROR;
-                            } /*  if (retrofitError.getResponse() != null) {
-                                switch (retrofitError.getResponse().getStatus()) {
-                                    case 401:
-                                        error = XiAuthenticationCallback.XiAuthenticationError.INVALID_CREDENTIALS;
-                                        break;
-                                    case 500:
-                                    case 503:
-                                        error = XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR;
-                                        break;
-                                }
-                            } */
+                            }
                         }
 
                         callback.authenticationFailed(error);
                     }
                 });
-    }
-
-    public void setOauthToken(String oAuthToken, XiAuthenticationCallback callback) {
-        //FIXME: acquireCredentials(callback, oAuthToken);
-        setAuthorizationHeaders(oAuthToken);
-        createSessionObject(callback, null);
     }
 
     @Override

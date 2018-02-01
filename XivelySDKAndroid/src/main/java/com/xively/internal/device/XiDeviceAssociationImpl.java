@@ -17,11 +17,45 @@ public class XiDeviceAssociationImpl {
     }
 
     public void startDeviceAssociation(String associationCode, final XivelyDeviceAssociationCallback callback) {
+        DependencyInjector.get().provisionWebServices().associateIoTDevice(
+                associationCode,
+                account.getUserName(),
+                new Callback<StartAssociationWithCode.Response>() {
 
-        DependencyInjector.get().provisionWebServices()
-                .associateIoTDevice(associationCode, account.getUserName(), new Callback<StartAssociationWithCode.Response>() {
                     @Override
-                    public void onResponse(Call<StartAssociationWithCode.Response> call, Response<StartAssociationWithCode.Response> response) {
+                    public void onResponse(
+                            Call<StartAssociationWithCode.Response> call,
+                            Response<StartAssociationWithCode.Response> response
+                    ) {
+                        switch (response.code()) {
+                            case 401:
+                                callback.onAssociationFailure(
+                                        XivelyDeviceAssociationCallback.AssociationError.UNAUTHORIZED
+                                );
+                                break;
+                            case 400:
+                            case 404:
+                                callback.onAssociationFailure(
+                                        XivelyDeviceAssociationCallback.AssociationError.INVALID_CODE
+                                );
+                                break;
+                            case 500:
+                                callback.onAssociationFailure(
+                                        XivelyDeviceAssociationCallback.AssociationError.SERVER_INTERNAL_ERROR
+                                );
+                                break;
+                            case 503:
+                                callback.onAssociationFailure(
+                                        XivelyDeviceAssociationCallback.AssociationError.SERVICE_UNAVAILABLE
+                                );
+                                break;
+                            default:
+                                callback.onAssociationFailure(
+                                        XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR
+                                );
+                                break;
+                        }
+
                         callback.onAssociationSuccess();
                     }
 
@@ -29,26 +63,6 @@ public class XiDeviceAssociationImpl {
                     public void onFailure(Call<StartAssociationWithCode.Response> call, Throwable t) {
                         XivelyDeviceAssociationCallback.AssociationError error;
                         error = XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR;
-
-                        // TODO
-                        switch (1) {
-                            case 401:
-                                error = XivelyDeviceAssociationCallback.AssociationError.UNAUTHORIZED;
-                                break;
-                            case 400:
-                            case 404:
-                                error = XivelyDeviceAssociationCallback.AssociationError.INVALID_CODE;
-                                break;
-                            case 500:
-                                error = XivelyDeviceAssociationCallback.AssociationError.SERVER_INTERNAL_ERROR;
-                                break;
-                            case 503:
-                                error = XivelyDeviceAssociationCallback.AssociationError.SERVICE_UNAVAILABLE;
-                                break;
-                            default:
-                                error = XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR;
-                                break;
-                        }
 
                         callback.onAssociationFailure(error);
                     }

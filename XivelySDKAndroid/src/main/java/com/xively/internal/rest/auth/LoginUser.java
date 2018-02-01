@@ -18,5 +18,6 @@ public interface LoginUser {
 
     class Response {
         public String jwt;
+        public String error;
     }
 }

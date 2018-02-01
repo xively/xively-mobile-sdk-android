@@ -259,54 +259,55 @@ public class XiAuthenticationTest extends TestCase {
         assertEquals(errorCaptor.getValue(), XiAuthenticationCallback.XiAuthenticationError.NETWORK_ERROR);
     }
 
-    //TODO: invalid credentials
-
     public void testRequestAuthFailureOnInvalidCredentials() {
         XiAuthenticationImpl SUT = new XiAuthenticationImpl();
 
         SUT.requestAuth(mockEmail, mockPassword, mockAccountId, mockAuthCallback);
 
-        // TODO
-//        verify(mockAuthWebServices).loginUser(
-//                eq(mockEmail),
-//                eq(mockPassword),
-//                eq(mockAccountId),
-//                captorLoginResponse.capture()
-//        );
-//
-//        Callback<LoginUser.Response> loginCallback = captorLoginResponse.getValue();
-//
-//        loginCallback.onResponse(null, Response.success(new LoginUser.Response()));
-//
-//        verify(mockAuthCallback).authenticationFailed(errorCaptor.capture());
-//
-//        assertNotNull(errorCaptor.getValue());
-//        assertEquals(errorCaptor.getValue(), XiAuthenticationCallback.XiAuthenticationError.INVALID_CREDENTIALS);
+        verify(mockAuthWebServices).loginUser(
+                eq(mockEmail),
+                eq(mockPassword),
+                eq(mockAccountId),
+                captorLoginResponse.capture()
+        );
+
+        Callback<LoginUser.Response> loginCallback = captorLoginResponse.getValue();
+
+        LoginUser.Response loginUserResponse = new LoginUser.Response();
+        loginUserResponse.jwt = null;
+        loginUserResponse.error = "Unathorized";
+
+        loginCallback.onResponse(null, Response.success(loginUserResponse));
+
+        verify(mockAuthCallback).authenticationFailed(errorCaptor.capture());
+
+        assertNotNull(errorCaptor.getValue());
+        assertEquals(errorCaptor.getValue(), XiAuthenticationCallback.XiAuthenticationError.INVALID_CREDENTIALS);
     }
 
     public void testRequestAuthFailureOnServer() {
-        ArgumentCaptor<Callback> loginResponseCallbackCaptor =
-                ArgumentCaptor.forClass(Callback.class);
-        XiAuthenticationImpl testAuth = new XiAuthenticationImpl();
+        XiAuthenticationImpl SUT = new XiAuthenticationImpl();
 
-        testAuth.requestAuth(mockEmail, mockPassword, mockAccountId, mockAuthCallback);
+        SUT.requestAuth(mockEmail, mockPassword, mockAccountId, mockAuthCallback);
 
-        // TODO
-//        verify(mockAuthWebServices).loginUser(eq(mockEmail), eq(mockPassword), eq(mockAccountId),
-//                loginResponseCallbackCaptor.capture());
-//        Callback<LoginUser.Response> loginCallback = loginResponseCallbackCaptor.getValue();
+        verify(mockAuthWebServices).loginUser(
+                eq(mockEmail),
+                eq(mockPassword),
+                eq(mockAccountId),
+                captorLoginResponse.capture()
+        );
 
-//        retrofit.client.Response mockResponse = new Response("mock url", 503, "something bad",
-//                new ArrayList<retrofit.client.Header>(), null);
-//        RetrofitError mockError =
-//                RetrofitError.httpError("mock url", mockResponse, null, null);
-//
-//        loginCallback.failure(mockError);
+        Callback<LoginUser.Response> loginCallback = captorLoginResponse.getValue();
 
-//        verify(mockAuthCallback).authenticationFailed(errorCaptor.capture());
-//
-//        assertNotNull(errorCaptor.getValue());
-//        assertTrue(errorCaptor.getValue()
-//                .equals(XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR));
+        LoginUser.Response loginUserResponse = new LoginUser.Response();
+        loginUserResponse.jwt = null;
+        loginUserResponse.error = "InternalServerError";
+
+        loginCallback.onResponse(null, Response.success(loginUserResponse));
+
+        verify(mockAuthCallback).authenticationFailed(errorCaptor.capture());
+
+        assertNotNull(errorCaptor.getValue());
+        assertEquals(errorCaptor.getValue(), XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR);
     }
 }
