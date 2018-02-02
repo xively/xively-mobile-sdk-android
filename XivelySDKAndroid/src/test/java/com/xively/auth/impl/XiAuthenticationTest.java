@@ -21,6 +21,7 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.IOException;
 import java.net.SocketTimeoutException;
 
 import retrofit2.Callback;
@@ -251,7 +252,7 @@ public class XiAuthenticationTest extends TestCase {
 
         Callback<LoginUser.Response> loginCallback = captorLoginResponse.getValue();
 
-        loginCallback.onFailure(null, new Throwable("mock url", new SocketTimeoutException()));
+        loginCallback.onFailure(null, new IOException("mock url", new SocketTimeoutException()));
 
         verify(mockAuthCallback).authenticationFailed(errorCaptor.capture());
 
