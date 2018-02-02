@@ -2,11 +2,10 @@ package com.xively.internal.rest.timeseries;
 
 import com.xively.XiSdkConfig;
 import com.xively.internal.logger.LMILog;
-import com.xively.internal.rest.timeseries.GetData;
-import com.xively.internal.rest.timeseries.TimeSeriesWebServices;
 
 import junit.framework.TestCase;
 
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -28,6 +27,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+
 public class TimeSeriesWebServicesTest extends TestCase {
 
     private Callback<GetData.Response> callback;
@@ -43,7 +43,8 @@ public class TimeSeriesWebServicesTest extends TestCase {
         MockitoAnnotations.initMocks(this);
     }
 
-    public void testTimeSeriesGetData() throws Exception {
+    @Test
+    public void testTimeSeriesGetDataSuccess() throws Exception {
         TimeSeriesWebServices SUT = new TimeSeriesWebServices(mockGetData);
 
         String mockTopic = "mock topic value";
@@ -52,17 +53,29 @@ public class TimeSeriesWebServicesTest extends TestCase {
         String expectedStartDate = isoFormat.format(mockStartDate);
         String expectedEndDate = isoFormat.format(mockEndDate);
 
-        when(mockGetData.getData(anyString(), anyString(), anyString(), anyString(), anyInt(), anyString(), anyBoolean(), anyString(), anyInt())).thenReturn(new SuccessStubCall());
+        final SuccessStubCall successStubCall = new SuccessStubCall();
+        when(mockGetData.getData(
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyInt(),
+                anyString(),
+                anyBoolean(),
+                anyString(),
+                anyInt()
+        )).thenReturn(successStubCall);
 
         callback = new Callback<GetData.Response>() {
             @Override
             public void onResponse(Call<GetData.Response> call, Response<GetData.Response> response) {
-
+                assertEquals(successStubCall, call);
+                assertEquals(response.code(), 200);
             }
 
             @Override
             public void onFailure(Call<GetData.Response> call, Throwable t) {
-
+                fail();
             }
         };
 
@@ -81,7 +94,59 @@ public class TimeSeriesWebServicesTest extends TestCase {
         );
     }
 
-    public void testTimeSeriesGetDataAllParams() throws Exception {
+    @Test
+    public void testTimeSeriesGetDataFailure() throws Exception {
+        TimeSeriesWebServices SUT = new TimeSeriesWebServices(mockGetData);
+
+        String mockTopic = "mock topic value";
+        Date mockStartDate = new Date(System.currentTimeMillis() - 24 * 60 * 60000);
+        Date mockEndDate = new Date(System.currentTimeMillis());
+        String expectedStartDate = isoFormat.format(mockStartDate);
+        String expectedEndDate = isoFormat.format(mockEndDate);
+
+        final FailureStubCall failureStubCall = new FailureStubCall();
+        when(mockGetData.getData(
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyInt(),
+                anyString(),
+                anyBoolean(),
+                anyString(),
+                anyInt()
+        )).thenReturn(failureStubCall);
+
+        callback = new Callback<GetData.Response>() {
+            @Override
+            public void onResponse(Call<GetData.Response> call, Response<GetData.Response> response) {
+                fail();
+            }
+
+            @Override
+            public void onFailure(Call<GetData.Response> call, Throwable t) {
+                assertEquals(failureStubCall, call);
+                assertNotNull(t);
+            }
+        };
+
+        SUT.getData(mockTopic, mockStartDate, mockEndDate, callback);
+
+        verify(mockGetData, times(1)).getData(
+                anyString(),
+                eq(mockTopic),
+                eq(expectedStartDate),
+                eq(expectedEndDate),
+                anyInt(),
+                anyString(),
+                anyBoolean(),
+                anyString(),
+                anyInt()
+        );
+    }
+
+    @Test
+    public void testTimeSeriesGetDataAllParamsSuccess() throws Exception {
         TimeSeriesWebServices SUT = new TimeSeriesWebServices(mockGetData);
 
         String mockTopic = "mock topic value";
@@ -95,17 +160,29 @@ public class TimeSeriesWebServicesTest extends TestCase {
         String mockCategory = "mock category";
         Integer mockGroupType = 123456;
 
-        when(mockGetData.getData(anyString(), anyString(), anyString(), anyString(), anyInt(), anyString(), anyBoolean(), anyString(), anyInt())).thenReturn(new SuccessStubCall());
+        final SuccessStubCall successStubCall = new SuccessStubCall();
+        when(mockGetData.getData(
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyInt(),
+                anyString(),
+                anyBoolean(),
+                anyString(),
+                anyInt()
+        )).thenReturn(successStubCall);
 
         callback = new Callback<GetData.Response>() {
             @Override
             public void onResponse(Call<GetData.Response> call, Response<GetData.Response> response) {
-
+                assertEquals(successStubCall, call);
+                assertEquals(response.code(), 200);
             }
 
             @Override
             public void onFailure(Call<GetData.Response> call, Throwable t) {
-
+                fail();
             }
         };
 
