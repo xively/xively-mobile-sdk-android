@@ -45,18 +45,20 @@ public class XiAuthenticationImpl implements XiAuthentication {
                     @Override
                     public void onResponse(Call<LoginUser.Response> call, Response<LoginUser.Response> response) {
                         LoginUser.Response loginResponse = response.body();
-                        log.d(loginResponse.toString());
+                        if (loginResponse != null) {
+                            log.d(loginResponse.toString());
 
-                        if (loginResponse != null && loginResponse.jwt != null && !loginResponse.jwt.equals("")) {
-                            log.i("Authentication success. Acquiring credentials...");
-                            setAuthorizationHeaders(loginResponse.jwt);
-                            acquireCredentials(callback, loginResponse.jwt);
-                        } else if (loginResponse.error != null && loginResponse.error.equals("Unathorized")) {
-                            log.w("Invalid Credentials");
-                            callback.authenticationFailed(XiAuthenticationCallback.XiAuthenticationError.INVALID_CREDENTIALS);
-                        } else {
-                            log.w("Invalid auth response.");
-                            callback.authenticationFailed(XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR);
+                            if (loginResponse.jwt != null && !loginResponse.jwt.equals("")) {
+                                log.i("Authentication success. Acquiring credentials...");
+                                setAuthorizationHeaders(loginResponse.jwt);
+                                acquireCredentials(callback, loginResponse.jwt);
+                            } else if (loginResponse.error != null && loginResponse.error.equals("Unathorized")) {
+                                log.w("Invalid Credentials");
+                                callback.authenticationFailed(XiAuthenticationCallback.XiAuthenticationError.INVALID_CREDENTIALS);
+                            } else {
+                                log.w("Invalid auth response.");
+                                callback.authenticationFailed(XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR);
+                            }
                         }
                     }
 
@@ -112,8 +114,13 @@ public class XiAuthenticationImpl implements XiAuthentication {
                             @Override
                             public void onResponse(Call<XivelyAccount> call, Response<XivelyAccount> response) {
                                 XivelyAccount accountResponse = response.body();
-                                log.d(accountResponse.toString());
-                                createSessionObject(callback, accountResponse);
+                                if (accountResponse != null) {
+                                    log.d(accountResponse.toString());
+                                    createSessionObject(callback, accountResponse);
+                                } else {
+                                    callback.authenticationFailed(
+                                            XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR);
+                                }
                             }
 
                             @Override

@@ -56,22 +56,26 @@ public class XiTimeSeriesImpl implements XiTimeSeries {
             @Override
             public void onResponse(Call<GetData.Response> call, Response<GetData.Response> response) {
                 GetData.Response getDataResposne = response.body();
-                log.d(getDataResposne.toString());
+                if (getDataResposne != null) {
+                    log.d(getDataResposne.toString());
 
-                if (getDataResposne.result != null &&
-                        getDataResposne.result.length > 0) {
-                    ArrayList<TimeSeriesItem> res = new ArrayList<>();
-                    res.addAll(Arrays.asList(getDataResposne.result));
-                    xiTimeSeriesCallback.onTimeSeriesItemsRetrieved(res);
+                    if (getDataResposne.result != null &&
+                            getDataResposne.result.length > 0) {
+                        ArrayList<TimeSeriesItem> res = new ArrayList<>();
+                        res.addAll(Arrays.asList(getDataResposne.result));
+                        xiTimeSeriesCallback.onTimeSeriesItemsRetrieved(res);
+                    } else {
+                        xiTimeSeriesCallback.onFinishedWithError(XiTimeSeriesCallback.XiTimeSeriesError.INTERNAL_ERROR);
+                    }
                 } else {
-                    xiTimeSeriesCallback.onFinishedWithError(null);
+                    xiTimeSeriesCallback.onFinishedWithError(XiTimeSeriesCallback.XiTimeSeriesError.INTERNAL_ERROR);
                 }
             }
 
             @Override
             public void onFailure(Call<GetData.Response> call, Throwable t) {
                 log.w("TS get data finished");
-                xiTimeSeriesCallback.onFinishedWithError(null);
+                xiTimeSeriesCallback.onFinishedWithError(XiTimeSeriesCallback.XiTimeSeriesError.INTERNAL_ERROR);
             }
         });
     }
@@ -99,26 +103,32 @@ public class XiTimeSeriesImpl implements XiTimeSeries {
                 @Override
                 public void onResponse(Call<GetData.Response> call, Response<GetData.Response> response) {
                     GetData.Response getDataResponse = response.body();
-                    log.d(getDataResponse.toString());
+                    if (getDataResponse != null) {
+                        log.d(getDataResponse.toString());
 
-                    if (getDataResponse.result != null &&
-                            getDataResponse.result.length > 0) {
-                        result.addAll(Arrays.asList(getDataResponse.result));
-                    }
-
-                    if (getDataResponse.meta.pagingToken != null &&
-                            !getDataResponse.meta.pagingToken.equals("")) {
-                        ArrayList<TimeSeriesItem> recursiveResult = null;
-
-                        recursiveResult = getDataQuery(channel, startDate, endDate, category,
-                                getDataResponse.meta.pagingToken);
-
-                        if (recursiveResult != null) {
-                            result.addAll(recursiveResult);
+                        if (getDataResponse.result != null &&
+                                getDataResponse.result.length > 0) {
+                            result.addAll(Arrays.asList(getDataResponse.result));
                         }
-                    }
 
-                    resultUpdated.signalAll();
+                        if (getDataResponse.meta.pagingToken != null && !getDataResponse.meta.pagingToken.equals("")) {
+                            ArrayList<TimeSeriesItem> recursiveResult = getDataQuery(
+                                    channel,
+                                    startDate,
+                                    endDate,
+                                    category,
+                                    getDataResponse.meta.pagingToken
+                            );
+
+                            if (recursiveResult != null) {
+                                result.addAll(recursiveResult);
+                            }
+                        }
+
+                        resultUpdated.signalAll();
+                    } else {
+                        resultUpdated.signalAll();
+                    }
                 }
 
                 @Override

@@ -38,7 +38,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         OnFragmentInteractionListener {
-
     private static final String TAG = "MainAcitivty";
 
     /**

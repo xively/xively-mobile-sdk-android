@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 
 public interface XiTimeSeriesCallback {
-    enum XiTimeSeriesError {}
+    enum XiTimeSeriesError {INTERNAL_ERROR}
 
     void onTimeSeriesItemsRetrieved(ArrayList<TimeSeriesItem> items);
 

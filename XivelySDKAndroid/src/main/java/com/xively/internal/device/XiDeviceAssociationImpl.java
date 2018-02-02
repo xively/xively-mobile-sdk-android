@@ -24,7 +24,7 @@ public class XiDeviceAssociationImpl {
         this.account = xivelyEndUserAccount;
     }
 
-    public void startDeviceAssociation(String associationCode, final XivelyDeviceAssociationCallback callback) {
+    public void startDeviceAssociation(final String associationCode, final XivelyDeviceAssociationCallback callback) {
         DependencyInjector.get().provisionWebServices().associateIoTDevice(
                 associationCode,
                 account.getUserName(),
@@ -36,45 +36,46 @@ public class XiDeviceAssociationImpl {
                             Response<StartAssociationWithCode.Response> response
                     ) {
                         StartAssociationWithCode.Response associationResponse = response.body();
-                        log.d(associationResponse.toString());
-                        switch (response.code()) {
-                            case 401:
-                                callback.onAssociationFailure(
-                                        XivelyDeviceAssociationCallback.AssociationError.UNAUTHORIZED
-                                );
-                                break;
-                            case 400:
-                            case 404:
-                                callback.onAssociationFailure(
-                                        XivelyDeviceAssociationCallback.AssociationError.INVALID_CODE
-                                );
-                                break;
-                            case 500:
-                                callback.onAssociationFailure(
-                                        XivelyDeviceAssociationCallback.AssociationError.SERVER_INTERNAL_ERROR
-                                );
-                                break;
-                            case 503:
-                                callback.onAssociationFailure(
-                                        XivelyDeviceAssociationCallback.AssociationError.SERVICE_UNAVAILABLE
-                                );
-                                break;
-                            default:
-                                callback.onAssociationFailure(
-                                        XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR
-                                );
-                                break;
-                        }
+                        if (associationResponse != null) {
+                            log.d(associationResponse.toString());
+                            switch (response.code()) {
+                                case 401:
+                                    callback.onAssociationFailure(
+                                            XivelyDeviceAssociationCallback.AssociationError.UNAUTHORIZED
+                                    );
+                                    break;
+                                case 400:
+                                case 404:
+                                    callback.onAssociationFailure(
+                                            XivelyDeviceAssociationCallback.AssociationError.INVALID_CODE
+                                    );
+                                    break;
+                                case 500:
+                                    callback.onAssociationFailure(
+                                            XivelyDeviceAssociationCallback.AssociationError.SERVER_INTERNAL_ERROR
+                                    );
+                                    break;
+                                case 503:
+                                    callback.onAssociationFailure(
+                                            XivelyDeviceAssociationCallback.AssociationError.SERVICE_UNAVAILABLE
+                                    );
+                                    break;
+                                default:
+                                    callback.onAssociationFailure(
+                                            XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR
+                                    );
+                                    break;
+                            }
 
-                        callback.onAssociationSuccess();
+                            callback.onAssociationSuccess();
+                        } else {
+                            callback.onAssociationFailure(XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR);
+                        }
                     }
 
                     @Override
                     public void onFailure(Call<StartAssociationWithCode.Response> call, Throwable t) {
-                        XivelyDeviceAssociationCallback.AssociationError error;
-                        error = XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR;
-
-                        callback.onAssociationFailure(error);
+                        callback.onAssociationFailure(XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR);
                     }
                 });
     }

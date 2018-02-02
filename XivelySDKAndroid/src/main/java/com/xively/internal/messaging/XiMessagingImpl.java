@@ -30,9 +30,9 @@ public class XiMessagingImpl implements XiMessaging, ConnectionListener, Publish
     private XiMqttConnection connection;
     private XiMqttConnectionPool connectionPool;
 
-    final CopyOnWriteArrayList<XiMessagingDataListener> dataListeners;
-    final CopyOnWriteArrayList<XiMessagingStateListener> stateListeners;
-    final CopyOnWriteArrayList<XiMessagingSubscriptionListener> subscriptionListeners;
+    private final CopyOnWriteArrayList<XiMessagingDataListener> dataListeners;
+    private final CopyOnWriteArrayList<XiMessagingStateListener> stateListeners;
+    private final CopyOnWriteArrayList<XiMessagingSubscriptionListener> subscriptionListeners;
 
     public XiMessagingImpl(XiMqttConnectionPool connectionPool, String token) {
         log.i("Messaging init.");
