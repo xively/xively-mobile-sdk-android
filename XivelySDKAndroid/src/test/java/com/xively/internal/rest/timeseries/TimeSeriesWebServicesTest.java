@@ -1,4 +1,4 @@
-package com.xively.internal.rest;
+package com.xively.internal.rest.timeseries;
 
 import com.xively.XiSdkConfig;
 import com.xively.internal.logger.LMILog;

@@ -6,6 +6,7 @@ import com.xively.messaging.XiDeviceInfo.ProvisioningStateEnum;
 
 import junit.framework.TestCase;
 
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+
 public class BlueprintGetDevicesTest extends TestCase {
 
     @Mock
@@ -35,7 +37,8 @@ public class BlueprintGetDevicesTest extends TestCase {
         MockitoAnnotations.initMocks(this);
     }
 
-    public void testGetDevicesCallsService() throws Exception {
+    @Test
+    public void testGetDevicesCallsServiceSuccess() throws Exception {
         BlueprintWebServices SUT = new BlueprintWebServices(
                 null,
                 null,
@@ -56,19 +59,103 @@ public class BlueprintGetDevicesTest extends TestCase {
         final int page = 66;
         final int pageSize = 99;
 
-        when(mockGetDevices.getDevices(anyString(), anyString(), anyString(), anyString(), anyString(), anyBoolean(), anyBoolean(), anyInt(), anyInt(), anyString(), anyString())).thenReturn(new SuccessStubCall());
+        final SuccessStubCall successStubCall = new SuccessStubCall();
+
+        when(mockGetDevices.getDevices(
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString(),
+                anyString()
+        )).thenReturn(successStubCall);
 
         SUT.getDevices(
                 accountId, deviceTemplateId, organizationId, provisioningState, page, pageSize,
                 new Callback<GetDevices.Response>() {
                     @Override
                     public void onResponse(Call<GetDevices.Response> call, Response<GetDevices.Response> response) {
-
+                        assertEquals(successStubCall, call);
+                        assertEquals(response.code(), 200);
                     }
 
                     @Override
                     public void onFailure(Call<GetDevices.Response> call, Throwable t) {
+                        fail();
+                    }
+                }
+        );
 
+        verify(mockGetDevices, times(1)).getDevices(
+                anyString(),
+                eq(accountId),
+                eq(deviceTemplateId),
+                eq(organizationId),
+                eq(provisioningState.toString()),
+                eq(Boolean.TRUE),
+                eq(Boolean.TRUE),
+                eq(page),
+                eq(pageSize),
+                anyString(),
+                anyString()
+        );
+    }
+
+    @Test
+    public void testGetDevicesCallsServiceFailure() {
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                null,
+                null,
+                null,
+                null,
+                mockGetDevices,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        final String accountId = "mock account id";
+        final String deviceTemplateId = "mock device template id";
+        final String organizationId = "mock organization id";
+        final ProvisioningStateEnum provisioningState = ProvisioningStateEnum.activated;
+        final int page = 66;
+        final int pageSize = 99;
+
+        final FailureStubCall failureStubCall = new FailureStubCall();
+
+        when(mockGetDevices.getDevices(
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString(),
+                anyString()
+        )).thenReturn(failureStubCall);
+
+        SUT.getDevices(
+                accountId, deviceTemplateId, organizationId, provisioningState, page, pageSize,
+                new Callback<GetDevices.Response>() {
+                    @Override
+                    public void onResponse(Call<GetDevices.Response> call, Response<GetDevices.Response> response) {
+                        fail();
+                    }
+
+                    @Override
+                    public void onFailure(Call<GetDevices.Response> call, Throwable t) {
+                        assertEquals(failureStubCall, call);
+                        assertNotNull(t);
                     }
                 }
         );

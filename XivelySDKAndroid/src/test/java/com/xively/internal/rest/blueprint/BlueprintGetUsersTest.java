@@ -5,7 +5,9 @@ import com.xively.internal.logger.LMILog;
 
 import junit.framework.TestCase;
 
+import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -25,6 +27,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+
 public class BlueprintGetUsersTest extends TestCase {
 
     @Mock
@@ -33,6 +36,8 @@ public class BlueprintGetUsersTest extends TestCase {
     private GetAccountUser mockGetAccountUser;
     @Mock
     private CreateCredentials mockCreateCredentials;
+    @Captor
+    private ArgumentCaptor<CreateCredentials.Request> captorCreateCredentialsRequest;
 
     @Override
     protected void setUp() throws Exception {
@@ -40,6 +45,7 @@ public class BlueprintGetUsersTest extends TestCase {
         MockitoAnnotations.initMocks(this);
     }
 
+    @Test
     public void testStartGetEndUserQuery() throws Exception {
         BlueprintWebServices SUT = new BlueprintWebServices(
                 null,
@@ -58,7 +64,16 @@ public class BlueprintGetUsersTest extends TestCase {
         String accountId = "mock account id";
         String userId = "mock access user id";
 
-        when(mockGetEndUsers.getEndUsers(anyString(), anyString(), anyString(), anyBoolean(), anyBoolean(), anyInt(), anyInt(), anyString())).thenReturn(new SuccessStubCall());
+        when(mockGetEndUsers.getEndUsers(
+                anyString(),
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString()
+        )).thenReturn(new SuccessStubCall<GetEndUsers.Response>());
 
         SUT.getEndUsers(accountId, userId, new Callback<GetEndUsers.Response>() {
             @Override
@@ -84,6 +99,7 @@ public class BlueprintGetUsersTest extends TestCase {
         );
     }
 
+    @Test
     public void testStartGeAccountUserQuery() throws Exception {
         BlueprintWebServices SUT = new BlueprintWebServices(
                 null,
@@ -101,7 +117,16 @@ public class BlueprintGetUsersTest extends TestCase {
         String accountId = "mock account id";
         String userId = "mock access user id";
 
-        when(mockGetAccountUser.getAccountUser(anyString(), anyString(), anyString(), anyBoolean(), anyBoolean(), anyInt(), anyInt(), anyString())).thenReturn(new SuccessStubCall());
+        when(mockGetAccountUser.getAccountUser(
+                anyString(),
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString()
+        )).thenReturn(new SuccessStubCall<GetAccountUser.Response>());
 
         SUT.getAccountUser(accountId, userId, new Callback<GetAccountUser.Response>() {
             @Override
@@ -127,6 +152,7 @@ public class BlueprintGetUsersTest extends TestCase {
         );
     }
 
+    @Test
     public void testStartCreateCredentialsQuery() throws Exception {
         BlueprintWebServices SUT = new BlueprintWebServices(
                 mockCreateCredentials,
@@ -141,13 +167,13 @@ public class BlueprintGetUsersTest extends TestCase {
                 null
         );
 
-        ArgumentCaptor<CreateCredentials.Request> createCredentialsRequestCaptor =
-                ArgumentCaptor.forClass(CreateCredentials.Request.class);
-
         String accountId = "mock account id";
         String userId = "mock access user id";
 
-        when(mockCreateCredentials.createCredentials(anyString(), any(CreateCredentials.Request.class))).thenReturn(new SuccessStubCall());
+        when(mockCreateCredentials.createCredentials(
+                anyString(),
+                any(CreateCredentials.Request.class)
+        )).thenReturn(new SuccessStubCall<CreateCredentials.Response>());
 
         SUT.createCredentials(accountId, userId, BlueprintWebServices.BluePrintEntity.endUser, new Callback<CreateCredentials.Response>() {
             @Override
@@ -161,9 +187,12 @@ public class BlueprintGetUsersTest extends TestCase {
             }
         });
 
-        verify(mockCreateCredentials, times(1)).createCredentials(anyString(), createCredentialsRequestCaptor.capture());
+        verify(mockCreateCredentials, times(1)).createCredentials(
+                anyString(),
+                captorCreateCredentialsRequest.capture()
+        );
 
-        CreateCredentials.Request request = createCredentialsRequestCaptor.getValue();
+        CreateCredentials.Request request = captorCreateCredentialsRequest.getValue();
 
         assertNotNull(request);
         assertEquals(accountId, request.accountId);
@@ -208,5 +237,4 @@ public class BlueprintGetUsersTest extends TestCase {
             return null;
         }
     }
-
 }
