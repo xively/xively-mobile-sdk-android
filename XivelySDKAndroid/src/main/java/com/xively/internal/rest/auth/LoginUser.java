@@ -14,10 +14,27 @@ public interface LoginUser {
         public String emailAddress;
         public String password;
         public String accountId;
+
+        @Override
+        public String toString() {
+            return "LoginUser.Request{" +
+                    "emailAddress='" + emailAddress + '\'' +
+                    ", password='" + password + '\'' +
+                    ", accountId='" + accountId + '\'' +
+                    '}';
+        }
     }
 
     class Response {
         public String jwt;
         public String error;
+
+        @Override
+        public String toString() {
+            return "LoginUser.Response{" +
+                    "jwt='" + jwt + '\'' +
+                    ", error='" + error + '\'' +
+                    '}';
+        }
     }
 }

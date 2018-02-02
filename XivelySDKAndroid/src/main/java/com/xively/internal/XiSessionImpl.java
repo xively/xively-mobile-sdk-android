@@ -100,13 +100,11 @@ public class XiSessionImpl implements XiSession {
     private final ArrayList<XiEndUserInfo> aggregatedEndUsersResult = new ArrayList<>();
 
     public void requestXiEndUserList(final XiEndUserListCallback callback) {
-
         aggregatedEndUsersResult.clear();
         requestMoreXiEndUserList(callback, 1);
     }
 
     public void requestMoreXiEndUserList(final XiEndUserListCallback callback, int page) {
-
         final ArrayList<XiEndUserInfo> aggregatedResult = new ArrayList<>();
 
         final Callback<GetEndUsers.Response> blueprintCallback = new Callback<GetEndUsers.Response>() {
@@ -114,6 +112,7 @@ public class XiSessionImpl implements XiSession {
             public void onResponse(Call<GetEndUsers.Response> call, Response<GetEndUsers.Response> response) {
                 log.i("Get end user list success.");
                 GetEndUsers.Response getEndUsersResponse = response.body();
+                log.d(getEndUsersResponse.toString());
 
                 if (getEndUsersResponse == null ||
                         getEndUsersResponse.endUsers == null ||
@@ -138,7 +137,6 @@ public class XiSessionImpl implements XiSession {
             @Override
             public void onFailure(Call<GetEndUsers.Response> call, Throwable t) {
                 log.w("Failed to get end user list.");
-//                log.w(""+new String(((TypedByteArray) retrofitError.getResponse().getBody()).getBytes()));
                 callback.onEndUserListFailed();
             }
         };
@@ -148,12 +146,12 @@ public class XiSessionImpl implements XiSession {
     }
 
     public void requestXiEndUser(String endUserId, final XiEndUserCallback callback) {
-
         final Callback<GetEndUser.Response> blueprintCallback = new Callback<GetEndUser.Response>() {
             @Override
             public void onResponse(Call<GetEndUser.Response> call, Response<GetEndUser.Response> response) {
                 log.i("Get end user success.");
                 GetEndUser.Response getEndUserResponse = response.body();
+                log.d(getEndUserResponse.toString());
 
                 if (getEndUserResponse == null || getEndUserResponse.error != null) {
                     onFailure(null, null);
@@ -175,12 +173,12 @@ public class XiSessionImpl implements XiSession {
     }
 
     public void requestXiEndUserUpdate(String userId, String version, HashMap<String, Object> userData, final XiEndUserUpdateCallback callback) {
-
         final Callback<PutEndUser.Response> updateCallback = new Callback<PutEndUser.Response>() {
             @Override
             public void onResponse(Call<PutEndUser.Response> call, Response<PutEndUser.Response> response) {
                 log.i("Update end user success.");
                 PutEndUser.Response putEndUserResponse = response.body();
+                log.d(putEndUserResponse.toString());
 
                 if (putEndUserResponse == null || putEndUserResponse.error != null) {
                     onFailure(call, null);
@@ -208,12 +206,12 @@ public class XiSessionImpl implements XiSession {
     }
 
     public void requestMoreXiOrganizationList(final XiOrganizationListCallback callback, int startpage) {
-
         final Callback<GetOrganizations.Response> blueprintCallback = new Callback<GetOrganizations.Response>() {
             @Override
             public void onResponse(Call<GetOrganizations.Response> call, Response<GetOrganizations.Response> response) {
                 log.i("Get organization list success.");
                 GetOrganizations.Response getOrganizationResponse = response.body();
+                log.d(getOrganizationResponse.toString());
 
                 if (getOrganizationResponse == null ||
                         getOrganizationResponse.organizations == null ||
@@ -247,12 +245,12 @@ public class XiSessionImpl implements XiSession {
     }
 
     public void requestXiOrganization(String organizationId, final XiOrganizationCallback callback) {
-
         final Callback<GetOrganization.Response> blueprintCallback = new Callback<GetOrganization.Response>() {
             @Override
             public void onResponse(Call<GetOrganization.Response> call, Response<GetOrganization.Response> response) {
                 log.i("Get organization success." + response);
                 GetOrganization.Response getOrganizationResponse = response.body();
+                log.d(getOrganizationResponse.toString());
 
                 if (getOrganizationResponse == null || getOrganizationResponse.error != null) {
                     onFailure(call, null);
@@ -275,18 +273,17 @@ public class XiSessionImpl implements XiSession {
     private final ArrayList<XiDeviceInfo> aggregatedDevicesResult = new ArrayList<>();
 
     public void requestXiDeviceInfoList(final XiDeviceInfoListCallback callback) {
-
         aggregatedDevicesResult.clear();
         requestMoreXiDeviceInfoList(callback, 1);
     }
 
     public void requestMoreXiDeviceInfoList(final XiDeviceInfoListCallback callback, int startpage) {
-
         final Callback<GetDevices.Response> blueprintCallback = new Callback<GetDevices.Response>() {
             @Override
             public void onResponse(Call<GetDevices.Response> call, Response<GetDevices.Response> response) {
                 log.i("Get device info list success.");
                 GetDevices.Response getDevicesResponse = response.body();
+                log.d(getDevicesResponse.toString());
 
                 if (getDevicesResponse == null ||
                         getDevicesResponse.devices == null ||
@@ -321,12 +318,12 @@ public class XiSessionImpl implements XiSession {
 
 
     public void requestXiDeviceInfo(String deviceId, final XiDeviceInfoCallback callback) {
-
         final Callback<GetDevice.Response> blueprintCallback = new Callback<GetDevice.Response>() {
             @Override
             public void onResponse(Call<GetDevice.Response> call, Response<GetDevice.Response> response) {
                 log.i("Get device success.");
                 GetDevice.Response getDeviceResponse = response.body();
+                log.d(getDeviceResponse.toString());
 
                 if (getDeviceResponse == null || getDeviceResponse.error != null) {
                     onFailure(call, null);
@@ -347,17 +344,18 @@ public class XiSessionImpl implements XiSession {
     }
 
     public void requestXiDeviceUpdate(String deviceId, String version, HashMap<String, Object> deviceData, final XiDeviceUpdateCallback callback) {
-
         final Callback<PutDevice.Response> updateCallback = new Callback<PutDevice.Response>() {
             @Override
             public void onResponse(Call<PutDevice.Response> call, Response<PutDevice.Response> response) {
                 log.i("Put device success.");
                 PutDevice.Response putDeviceResponse = response.body();
+                log.d(putDeviceResponse.toString());
 
                 if (putDeviceResponse == null || putDeviceResponse.error != null) {
                     onFailure(call, null);
                     return;
                 }
+
                 XiDeviceInfo info = parseDeviceInfo(putDeviceResponse.device);
                 callback.onDevicUpdateSuccess(info);
             }
@@ -422,7 +420,6 @@ public class XiSessionImpl implements XiSession {
     }
 
     private XiOrganizationInfo parseOrganization(LinkedTreeMap<String, Object> organizationMap) {
-
         XiOrganizationInfo organizationInfo = new XiOrganizationInfo();
 
         organizationInfo.organizationId = (String) organizationMap.get("id");

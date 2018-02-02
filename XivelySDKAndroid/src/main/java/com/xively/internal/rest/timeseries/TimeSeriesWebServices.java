@@ -10,7 +10,6 @@ import retrofit2.Callback;
 
 
 public class TimeSeriesWebServices {
-
     private static final String TAG = "TimeSeriesWebServices";
     private static final LMILog log = new LMILog(TAG);
 

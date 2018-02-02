@@ -28,5 +28,13 @@ public interface GetDevices {
     class Response {
         public HashMap<String, Object> devices;
         public BlueprintError error;
+
+        @Override
+        public String toString() {
+            return "Response{" +
+                    "devices=" + devices +
+                    ", error=" + error +
+                    '}';
+        }
     }
 }

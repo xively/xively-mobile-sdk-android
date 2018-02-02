@@ -25,5 +25,13 @@ public interface GetEndUsers {
     class Response {
         public HashMap<String, Object> endUsers;
         public BlueprintError error;
+
+        @Override
+        public String toString() {
+            return "Response{" +
+                    "endUsers=" + endUsers +
+                    ", error=" + error +
+                    '}';
+        }
     }
 }

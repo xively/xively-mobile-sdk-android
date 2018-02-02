@@ -62,4 +62,14 @@ public class XivelyAccount {
     public String getDisplayName() {
         return displayName;
     }
+
+    @Override
+    public String toString() {
+        return "XivelyAccount{" +
+                "clientId='" + clientId + '\'' +
+                ", userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", displayName='" + displayName + '\'' +
+                '}';
+    }
 }

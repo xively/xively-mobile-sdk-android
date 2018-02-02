@@ -2,6 +2,7 @@ package com.xively.internal.device;
 
 import com.xively.internal.DependencyInjector;
 import com.xively.internal.account.XivelyAccount;
+import com.xively.internal.logger.LMILog;
 import com.xively.internal.rest.provision.StartAssociationWithCode;
 import com.xively.messaging.XivelyDeviceAssociationCallback;
 
@@ -11,7 +12,13 @@ import retrofit2.Response;
 
 
 public class XiDeviceAssociationImpl {
+    private static final String TAG = "XiDeviceAssociationImpl";
+    private static final LMILog log = new LMILog(TAG);
     private final XivelyAccount account;
+
+    static {
+        log.getClass();
+    }
 
     public XiDeviceAssociationImpl(XivelyAccount xivelyEndUserAccount) {
         this.account = xivelyEndUserAccount;
@@ -28,6 +35,8 @@ public class XiDeviceAssociationImpl {
                             Call<StartAssociationWithCode.Response> call,
                             Response<StartAssociationWithCode.Response> response
                     ) {
+                        StartAssociationWithCode.Response associationResponse = response.body();
+                        log.d(associationResponse.toString());
                         switch (response.code()) {
                             case 401:
                                 callback.onAssociationFailure(

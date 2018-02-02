@@ -7,4 +7,15 @@ public class TimeSeriesListMetaDataDTO {
     public String end; //Time of the last data in result list
     public Integer count; //Number of elements in result list
     public String pagingToken; //Paging token
+
+    @Override
+    public String toString() {
+        return "TimeSeriesListMetaDataDTO{" +
+                "timeSpent=" + timeSpent +
+                ", start='" + start + '\'' +
+                ", end='" + end + '\'' +
+                ", count=" + count +
+                ", pagingToken='" + pagingToken + '\'' +
+                '}';
+    }
 }

@@ -19,5 +19,13 @@ public interface GetOrganization {
     class Response {
         public LinkedTreeMap<String, Object> organization;
         public BlueprintError error;
+
+        @Override
+        public String toString() {
+            return "Response{" +
+                    "organization=" + organization +
+                    ", error=" + error +
+                    '}';
+        }
     }
 }

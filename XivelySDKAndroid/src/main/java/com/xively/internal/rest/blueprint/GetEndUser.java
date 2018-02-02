@@ -19,5 +19,13 @@ public interface GetEndUser {
     class Response {
         public LinkedTreeMap<String, Object> endUser;
         public BlueprintError error;
+
+        @Override
+        public String toString() {
+            return "Response{" +
+                    "endUser=" + endUser +
+                    ", error=" + error +
+                    '}';
+        }
     }
 }

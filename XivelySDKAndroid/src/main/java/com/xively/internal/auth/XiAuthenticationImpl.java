@@ -45,6 +45,7 @@ public class XiAuthenticationImpl implements XiAuthentication {
                     @Override
                     public void onResponse(Call<LoginUser.Response> call, Response<LoginUser.Response> response) {
                         LoginUser.Response loginResponse = response.body();
+                        log.d(loginResponse.toString());
 
                         if (loginResponse != null && loginResponse.jwt != null && !loginResponse.jwt.equals("")) {
                             log.i("Authentication success. Acquiring credentials...");
@@ -110,8 +111,9 @@ public class XiAuthenticationImpl implements XiAuthentication {
                         new Callback<XivelyAccount>() {
                             @Override
                             public void onResponse(Call<XivelyAccount> call, Response<XivelyAccount> response) {
-                                XivelyAccount accoutnResponse = response.body();
-                                createSessionObject(callback, accoutnResponse);
+                                XivelyAccount accountResponse = response.body();
+                                log.d(accountResponse.toString());
+                                createSessionObject(callback, accountResponse);
                             }
 
                             @Override

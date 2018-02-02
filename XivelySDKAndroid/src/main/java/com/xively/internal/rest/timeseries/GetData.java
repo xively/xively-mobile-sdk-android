@@ -2,6 +2,8 @@ package com.xively.internal.rest.timeseries;
 
 import com.xively.timeseries.TimeSeriesItem;
 
+import java.util.Arrays;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -27,5 +29,13 @@ public interface GetData {
     class Response {
         public TimeSeriesListMetaDataDTO meta; //TimeSeries list meta data,
         public TimeSeriesItem[] result; //TimeSeries data
+
+        @Override
+        public String toString() {
+            return "Response{" +
+                    "meta=" + meta +
+                    ", result=" + Arrays.toString(result) +
+                    '}';
+        }
     }
 }

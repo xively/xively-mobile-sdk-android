@@ -299,15 +299,12 @@ public class BlueprintWebServices {
         final String accountId;
 
         String jsonString = new String(jwtData);
-        log.d(jsonString);
 
         try {
             Gson gson = new Gson();
             XivelyJWT xivelyJWT = gson.fromJson(jsonString, XivelyJWT.class);
-            log.d(xivelyJWT.toString());
             idmUserId = xivelyJWT.getUserId();
             accountId = xivelyJWT.getAccountId();
-            log.d("AccountId: " + accountId + " UserId: " + idmUserId);
         } catch (JsonSyntaxException ex) {
             log.e("Failed to acquire credentials: corrupt token.");
             log.t(ex.toString());
@@ -322,17 +319,18 @@ public class BlueprintWebServices {
                     Call<GetAccountUser.Response> call,
                     retrofit2.Response<GetAccountUser.Response> response
             ) {
-                GetAccountUser.Response accountUseresResponse = response.body();
+                GetAccountUser.Response accountUsersResponse = response.body();
+                log.d(accountUsersResponse.toString());
 
-                if (accountUseresResponse == null ||
-                        accountUseresResponse.accountUsers == null ||
-                        accountUseresResponse.accountUsers.results.length == 0) {
+                if (accountUsersResponse == null ||
+                        accountUsersResponse.accountUsers == null ||
+                        accountUsersResponse.accountUsers.results.length == 0) {
                     onFailure(call, new Throwable("Empty AccountUser response"));
                     return;
                 }
 
                 AccountUser resultAccountUser = null;
-                for (AccountUser accountUser : accountUseresResponse.accountUsers.results) {
+                for (AccountUser accountUser : accountUsersResponse.accountUsers.results) {
                     if (accountUser.userId.endsWith(idmUserId)) {
                         resultAccountUser = accountUser;
                         break;
@@ -360,6 +358,7 @@ public class BlueprintWebServices {
                     retrofit2.Response<GetEndUsers.Response> response
             ) {
                 GetEndUsers.Response endUsersResponse = response.body();
+                log.d(endUsersResponse.toString());
 
                 if (endUsersResponse == null ||
                         endUsersResponse.endUsers == null ||
@@ -414,6 +413,7 @@ public class BlueprintWebServices {
                     retrofit2.Response<CreateCredentials.Response> response
             ) {
                 CreateCredentials.Response credentialResponse = response.body();
+                log.d(credentialResponse.toString());
 
                 if (credentialResponse == null ||
                         credentialResponse.mqttCredential == null) {

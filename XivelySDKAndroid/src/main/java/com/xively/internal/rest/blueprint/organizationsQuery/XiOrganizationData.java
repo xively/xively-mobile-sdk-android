@@ -22,4 +22,30 @@ public class XiOrganizationData {
     public String industry;
     public String organizationSize;
     public String websiteAddress;
+
+    @Override
+    public String toString() {
+        return "XiOrganizationData{" +
+                "id='" + id + '\'' +
+                ", created='" + created + '\'' +
+                ", createdById='" + createdById + '\'' +
+                ", lastModified='" + lastModified + '\'' +
+                ", lastModifiedById='" + lastModifiedById + '\'' +
+                ", version='" + version + '\'' +
+                ", accountId='" + accountId + '\'' +
+                ", parentId='" + parentId + '\'' +
+                ", organizationTemplateId='" + organizationTemplateId + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", postalCode='" + postalCode + '\'' +
+                ", countryCode='" + countryCode + '\'' +
+                ", industry='" + industry + '\'' +
+                ", organizationSize='" + organizationSize + '\'' +
+                ", websiteAddress='" + websiteAddress + '\'' +
+                '}';
+    }
 }

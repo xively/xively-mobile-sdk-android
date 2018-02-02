@@ -56,6 +56,7 @@ public class XiTimeSeriesImpl implements XiTimeSeries {
             @Override
             public void onResponse(Call<GetData.Response> call, Response<GetData.Response> response) {
                 GetData.Response getDataResposne = response.body();
+                log.d(getDataResposne.toString());
 
                 if (getDataResposne.result != null &&
                         getDataResposne.result.length > 0) {
@@ -98,6 +99,7 @@ public class XiTimeSeriesImpl implements XiTimeSeries {
                 @Override
                 public void onResponse(Call<GetData.Response> call, Response<GetData.Response> response) {
                     GetData.Response getDataResponse = response.body();
+                    log.d(getDataResponse.toString());
 
                     if (getDataResponse.result != null &&
                             getDataResponse.result.length > 0) {

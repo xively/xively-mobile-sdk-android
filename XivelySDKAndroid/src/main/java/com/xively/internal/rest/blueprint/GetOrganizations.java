@@ -29,5 +29,13 @@ public interface GetOrganizations {
     class Response {
         public HashMap<String, Object> organizations;
         public BlueprintError error;
+
+        @Override
+        public String toString() {
+            return "Response{" +
+                    "organizations=" + organizations +
+                    ", error=" + error +
+                    '}';
+        }
     }
 }

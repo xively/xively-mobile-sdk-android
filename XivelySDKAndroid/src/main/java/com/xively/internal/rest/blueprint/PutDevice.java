@@ -25,5 +25,13 @@ public interface PutDevice {
     class Response {
         public LinkedTreeMap<String, Object> device;
         public BlueprintError error;
+
+        @Override
+        public String toString() {
+            return "Response{" +
+                    "device=" + device +
+                    ", error=" + error +
+                    '}';
+        }
     }
 }

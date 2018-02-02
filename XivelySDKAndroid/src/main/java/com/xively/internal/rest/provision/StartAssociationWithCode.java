@@ -17,9 +17,20 @@ public interface StartAssociationWithCode {
     class Request {
         public String associationCode;
         public String endUserId;
+
+        @Override
+        public String toString() {
+            return "AssociationWithCode.Request{" +
+                    "associationCode='" + associationCode + '\'' +
+                    ", endUserId='" + endUserId + '\'' +
+                    '}';
+        }
     }
 
     class Response {
-
+        @Override
+        public String toString() {
+            return "AssociationWithCode.Response{}";
+        }
     }
 }

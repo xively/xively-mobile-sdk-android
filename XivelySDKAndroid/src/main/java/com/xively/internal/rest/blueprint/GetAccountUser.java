@@ -25,5 +25,13 @@ public interface GetAccountUser {
     class Response {
         public AccountUsersList accountUsers;
         public BlueprintError error;
+
+        @Override
+        public String toString() {
+            return "Response{" +
+                    "accountUsers=" + accountUsers +
+                    ", error=" + error +
+                    '}';
+        }
     }
 }

@@ -20,10 +20,27 @@ public interface CreateCredentials {
         public String accountId;
         public String entityId;
         public String entityType;
+
+        @Override
+        public String toString() {
+            return "Request{" +
+                    "accountId='" + accountId + '\'' +
+                    ", entityId='" + entityId + '\'' +
+                    ", entityType='" + entityType + '\'' +
+                    '}';
+        }
     }
 
     class Response {
         public Credential mqttCredential;
         public BlueprintError error;
+
+        @Override
+        public String toString() {
+            return "Response{" +
+                    "mqttCredential=" + mqttCredential +
+                    ", error=" + error +
+                    '}';
+        }
     }
 }

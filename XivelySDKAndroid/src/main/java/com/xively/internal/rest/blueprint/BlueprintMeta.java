@@ -7,4 +7,15 @@ public class BlueprintMeta {
     public Integer page;
     public String sortBy;
     public String sortOrder;
+
+    @Override
+    public String toString() {
+        return "BlueprintMeta{" +
+                "count=" + count +
+                ", pageSize=" + pageSize +
+                ", page=" + page +
+                ", sortBy='" + sortBy + '\'' +
+                ", sortOrder='" + sortOrder + '\'' +
+                '}';
+    }
 }
