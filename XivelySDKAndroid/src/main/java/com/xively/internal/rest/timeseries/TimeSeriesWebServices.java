@@ -21,8 +21,8 @@ public class TimeSeriesWebServices {
     private String authorizationHeader;
 
     public TimeSeriesWebServices() {
-        TimesSeriesApiFactory timesSeriesApiFactory = TimesSeriesApiFactory.getInstance();
-        this.timeseriesApi = timesSeriesApiFactory.getTimeseriesApi();
+        TimeSeriesApiFactory timeSeriesApiFactory = TimeSeriesApiFactory.getInstance();
+        this.timeseriesApi = timeSeriesApiFactory.getTimeSeriesApi();
     }
 
     //for unit testing

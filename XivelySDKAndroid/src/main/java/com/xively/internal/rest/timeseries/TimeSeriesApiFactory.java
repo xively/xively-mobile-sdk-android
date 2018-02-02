@@ -11,10 +11,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class TimesSeriesApiFactory {
-    private GetData timeseriesApi;
+public class TimeSeriesApiFactory {
+    private GetData timeSeriesApi;
 
-    private TimesSeriesApiFactory() {
+    private TimeSeriesApiFactory() {
         String wsEndpoint = "https://" + Config.timeseries_endpoint();
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
@@ -37,14 +37,14 @@ public class TimesSeriesApiFactory {
                 .client(client)
                 .build();
 
-        this.timeseriesApi = retrofit.create(GetData.class);
+        this.timeSeriesApi = retrofit.create(GetData.class);
     }
 
-    public static TimesSeriesApiFactory getInstance() {
-        return new TimesSeriesApiFactory();
+    public static TimeSeriesApiFactory getInstance() {
+        return new TimeSeriesApiFactory();
     }
 
-    public GetData getTimeseriesApi() {
-        return timeseriesApi;
+    public GetData getTimeSeriesApi() {
+        return timeSeriesApi;
     }
 }
