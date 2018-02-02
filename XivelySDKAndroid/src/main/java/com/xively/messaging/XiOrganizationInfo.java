@@ -22,21 +22,22 @@ public class XiOrganizationInfo {
 
     @Override
     public String toString() {
-
-        return "organizationId: " + organizationId + "\n" +
-                "parentId: " + parentId + "\n" +
-                "organizationTemplateId: " + organizationTemplateId + "\n" +
-                "name: " + name + "\n" +
-                "description: " + description + "\n" +
-                "phoneNumber: " + phoneNumber + "\n" +
-                "address: " + address + "\n" +
-                "city: " + city + "\n" +
-                "state: " + state + "\n" +
-                "postalCode: " + postalCode + "\n" +
-                "countryCode: " + countryCode + "\n" +
-                "industry: " + industry + "\n" +
-                "organizationSize: " + organizaitonSize + "\n" +
-                "websiteAddress: " + websiteAddress + "\n" +
-                "customFields: " + customFields;
+        return "XiOrganizationInfo{" +
+                "organizationId='" + organizationId + '\'' +
+                ", parentId='" + parentId + '\'' +
+                ", organizationTemplateId='" + organizationTemplateId + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", postalCode='" + postalCode + '\'' +
+                ", countryCode='" + countryCode + '\'' +
+                ", industry='" + industry + '\'' +
+                ", organizaitonSize='" + organizaitonSize + '\'' +
+                ", websiteAddress='" + websiteAddress + '\'' +
+                ", customFields=" + customFields +
+                '}';
     }
 }

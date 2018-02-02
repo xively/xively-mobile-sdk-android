@@ -7,8 +7,8 @@ import com.xively.messaging.XiMessaging;
 import com.xively.messaging.XiMessagingCreator;
 import com.xively.messaging.XiMessagingStateListener;
 
-public class XiMessagingCreatorImpl extends XiMessagingCreator {
 
+public class XiMessagingCreatorImpl extends XiMessagingCreator {
     private XiMqttConnectionPool connectionPool;
 
     public XiMessagingCreatorImpl(XiMqttConnectionPool connectionPool) {
@@ -52,5 +52,4 @@ public class XiMessagingCreatorImpl extends XiMessagingCreator {
             serviceCreateFailed();
         }
     }
-
 }

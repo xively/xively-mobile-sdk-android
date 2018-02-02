@@ -3,7 +3,6 @@ package com.xively.auth;
 import com.xively.XiSession;
 
 public interface XiAuthenticationCallback {
-
     enum XiAuthenticationError {
         INVALID_CREDENTIALS, INTERNAL_ERROR, NETWORK_ERROR, UNEXPECTED_ERROR, CANCELED
     }
@@ -20,5 +19,4 @@ public interface XiAuthenticationCallback {
      * The authentication has failed.
      */
     void authenticationFailed(XiAuthenticationError errorType);
-
 }

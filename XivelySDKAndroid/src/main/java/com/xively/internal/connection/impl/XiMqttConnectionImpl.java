@@ -27,6 +27,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.net.ssl.SSLContext;
 
+
 public class XiMqttConnectionImpl implements XiMqttConnection {
     private static final String TAG = "XMqttConnection";
     private static final LMILog log = new LMILog(TAG);
@@ -468,5 +469,4 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
             listener.onMessageDeliveryConfirmation(messageId);
         }
     }
-
 }

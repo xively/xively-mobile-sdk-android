@@ -37,5 +37,4 @@ public abstract class XiMessagingCreator extends XiServiceCreator<XiMessaging> {
      * Service Creator Callback listeners must registered before this method is called.
      */
     public abstract void createMessaging(boolean cleanSession, XiLastWill lastWill);
-
 }

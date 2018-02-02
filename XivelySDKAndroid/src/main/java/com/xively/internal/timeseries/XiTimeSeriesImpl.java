@@ -21,8 +21,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class XiTimeSeriesImpl implements XiTimeSeries {
 
+public class XiTimeSeriesImpl implements XiTimeSeries {
     private static final String TAG = "XiTimeSeriesImpl";
     private static final LMILog log = new LMILog(TAG);
 
@@ -138,5 +138,4 @@ public class XiTimeSeriesImpl implements XiTimeSeries {
 
         return (ArrayList<TimeSeriesItem>) result.clone();
     }
-
 }

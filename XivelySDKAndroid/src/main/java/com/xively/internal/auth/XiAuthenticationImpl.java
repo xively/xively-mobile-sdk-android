@@ -20,6 +20,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
 public class XiAuthenticationImpl implements XiAuthentication {
     private static final String TAG = "XiAuthentication";
     private static final LMILog log = new LMILog(TAG);

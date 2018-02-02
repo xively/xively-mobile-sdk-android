@@ -29,5 +29,4 @@ public class XiAuthenticationFactory {
 
         return createAuthenticationService(context);
     }
-
 }

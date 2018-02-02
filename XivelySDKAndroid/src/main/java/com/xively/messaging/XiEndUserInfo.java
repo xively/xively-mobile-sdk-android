@@ -11,9 +11,11 @@ public class XiEndUserInfo {
 
     @Override
     public String toString() {
-
-        return "userId: " + userId + "\n" +
-                "emailAddress: " + emailAddress + "\n" +
-                "customFields: " + customFields;
+        return "XiEndUserInfo{" +
+                "userId='" + userId + '\'' +
+                ", emailAddress='" + emailAddress + '\'' +
+                ", version='" + version + '\'' +
+                ", customFields=" + customFields +
+                '}';
     }
 }

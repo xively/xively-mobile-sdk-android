@@ -19,5 +19,4 @@ public class XiDeviceData {
     public String purchaseDate;
     public String connected;
     public XiChannelData[] channels;
-
 }

@@ -9,6 +9,7 @@ import com.xively.internal.device.DeviceInfo;
 
 import java.util.UUID;
 
+
 public class DeviceInfoImpl implements DeviceInfo {
 
     private String uniqueID = null;
@@ -30,5 +31,4 @@ public class DeviceInfoImpl implements DeviceInfo {
         }
         return uniqueID;
     }
-
 }

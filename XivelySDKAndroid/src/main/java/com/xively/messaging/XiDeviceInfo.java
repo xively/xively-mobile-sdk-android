@@ -31,16 +31,16 @@ public class XiDeviceInfo {
             deviceChannelsString = "N/A";
         }
 
-        return
-                "id: " + deviceId + "\n" +
-                        "serialNumber: " + serialNumber + "\n" +
-                        "provisioningState: " + provisioningState + "\n" +
-                        "deviceVersion: " + deviceVersion + "\n" +
-                        "deviceLocation: " + deviceLocation + "\n" +
-                        "deviceName: " + deviceName + "\n" +
-                        "purchaseDate: " + purchaseDate + "\n" +
-                        "deviceChannels: " + deviceChannelsString + "\n" +
-                        "customFields: " + customFields;
-
+        return "XiDeviceInfo{" +
+                "deviceId='" + deviceId + '\'' +
+                ", serialNumber='" + serialNumber + '\'' +
+                ", provisioningState=" + provisioningState +
+                ", deviceVersion='" + deviceVersion + '\'' +
+                ", deviceLocation='" + deviceLocation + '\'' +
+                ", deviceName='" + deviceName + '\'' +
+                ", purchaseDate='" + purchaseDate + '\'' +
+                ", deviceChannels=" + deviceChannelsString +
+                ", customFields=" + customFields +
+                '}';
     }
 }

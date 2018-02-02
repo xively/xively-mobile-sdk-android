@@ -155,5 +155,4 @@ public interface XiMqttConnection {
      * @param listener A {@link PublishListener} instance.
      */
     public void removePublishListener(PublishListener listener);
-
 }

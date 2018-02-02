@@ -9,7 +9,7 @@ import java.util.Map;
 /*
  * {
  *   "expires":1517482896703,
- *   "renewalKey":"D7j2ktfL3uvzchbCpHYH8A==",
+ *   "renewalKey":"<renewalKey==>",
  *   "renewalExp":1518691296703,
  *   "cookieProperties":{
  *      "maxAge":1209600000,
@@ -19,13 +19,13 @@ import java.util.Map;
  *      "httpOnly":true,
  *      "isHttpOnly":true
  *   },
- *   "id":"adf09ec5-0c89-4ab7-9668-2f3debe5fd5a",
- *   "userId":"2703e7d6-612f-428b-a56d-c96b0cb7acff",
- *   "accountId":"d95ee4d1-45fb-4061-b3fb-f2651158b416",
+ *   "id":"<id>",
+ *   "userId":"<userId>",
+ *   "accountId":"<accountId>",
  *   "roles":[
  *
  *   ],
- *   "cert":"0efb9b3e-d210-44f2-9bec-31243e132a62"
+ *   "cert":"<certId>"
  * }
  */
 

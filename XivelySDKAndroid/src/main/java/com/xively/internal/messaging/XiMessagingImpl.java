@@ -16,8 +16,8 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class XiMessagingImpl implements XiMessaging, ConnectionListener, PublishListener {
 
+public class XiMessagingImpl implements XiMessaging, ConnectionListener, PublishListener {
     private static final String TAG = "XiMessaging";
     private static final LMILog log = new LMILog(TAG);
 

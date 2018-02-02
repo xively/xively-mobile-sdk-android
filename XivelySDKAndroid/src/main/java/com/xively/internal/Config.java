@@ -116,5 +116,4 @@ public abstract class Config {
         Config.CONN_MQTT_MAX_RECONNECT = Config.DEFAULT_CONN_MQTT_MAX_RECONNECT;
         Config.CONN_KEEPALIVE = Config.DEFAULT_CONN_KEEPALIVE;
     }
-
 }

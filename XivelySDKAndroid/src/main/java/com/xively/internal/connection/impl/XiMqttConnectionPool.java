@@ -13,7 +13,6 @@ import java.util.ArrayList;
  * @Internal
  */
 public class XiMqttConnectionPool {
-
     private static final String TAG = "XiMqttConnectionPool";
     private static final LMILog log = new LMILog(TAG);
 
@@ -133,5 +132,4 @@ public class XiMqttConnectionPool {
 
         void onConnectFailed(ConnectionListener.ConnectionError error);
     }
-
 }

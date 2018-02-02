@@ -2,6 +2,7 @@ package com.xively.internal.logger;
 
 import com.xively.XiSdkConfig;
 
+
 class Debug {
 
     private static final String TAG = "Debug";
@@ -14,5 +15,4 @@ class Debug {
     public static void DebugBreak() {
         log.l(XiSdkConfig.LogLevel.INFO, "DebugBreak!");
     }
-
 }

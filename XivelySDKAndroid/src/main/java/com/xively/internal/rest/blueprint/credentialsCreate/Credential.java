@@ -12,5 +12,4 @@ public class Credential {
     public String entityId;
     public String entityType;
     public String secret;
-
 }

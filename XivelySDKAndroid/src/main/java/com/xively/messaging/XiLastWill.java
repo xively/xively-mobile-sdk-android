@@ -71,9 +71,11 @@ public class XiLastWill {
 
     @Override
     public String toString() {
-        return "topic: " + topic + "\n" +
-                "message: " + message + "\n" +
-                "qos: " + qos + "\n" +
-                "retain: " + retain;
+        return "XiLastWill{" +
+                "topic='" + topic + '\'' +
+                ", message=" + Arrays.toString(message) +
+                ", qos=" + qos +
+                ", retain=" + retain +
+                '}';
     }
 }

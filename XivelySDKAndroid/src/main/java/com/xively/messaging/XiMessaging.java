@@ -169,5 +169,4 @@ public interface XiMessaging extends XiService {
      * from the current {@link com.xively.XiSession} instance.
      */
     void close();
-
 }
