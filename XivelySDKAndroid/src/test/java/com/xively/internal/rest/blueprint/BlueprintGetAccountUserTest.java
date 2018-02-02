@@ -1,5 +1,6 @@
 package com.xively.internal.rest.blueprint;
 
+
 import com.xively.XiSdkConfig;
 import com.xively.internal.logger.LMILog;
 
@@ -19,16 +20,16 @@ import retrofit2.Response;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.eq;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-public class BlueprintGetUsersTest extends TestCase {
+public class BlueprintGetAccountUserTest extends TestCase {
 
     @Mock
-    private GetEndUsers mockGetEndUsers;
+    private GetAccountUser mockGetAccountUser;
 
     @Override
     protected void setUp() throws Exception {
@@ -37,16 +38,16 @@ public class BlueprintGetUsersTest extends TestCase {
     }
 
     @Test
-    public void testStartGetEndUserQuerySuccess() throws Exception {
+    public void testStartGeAccountUserQuerySuccess() throws Exception {
         BlueprintWebServices SUT = new BlueprintWebServices(
                 null,
+                mockGetAccountUser,
                 null,
                 null,
                 null,
                 null,
                 null,
                 null,
-                mockGetEndUsers,
                 null,
                 null
         );
@@ -55,7 +56,7 @@ public class BlueprintGetUsersTest extends TestCase {
         String userId = "mock access user id";
 
         final SuccessStubCall successStubCall = new SuccessStubCall();
-        when(mockGetEndUsers.getEndUsers(
+        when(mockGetAccountUser.getAccountUser(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -66,20 +67,20 @@ public class BlueprintGetUsersTest extends TestCase {
                 anyString()
         )).thenReturn(successStubCall);
 
-        SUT.getEndUsers(accountId, userId, new Callback<GetEndUsers.Response>() {
+        SUT.getAccountUser(accountId, userId, new Callback<GetAccountUser.Response>() {
             @Override
-            public void onResponse(Call<GetEndUsers.Response> call, Response<GetEndUsers.Response> response) {
+            public void onResponse(Call<GetAccountUser.Response> call, Response<GetAccountUser.Response> response) {
                 assertEquals(successStubCall, call);
                 assertEquals(response.code(), 200);
             }
 
             @Override
-            public void onFailure(Call<GetEndUsers.Response> call, Throwable t) {
+            public void onFailure(Call<GetAccountUser.Response> call, Throwable t) {
                 fail();
             }
         });
 
-        verify(mockGetEndUsers, times(1)).getEndUsers(
+        verify(mockGetAccountUser, times(1)).getAccountUser(
                 anyString(),
                 eq(accountId),
                 eq(userId),
@@ -92,16 +93,16 @@ public class BlueprintGetUsersTest extends TestCase {
     }
 
     @Test
-    public void testStartGetEndUserQueryFailure() throws Exception {
+    public void testStartGeAccountUserQueryFailure() throws Exception {
         BlueprintWebServices SUT = new BlueprintWebServices(
                 null,
+                mockGetAccountUser,
                 null,
                 null,
                 null,
                 null,
                 null,
                 null,
-                mockGetEndUsers,
                 null,
                 null
         );
@@ -110,7 +111,7 @@ public class BlueprintGetUsersTest extends TestCase {
         String userId = "mock access user id";
 
         final FailureStubCall failureStubCall = new FailureStubCall();
-        when(mockGetEndUsers.getEndUsers(
+        when(mockGetAccountUser.getAccountUser(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -121,20 +122,20 @@ public class BlueprintGetUsersTest extends TestCase {
                 anyString()
         )).thenReturn(failureStubCall);
 
-        SUT.getEndUsers(accountId, userId, new Callback<GetEndUsers.Response>() {
+        SUT.getAccountUser(accountId, userId, new Callback<GetAccountUser.Response>() {
             @Override
-            public void onResponse(Call<GetEndUsers.Response> call, Response<GetEndUsers.Response> response) {
+            public void onResponse(Call<GetAccountUser.Response> call, Response<GetAccountUser.Response> response) {
                 fail();
             }
 
             @Override
-            public void onFailure(Call<GetEndUsers.Response> call, Throwable t) {
+            public void onFailure(Call<GetAccountUser.Response> call, Throwable t) {
                 assertEquals(failureStubCall, call);
                 assertNotNull(t);
             }
         });
 
-        verify(mockGetEndUsers, times(1)).getEndUsers(
+        verify(mockGetAccountUser, times(1)).getAccountUser(
                 anyString(),
                 eq(accountId),
                 eq(userId),
@@ -146,16 +147,17 @@ public class BlueprintGetUsersTest extends TestCase {
         );
     }
 
-    private class SuccessStubCall implements Call<GetEndUsers.Response> {
+    private class SuccessStubCall implements Call<GetAccountUser.Response> {
+
         @Override
-        public Response<GetEndUsers.Response> execute() throws IOException {
+        public Response<GetAccountUser.Response> execute() throws IOException {
             return null;
         }
 
         @Override
-        public void enqueue(Callback<GetEndUsers.Response> callback) {
-            GetEndUsers.Response response = new GetEndUsers.Response();
-            Response<GetEndUsers.Response> retrofitResponse = Response.success(response);
+        public void enqueue(Callback<GetAccountUser.Response> callback) {
+            GetAccountUser.Response response = new GetAccountUser.Response();
+            Response<GetAccountUser.Response> retrofitResponse = Response.success(response);
             callback.onResponse(this, retrofitResponse);
         }
 
@@ -175,7 +177,7 @@ public class BlueprintGetUsersTest extends TestCase {
         }
 
         @Override
-        public Call<GetEndUsers.Response> clone() {
+        public Call<GetAccountUser.Response> clone() {
             return null;
         }
 
@@ -185,14 +187,15 @@ public class BlueprintGetUsersTest extends TestCase {
         }
     }
 
-    private class FailureStubCall implements Call<GetEndUsers.Response> {
+    private class FailureStubCall implements Call<GetAccountUser.Response> {
+
         @Override
-        public Response<GetEndUsers.Response> execute() throws IOException {
+        public Response<GetAccountUser.Response> execute() throws IOException {
             return null;
         }
 
         @Override
-        public void enqueue(Callback<GetEndUsers.Response> callback) {
+        public void enqueue(Callback<GetAccountUser.Response> callback) {
             callback.onFailure(this, new Throwable("Just an exception"));
         }
 
@@ -212,7 +215,7 @@ public class BlueprintGetUsersTest extends TestCase {
         }
 
         @Override
-        public Call<GetEndUsers.Response> clone() {
+        public Call<GetAccountUser.Response> clone() {
             return null;
         }
 
