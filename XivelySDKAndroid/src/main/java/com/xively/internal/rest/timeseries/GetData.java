@@ -8,6 +8,7 @@ import retrofit2.http.Header;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
+
 public interface GetData {
 
     @GET("/api/v4/data/{topic}")
@@ -27,5 +28,4 @@ public interface GetData {
         public TimeSeriesListMetaDataDTO meta; //TimeSeries list meta data,
         public TimeSeriesItem[] result; //TimeSeries data
     }
-
 }

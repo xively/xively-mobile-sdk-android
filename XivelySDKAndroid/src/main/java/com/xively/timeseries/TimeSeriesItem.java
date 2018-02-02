@@ -1,5 +1,6 @@
 package com.xively.timeseries;
 
+
 public class TimeSeriesItem {
     public String time; //Time in ISO8601 (yyyy-MM-ddTHH:mm:ssZ)
     public String category; //Category

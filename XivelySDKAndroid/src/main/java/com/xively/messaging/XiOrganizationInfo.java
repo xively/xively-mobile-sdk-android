@@ -2,11 +2,8 @@ package com.xively.messaging;
 
 import com.google.gson.internal.LinkedTreeMap;
 
-/**
- * Created by milgra on 26/07/16.
- */
-public class XiOrganizationInfo {
 
+public class XiOrganizationInfo {
     public String organizationId;
     public String parentId;
     public String organizationTemplateId;
@@ -26,21 +23,20 @@ public class XiOrganizationInfo {
     @Override
     public String toString() {
 
-        return
-                "organizationId: " + organizationId + "\n" +
-                        "parentId: " + parentId + "\n" +
-                        "organizationTemplateId: " + organizationTemplateId + "\n" +
-                        "name: " + name + "\n" +
-                        "description: " + description + "\n" +
-                        "phoneNumber: " + phoneNumber + "\n" +
-                        "address: " + address + "\n" +
-                        "city: " + city + "\n" +
-                        "state: " + state + "\n" +
-                        "postalCode: " + postalCode + "\n" +
-                        "countryCode: " + countryCode + "\n" +
-                        "industry: " + industry + "\n" +
-                        "organizationSize: " + organizaitonSize + "\n" +
-                        "websiteAddress: " + websiteAddress + "\n" +
-                        "customFields: " + customFields;
+        return "organizationId: " + organizationId + "\n" +
+                "parentId: " + parentId + "\n" +
+                "organizationTemplateId: " + organizationTemplateId + "\n" +
+                "name: " + name + "\n" +
+                "description: " + description + "\n" +
+                "phoneNumber: " + phoneNumber + "\n" +
+                "address: " + address + "\n" +
+                "city: " + city + "\n" +
+                "state: " + state + "\n" +
+                "postalCode: " + postalCode + "\n" +
+                "countryCode: " + countryCode + "\n" +
+                "industry: " + industry + "\n" +
+                "organizationSize: " + organizaitonSize + "\n" +
+                "websiteAddress: " + websiteAddress + "\n" +
+                "customFields: " + customFields;
     }
 }

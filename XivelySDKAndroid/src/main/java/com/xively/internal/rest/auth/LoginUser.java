@@ -1,9 +1,9 @@
 package com.xively.internal.rest.auth;
 
-
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
+
 
 public interface LoginUser {
 

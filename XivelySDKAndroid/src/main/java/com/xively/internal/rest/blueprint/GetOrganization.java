@@ -7,6 +7,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Path;
 
+
 public interface GetOrganization {
 
     @GET("/api/v1/organizations/{id}")

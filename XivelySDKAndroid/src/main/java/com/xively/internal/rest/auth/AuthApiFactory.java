@@ -10,9 +10,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * Created by svaradi on 1/30/18.
- */
 
 public class AuthApiFactory {
     private LoginUser loginApi;

@@ -7,6 +7,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Query;
 
+
 public interface GetDevices {
 
     @GET("/api/v1/devices")
@@ -28,5 +29,4 @@ public interface GetDevices {
         public HashMap<String, Object> devices;
         public BlueprintError error;
     }
-
 }

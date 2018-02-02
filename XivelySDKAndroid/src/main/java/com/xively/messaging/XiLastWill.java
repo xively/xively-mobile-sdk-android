@@ -3,11 +3,8 @@ package com.xively.messaging;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 
-/**
- * Last will data for a messaging connection.
- */
-public class XiLastWill {
 
+public class XiLastWill {
     private String topic;
     private byte[] message;
     private XiMessaging.XiMessagingQoS qos;
@@ -74,10 +71,9 @@ public class XiLastWill {
 
     @Override
     public String toString() {
-        return
-                "topic: " + topic + "\n" +
-                        "message: " + message + "\n" +
-                        "qos: " + qos + "\n" +
-                        "retain: " + retain;
+        return "topic: " + topic + "\n" +
+                "message: " + message + "\n" +
+                "qos: " + qos + "\n" +
+                "retain: " + retain;
     }
 }

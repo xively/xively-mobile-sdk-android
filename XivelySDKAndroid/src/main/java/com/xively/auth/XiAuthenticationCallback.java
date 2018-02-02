@@ -4,7 +4,9 @@ import com.xively.XiSession;
 
 public interface XiAuthenticationCallback {
 
-    enum XiAuthenticationError {INVALID_CREDENTIALS, INTERNAL_ERROR, NETWORK_ERROR, UNEXPECTED_ERROR, CANCELED}
+    enum XiAuthenticationError {
+        INVALID_CREDENTIALS, INTERNAL_ERROR, NETWORK_ERROR, UNEXPECTED_ERROR, CANCELED
+    }
 
     /**
      * The authentication has been successful and the application now is authorized to use

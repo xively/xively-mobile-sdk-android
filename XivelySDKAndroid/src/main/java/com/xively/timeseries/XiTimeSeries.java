@@ -4,8 +4,8 @@ import com.xively.XiService;
 
 import java.util.Date;
 
-public interface XiTimeSeries extends XiService {
 
+public interface XiTimeSeries extends XiService {
 
     /**
      * Request historic data of the specified channel stored in TimeSeries for the given time range.
@@ -33,5 +33,4 @@ public interface XiTimeSeries extends XiService {
      * Does nothing if there is no pending request or if it has already been canceled or finished.
      */
     void cancel();
-
 }

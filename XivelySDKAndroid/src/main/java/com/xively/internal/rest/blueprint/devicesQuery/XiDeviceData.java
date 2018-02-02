@@ -1,5 +1,6 @@
 package com.xively.internal.rest.blueprint.devicesQuery;
 
+
 public class XiDeviceData {
     public String id;
     public String created;

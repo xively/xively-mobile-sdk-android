@@ -1,6 +1,5 @@
 package com.xively.internal.rest.provision;
 
-
 import com.xively.XiSdkConfig;
 import com.xively.internal.Config;
 import com.xively.internal.logger.LMILog;

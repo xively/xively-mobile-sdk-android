@@ -1,6 +1,5 @@
 package com.xively.internal.rest.blueprint;
 
-
 import com.xively.XiSdkConfig;
 import com.xively.internal.Config;
 import com.xively.internal.logger.LMILog;
@@ -10,6 +9,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class BlueprintApiFactory {
     private CreateCredentials createMqttCredentialsApi;

@@ -13,6 +13,7 @@ import com.xively.timeseries.XiTimeSeries;
 
 import java.util.HashMap;
 
+
 /**
  * This class provides access to Xively services, such as Xively Messaging, TimeSeries, Device Info etc.
  * A session instance can be used after valid authentication while the credentials and

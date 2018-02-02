@@ -37,6 +37,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
 public class XiSessionImpl implements XiSession {
     private static final String TAG = "XiSession";
     private static final LMILog log = new LMILog(TAG);

@@ -3,11 +3,8 @@ package com.xively.internal;
 import com.xively.XiSdkConfig;
 import com.xively.internal.logger.LMILog;
 
-/**
- * @internal
- */
-public abstract class Config {
 
+public abstract class Config {
     private static final String XIVELY_STAGE_HOST = ".stage.xively.us";
     private static final String XIVELY_DEV_HOST = ".dev.xively.io";
     private static final String XIVELY_DEMO_HOST = ".com.xively.demo.xively.com";

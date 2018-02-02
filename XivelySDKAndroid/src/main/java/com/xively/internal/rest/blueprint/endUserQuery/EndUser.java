@@ -1,5 +1,6 @@
 package com.xively.internal.rest.blueprint.endUserQuery;
 
+
 public class EndUser {
     public String id;
     public String created;

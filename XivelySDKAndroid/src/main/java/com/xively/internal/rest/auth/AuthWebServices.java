@@ -4,6 +4,7 @@ import com.xively.internal.logger.LMILog;
 
 import retrofit2.Callback;
 
+
 public class AuthWebServices {
     private static final String TAG = "AuthWebServices";
     private static final LMILog log = new LMILog(TAG);

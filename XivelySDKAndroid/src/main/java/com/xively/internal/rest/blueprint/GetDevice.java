@@ -7,6 +7,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Path;
 
+
 public interface GetDevice {
     @GET("/api/v1/devices/{id}")
     Call<Response> getDevice(
@@ -18,5 +19,4 @@ public interface GetDevice {
         public LinkedTreeMap<String, Object> device;
         public BlueprintError error;
     }
-
 }

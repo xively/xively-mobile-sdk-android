@@ -1,5 +1,6 @@
 package com.xively.internal.rest.blueprint.accountUserQuery;
 
+
 public class AccountUser {
     public String id;
     public String created;

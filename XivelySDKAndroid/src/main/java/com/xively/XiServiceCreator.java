@@ -3,7 +3,6 @@ package com.xively;
 import java.util.ArrayList;
 
 public abstract class XiServiceCreator<T extends XiService> {
-
     public enum State {Idle, Creating, Created, Error, Canceled}
 
     protected State state = State.Idle;

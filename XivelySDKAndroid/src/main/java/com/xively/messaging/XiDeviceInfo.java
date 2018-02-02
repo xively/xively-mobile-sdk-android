@@ -5,7 +5,6 @@ import com.google.gson.internal.LinkedTreeMap;
 import java.util.ArrayList;
 
 public class XiDeviceInfo {
-
     public enum ProvisioningStateEnum {defined, activated, associated, reserved}
 
     public enum PersistenceTypeEnum {simple, timeSeries}

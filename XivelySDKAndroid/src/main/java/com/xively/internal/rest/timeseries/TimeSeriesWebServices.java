@@ -8,6 +8,7 @@ import java.util.Locale;
 
 import retrofit2.Callback;
 
+
 public class TimeSeriesWebServices {
 
     private static final String TAG = "TimeSeriesWebServices";

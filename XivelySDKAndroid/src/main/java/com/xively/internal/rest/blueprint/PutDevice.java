@@ -11,6 +11,7 @@ import retrofit2.http.Header;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
+
 public interface PutDevice {
 
     @PUT("/api/v1/devices/{id}")

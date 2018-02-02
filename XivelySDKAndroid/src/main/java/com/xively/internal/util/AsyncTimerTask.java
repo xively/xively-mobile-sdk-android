@@ -3,8 +3,8 @@ package com.xively.internal.util;
 import android.os.AsyncTask;
 import android.os.Looper;
 
-public class AsyncTimerTask {
 
+public class AsyncTimerTask {
     private Runnable postExecuteRunnable;
     private long timerMillis;
     private TimerTask timerTask;

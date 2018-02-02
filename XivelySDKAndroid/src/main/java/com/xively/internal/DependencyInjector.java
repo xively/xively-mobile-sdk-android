@@ -18,8 +18,8 @@ import com.xively.messaging.XiMessaging;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 
-public class DependencyInjector {
 
+public class DependencyInjector {
     private static DependencyInjector instance;
 
     private Context context;

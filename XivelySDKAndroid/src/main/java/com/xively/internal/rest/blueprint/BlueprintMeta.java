@@ -1,5 +1,6 @@
 package com.xively.internal.rest.blueprint;
 
+
 public class BlueprintMeta {
     public Integer count;
     public Integer pageSize;

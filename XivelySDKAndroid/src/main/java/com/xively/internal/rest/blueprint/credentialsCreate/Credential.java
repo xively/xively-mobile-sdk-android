@@ -1,5 +1,6 @@
 package com.xively.internal.rest.blueprint.credentialsCreate;
 
+
 public class Credential {
     public String id;
     public String created;

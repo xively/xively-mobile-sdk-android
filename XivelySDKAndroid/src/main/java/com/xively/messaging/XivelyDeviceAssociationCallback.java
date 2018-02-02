@@ -1,5 +1,6 @@
 package com.xively.messaging;
 
+
 public interface XivelyDeviceAssociationCallback {
 
     /**

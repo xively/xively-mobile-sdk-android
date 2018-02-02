@@ -1,10 +1,7 @@
 package com.xively.internal.rest.blueprint.organizationsQuery;
 
-/**
- * Created by milgra on 26/07/16.
- */
-public class XiOrganizationData {
 
+public class XiOrganizationData {
     public String id;
     public String created;
     public String createdById;

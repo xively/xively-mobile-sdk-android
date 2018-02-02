@@ -19,6 +19,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
 public class BlueprintWebServices {
     private static final String TAG = "BlueprintWebServices";
     private static final LMILog log = new LMILog(TAG);

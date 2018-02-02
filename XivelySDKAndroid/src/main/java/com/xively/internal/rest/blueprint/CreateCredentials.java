@@ -7,6 +7,7 @@ import retrofit2.http.Body;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 
+
 public interface CreateCredentials {
 
     @POST("/api/v1/access/mqtt-credentials")
@@ -15,10 +16,6 @@ public interface CreateCredentials {
             @Body Request body
     );
 
-    /**
-     * entityId - endUserId
-     * entityType - "endUser"
-     */
     class Request {
         public String accountId;
         public String entityId;

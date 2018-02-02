@@ -5,7 +5,6 @@ package com.xively;
  * APIs of the Xively SDK for Android.
  */
 public class XiException extends Exception {
-
     private static final long serialVersionUID = 5435926374136242171L;
 
     XiException() {

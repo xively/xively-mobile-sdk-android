@@ -5,8 +5,8 @@ import com.xively.internal.logger.LMILog;
 import java.io.File;
 import java.util.ArrayList;
 
-public class LMIFile {
 
+public class LMIFile {
     private static final LMILog log = new LMILog("LMIFile");
 
     private final File mFile;
