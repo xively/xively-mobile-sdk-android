@@ -15,13 +15,7 @@ public class ProvisioningApiFactory {
     private StartAssociationWithCode associationApi;
 
     private ProvisioningApiFactory() {
-        String wsEndpoint;
-        if (Config.CONN_USE_SSL) {
-            wsEndpoint = "https://";
-        } else {
-            wsEndpoint = "http://";
-        }
-        wsEndpoint += Config.provision_endpoint();
+        String wsEndpoint = "https://" + Config.provision_endpoint();
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();

@@ -15,14 +15,7 @@ public class AuthApiFactory {
     private LoginUser loginApi;
 
     private AuthApiFactory() {
-        String wsEndpoint;
-
-        if (Config.CONN_USE_SSL) {
-            wsEndpoint = "https://";
-        } else {
-            wsEndpoint = "http://";
-        }
-        wsEndpoint += Config.auth_endpoint();
+        String wsEndpoint = "https://" + Config.auth_endpoint();
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();

@@ -28,15 +28,7 @@ public class BlueprintApiFactory {
     private GetOrganizations getOrganizationsApi;
 
     private BlueprintApiFactory() {
-        String wsEndpoint;
-
-        if (Config.CONN_USE_SSL) {
-            wsEndpoint = "https://";
-        } else {
-            wsEndpoint = "http://";
-        }
-        wsEndpoint += Config.blueprint_endpoint();
-
+        String wsEndpoint = "https://" + Config.blueprint_endpoint();
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
