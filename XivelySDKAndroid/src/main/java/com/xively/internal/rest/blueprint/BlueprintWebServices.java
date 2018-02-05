@@ -1,20 +1,22 @@
 package com.xively.internal.rest.blueprint;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.LinkedTreeMap;
 import com.xively.internal.account.XivelyAccount;
-import com.xively.internal.auth.XivelyJWT;
 import com.xively.internal.logger.LMILog;
 import com.xively.internal.rest.blueprint.accountUserQuery.AccountUser;
 import com.xively.internal.rest.blueprint.endUserQuery.EndUser;
 import com.xively.messaging.XiDeviceInfo;
 
-import org.apache.commons.codec.binary.Base64;
-
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwsHeader;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SigningKeyResolver;
+import io.jsonwebtoken.UnsupportedJwtException;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -288,27 +290,30 @@ public class BlueprintWebServices {
             return;
         }
 
-        byte[] jwtData = Base64.decodeBase64(jwtSplit[1].getBytes());
-        if (jwtData == null || jwtData.length < 1) {
-            log.e("Failed to acquire credentials: corrupt token.");
-            callback.onFailure(null, new Throwable("Corrupt Token"));
-            return;
-        }
-
         final String idmUserId;
         final String accountId;
 
-        String jsonString = new String(jwtData);
-
         try {
-            Gson gson = new Gson();
-            XivelyJWT xivelyJWT = gson.fromJson(jsonString, XivelyJWT.class);
-            idmUserId = xivelyJWT.getUserId();
-            accountId = xivelyJWT.getAccountId();
+            Claims claims = Jwts.parser().setSigningKeyResolver(new SigningKeyResolver() {
+                @Override
+                public Key resolveSigningKey(JwsHeader header, Claims claims) {
+                    return null;
+                }
+
+                @Override
+                public Key resolveSigningKey(JwsHeader header, String plaintext) {
+                    return null;
+                }
+            }).parseClaimsJwt(jwtSplit[0] + "." + jwtSplit[1] + ".").getBody();
+            idmUserId = claims.get("userId", String.class);
+            accountId = claims.get("accountId", String.class);
         } catch (JsonSyntaxException ex) {
-            log.e("Failed to acquire credentials: corrupt token.");
-            log.t(ex.toString());
-            callback.onFailure(null, new Throwable("Corrupt Token"));
+            log.e("Failed to acquire credentials: Could not parse JWT Payload");
+            callback.onFailure(null, new Throwable("Could not parse JWT Payload"));
+            return;
+        } catch (UnsupportedJwtException ex) {
+            log.e("Failed to acquire credentials: Could not parse JWT Payload");
+            callback.onFailure(null, new Throwable("Could not parse JWT Payload"));
             return;
         }
 
@@ -379,6 +384,7 @@ public class BlueprintWebServices {
                         resultEndUser = new EndUser();
                         resultEndUser.id = (String) endUserMap.get("id");
                         resultEndUser.emailAddress = (String) endUserMap.get("emailAddress");
+                        log.i(resultEndUser.toString());
                         break;
                     }
                 }

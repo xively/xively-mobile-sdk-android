@@ -109,27 +109,27 @@ public class XiAuthenticationImpl implements XiAuthentication {
         synchronized (cancelSync) {
             if (!canceled) {
                 BlueprintWebServices blueprint = DependencyInjector.get().blueprintWebServices();
-                blueprint.queryXivelyAccount(jwt,
-                        new Callback<XivelyAccount>() {
-                            @Override
-                            public void onResponse(Call<XivelyAccount> call, Response<XivelyAccount> response) {
-                                XivelyAccount accountResponse = response.body();
-                                if (accountResponse != null) {
-                                    log.d(accountResponse.toString());
-                                    createSessionObject(callback, accountResponse);
-                                } else {
-                                    callback.authenticationFailed(
-                                            XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR);
-                                }
-                            }
 
-                            @Override
-                            public void onFailure(Call<XivelyAccount> call, Throwable t) {
-                                log.i("Failed to acquire credentials.");
-                                callback.authenticationFailed(
-                                        XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR);
-                            }
-                        });
+                blueprint.queryXivelyAccount(jwt, new Callback<XivelyAccount>() {
+                    @Override
+                    public void onResponse(Call<XivelyAccount> call, Response<XivelyAccount> response) {
+                        XivelyAccount accountResponse = response.body();
+                        if (accountResponse != null) {
+                            log.d(accountResponse.toString());
+                            createSessionObject(callback, accountResponse);
+                        } else {
+                            callback.authenticationFailed(
+                                    XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<XivelyAccount> call, Throwable t) {
+                        log.i("Failed to acquire credentials.");
+                        callback.authenticationFailed(
+                                XiAuthenticationCallback.XiAuthenticationError.INTERNAL_ERROR);
+                    }
+                });
             } else {
                 log.i("Authentication flow canceled.");
                 callback.authenticationFailed(XiAuthenticationCallback.XiAuthenticationError.CANCELED);

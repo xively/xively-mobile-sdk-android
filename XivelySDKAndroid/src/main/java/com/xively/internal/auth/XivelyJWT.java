@@ -56,70 +56,32 @@ public class XivelyJWT {
     public XivelyJWT() {
     }
 
-    public XivelyJWT(String id, String userId, long expires, String renewalKey, String accountId, String cert, List<Map<String, String>> roles) {
-        this.id = id;
-        this.userId = userId;
-        this.expires = expires;
-        this.renewalKey = renewalKey;
-        this.accountId = accountId;
-        this.cert = cert;
-        this.roles = roles;
-    }
-
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public long getExpires() {
         return expires;
-    }
-
-    public void setExpires(long expires) {
-        this.expires = expires;
     }
 
     public String getRenewalKey() {
         return renewalKey;
     }
 
-    public void setRenewalKey(String renewalKey) {
-        this.renewalKey = renewalKey;
-    }
-
     public String getAccountId() {
         return accountId;
-    }
-
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
     }
 
     public String getCert() {
         return cert;
     }
 
-    public void setCert(String cert) {
-        this.cert = cert;
-    }
-
     public List<Map<String, String>> getRoles() {
         return roles;
-    }
-
-    public void setRoles(List<Map<String, String>> roles) {
-        this.roles = roles;
     }
 
     @Override
