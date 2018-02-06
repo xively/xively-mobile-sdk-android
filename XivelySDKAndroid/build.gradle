@@ -44,7 +44,6 @@ publishing {
     }
 }
 
-
 def pomBuilder = { xmlProvider ->
     def root = xmlProvider.asNode()
 
@@ -100,16 +99,10 @@ publishing.publications {
             groupId "com.xively.android"
             artifactId "sdk"
             version "0.3.0"
-            // Publish default config without classifier
-//            if (getProject().android.publishNonDefault && variant.name == getProject().android.defaultPublishConfig) {
-//
-//                def obfuscatedAarFile = MultiProjectObfuscator.packageTaskOf(getProject(), variant)
-//                artifact (obfuscatedAarFile) {
-//                    extension 'aar'
-//                }
-//
-//                artifact getProject().tasks["${variant.name}JavadocJar"]
-//            }
+
+            artifact (variant.packageLibrary) {
+                extension 'aar'
+            }
 
             pom {
                 packaging 'aar'

@@ -1,1 +1,6 @@
-include ':XivelySDKAndroid', 'XivelySDKE2E', 'XivelySDKDemo'
+include ':XivelySDKAndroid'
+project(':XivelySDKAndroid').name = 'sdk'
+include 'XivelySDKE2E'
+project(':XivelySDKE2E').name = 'e2e'
+include 'XivelySDKDemo'
+project(':XivelySDKDemo').name = 'demo'
