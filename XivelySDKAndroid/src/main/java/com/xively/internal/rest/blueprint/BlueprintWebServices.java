@@ -1,6 +1,5 @@
 package com.xively.internal.rest.blueprint;
 
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.LinkedTreeMap;
 import com.xively.internal.account.XivelyAccount;
 import com.xively.internal.logger.LMILog;
@@ -294,7 +293,8 @@ public class BlueprintWebServices {
         final String accountId;
 
         try {
-            Claims claims = Jwts.parser().setSigningKeyResolver(new SigningKeyResolver() {
+            // We only need the payload of the JWT which contains the context
+            SigningKeyResolver notVerifySignatureResolver = new SigningKeyResolver() {
                 @Override
                 public Key resolveSigningKey(JwsHeader header, Claims claims) {
                     return null;
@@ -304,17 +304,23 @@ public class BlueprintWebServices {
                 public Key resolveSigningKey(JwsHeader header, String plaintext) {
                     return null;
                 }
-            }).parseClaimsJwt(jwtSplit[0] + "." + jwtSplit[1] + ".").getBody();
+            };
+
+            Claims claims = Jwts.parser()
+                    .setSigningKeyResolver(notVerifySignatureResolver)
+                    .parseClaimsJwt(jwtSplit[0] + "." + jwtSplit[1] + ".").getBody();
+
             idmUserId = claims.get("userId", String.class);
             accountId = claims.get("accountId", String.class);
-        } catch (JsonSyntaxException ex) {
-            log.e("Failed to acquire credentials: Could not parse JWT Payload");
-            callback.onFailure(null, new Throwable("Could not parse JWT Payload"));
-            return;
         } catch (UnsupportedJwtException ex) {
             log.e("Failed to acquire credentials: Could not parse JWT Payload");
             callback.onFailure(null, new Throwable("Could not parse JWT Payload"));
             return;
+        }
+
+        if (accountId == null || idmUserId == null) {
+            log.e("Failed to parse accountId or userId from JWT");
+            callback.onFailure(null, new Throwable("Failed to parse accountId or userId from JWT"));
         }
 
         final Callback<GetAccountUser.Response> accountUsersCallback = new Callback<GetAccountUser.Response>() {
