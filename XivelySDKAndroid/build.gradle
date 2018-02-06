@@ -1,4 +1,7 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+
+apply from: '../jacoco.gradle'
 
 android {
     compileSdkVersion 21
@@ -8,7 +11,7 @@ android {
         targetSdkVersion 21
 
         versionCode 3
-        versionName "0.3"
+        versionName "0.3.0"
     }
     buildTypes {
         release {
@@ -33,7 +36,38 @@ android {
     }
 }
 
-apply from: '../jacoco.gradle'
+publishing {
+    repositories {
+        maven {
+            url "file://$project.buildDir/outputs/mavenArtifact"
+        }
+    }
+}
+
+publishing.publications {
+    android.libraryVariants.all { variant ->
+        if (variant.buildType.name != "release") {
+            return
+        }
+
+        def publicationName = "${variant.name.capitalize()}"
+
+        "$publicationName"(MavenPublication) {
+            groupId "com.xively.android"
+            artifactId "sdk"
+            version "0.3.0"
+
+            // Publish default config without classifier
+//            if (android.publishNonDefault && variant.name == android.defaultPublishConfig) {
+//
+//                def nonObfuscatedAarFile = variant.outputs[0].packageLibrary
+//                artifact(nonObfuscatedAarFile) {
+//                    classifier "internal"
+//                }
+//            }
+        }
+    }
+}
 
 dependencies {
     testCompile 'junit:junit:4.12'
