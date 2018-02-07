@@ -2,14 +2,14 @@ package com.xively.messaging.impl;
 
 import com.xively.XiException;
 import com.xively.XiSdkConfig;
+import com.xively.internal.DependencyInjector;
+import com.xively.internal.account.XivelyAccount;
 import com.xively.internal.connection.ConnectionListener;
 import com.xively.internal.connection.PublishListener;
 import com.xively.internal.connection.XiMqttConnection;
 import com.xively.internal.connection.impl.XiMqttConnectionPool;
-import com.xively.internal.DependencyInjector;
-import com.xively.internal.account.XivelyAccount;
-import com.xively.internal.messaging.XiMessagingImpl;
 import com.xively.internal.logger.LMILog;
+import com.xively.internal.messaging.XiMessagingImpl;
 import com.xively.messaging.XiLastWill;
 import com.xively.messaging.XiMessaging;
 import com.xively.messaging.XiMessagingDataListener;
@@ -27,7 +27,13 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class XiMessagingTest extends TestCase {
 
@@ -70,8 +76,8 @@ public class XiMessagingTest extends TestCase {
                 XiMessaging.XiMessagingQoS.AtLeastOnce, false);
     }
 
-    public void testMessagingDefaultState(){
-        XiMessaging deviceControl = new XiMessagingImpl(mockConnectionPool,"jwt");
+    public void testMessagingDefaultState() {
+        XiMessaging deviceControl = new XiMessagingImpl(mockConnectionPool, "jwt");
 
         assertEquals(XiMessaging.State.Closed, deviceControl.getState());
     }
@@ -80,7 +86,7 @@ public class XiMessagingTest extends TestCase {
         ArgumentCaptor<XiMqttConnectionPool.MqttConnectionRequestCallback> connRequestCaptor =
                 ArgumentCaptor.forClass(XiMqttConnectionPool.MqttConnectionRequestCallback.class);
 
-        XiMessagingImpl deviceControl = new XiMessagingImpl(mockConnectionPool,"jwt");
+        XiMessagingImpl deviceControl = new XiMessagingImpl(mockConnectionPool, "jwt");
         deviceControl.addStateListener(mockStateListener);
         deviceControl.init(false, this.lastWill);
 
@@ -97,7 +103,7 @@ public class XiMessagingTest extends TestCase {
         ArgumentCaptor<XiMqttConnectionPool.MqttConnectionRequestCallback> connRequestCaptor =
                 ArgumentCaptor.forClass(XiMqttConnectionPool.MqttConnectionRequestCallback.class);
 
-        XiMessagingImpl deviceControl = new XiMessagingImpl(mockConnectionPool,"jwt");
+        XiMessagingImpl deviceControl = new XiMessagingImpl(mockConnectionPool, "jwt");
         deviceControl.addStateListener(mockStateListener);
         deviceControl.init(false, this.lastWill);
 
@@ -150,7 +156,7 @@ public class XiMessagingTest extends TestCase {
 
         try {
             deviceControl.addDataListener(null);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             fail(ex.toString());
         }
 
@@ -195,7 +201,7 @@ public class XiMessagingTest extends TestCase {
 
         try {
             deviceControl.removeDataListener(null);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             fail(ex.toString());
         }
 
@@ -261,7 +267,7 @@ public class XiMessagingTest extends TestCase {
         XiMessagingImpl deviceControl = setupNewTestObject(connectedConnection);
         try {
             deviceControl.addStateListener(null);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             fail(ex.toString());
         }
 
@@ -291,7 +297,7 @@ public class XiMessagingTest extends TestCase {
 
         try {
             deviceControl.removeStateListener(null);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             fail(ex.toString());
         }
 
@@ -311,7 +317,7 @@ public class XiMessagingTest extends TestCase {
         }
 
         verify(mockSubscriptionListener, times(1)).onSubscribed(eq(testTopic1));
-        verify(mockSubscriptionListener,never()).onSubscribed(eq(testTopic2));
+        verify(mockSubscriptionListener, never()).onSubscribed(eq(testTopic2));
 
         try {
             verify(connectedConnection).subscribeToTopic(eq(testTopic1), eq(0));
@@ -332,7 +338,7 @@ public class XiMessagingTest extends TestCase {
     }
 
     public void testMessagingSubscribeThrowsExceptionOnNullConnection() {
-        XiMessagingImpl deviceControl = new XiMessagingImpl(null,"jwt");
+        XiMessagingImpl deviceControl = new XiMessagingImpl(null, "jwt");
 
         try {
             deviceControl.subscribe(testTopic1, XiMessaging.XiMessagingQoS.AtLeastOnce);
@@ -364,7 +370,7 @@ public class XiMessagingTest extends TestCase {
         try {
             doThrow(new MqttException(0))
                     .when(connectedConnection).subscribeToTopic(anyString(), anyInt());
-        } catch (MqttException ex){
+        } catch (MqttException ex) {
             fail(ex.toString());
         }
 
@@ -389,7 +395,7 @@ public class XiMessagingTest extends TestCase {
     }
 
     public void testMessagingUnsubscribeThrowsExceptionOnNullConnection() {
-        XiMessagingImpl deviceControl = new XiMessagingImpl(null,"jwt");
+        XiMessagingImpl deviceControl = new XiMessagingImpl(null, "jwt");
         deviceControl.addSubscriptionListener(mockSubscriptionListener);
 
         try {
@@ -442,8 +448,8 @@ public class XiMessagingTest extends TestCase {
         }
     }
 
-    public void testMessagingPublishThrowsExceptionOnNullConnection(){
-        XiMessagingImpl deviceControl = new XiMessagingImpl(null,"jwt");
+    public void testMessagingPublishThrowsExceptionOnNullConnection() {
+        XiMessagingImpl deviceControl = new XiMessagingImpl(null, "jwt");
 
         try {
             deviceControl.publish(testTopic1, "test message".getBytes(),
@@ -453,8 +459,8 @@ public class XiMessagingTest extends TestCase {
         }
     }
 
-    public void testMessagingPublishRetainedThrowsExceptionOnNullConnection(){
-        XiMessagingImpl deviceControl = new XiMessagingImpl(null,"jwt");
+    public void testMessagingPublishRetainedThrowsExceptionOnNullConnection() {
+        XiMessagingImpl deviceControl = new XiMessagingImpl(null, "jwt");
 
         try {
             deviceControl.publish(testTopic1, "test message".getBytes(),
@@ -509,7 +515,7 @@ public class XiMessagingTest extends TestCase {
         ArgumentCaptor<XiMqttConnectionPool.MqttConnectionRequestCallback> connRequestCaptor =
                 ArgumentCaptor.forClass(XiMqttConnectionPool.MqttConnectionRequestCallback.class);
 
-        XiMessagingImpl deviceControl = new XiMessagingImpl(mockConnectionPool,"jwt");
+        XiMessagingImpl deviceControl = new XiMessagingImpl(mockConnectionPool, "jwt");
 
         deviceControl.init(false, null);
 

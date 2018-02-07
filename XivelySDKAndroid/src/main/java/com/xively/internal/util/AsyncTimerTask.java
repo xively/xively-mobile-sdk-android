@@ -3,8 +3,8 @@ package com.xively.internal.util;
 import android.os.AsyncTask;
 import android.os.Looper;
 
-public class AsyncTimerTask {
 
+public class AsyncTimerTask {
     private Runnable postExecuteRunnable;
     private long timerMillis;
     private TimerTask timerTask;
@@ -12,7 +12,7 @@ public class AsyncTimerTask {
     public AsyncTimerTask(final long timerMillis, final Runnable onPostExecute)
             throws IllegalThreadStateException {
 
-        if (Looper.myLooper() != Looper.getMainLooper()){
+        if (Looper.myLooper() != Looper.getMainLooper()) {
             throw new IllegalThreadStateException("Must be run on ui thread!");
         }
 
@@ -22,18 +22,18 @@ public class AsyncTimerTask {
         timerTask = new TimerTask();
     }
 
-    public void execute(){
+    public void execute() {
         timerTask.execute(timerMillis);
     }
 
-    public void cancel(){
+    public void cancel() {
         if (timerTask != null) {
             timerTask.cancel(true);
         }
     }
 
-    private void runPostExecuteRunnable(){
-        if (postExecuteRunnable != null){
+    private void runPostExecuteRunnable() {
+        if (postExecuteRunnable != null) {
             postExecuteRunnable.run();
         }
     }
@@ -54,10 +54,9 @@ public class AsyncTimerTask {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if (!isCancelled()){
+            if (!isCancelled()) {
                 runPostExecuteRunnable();
             }
         }
     }
-
 }

@@ -2,13 +2,13 @@ package com.xively.internal.connection.impl;
 
 import android.content.Context;
 
+import com.xively.internal.Config;
+import com.xively.internal.DependencyInjector;
+import com.xively.internal.account.XivelyAccount;
 import com.xively.internal.connection.ConnectionListener;
 import com.xively.internal.connection.ConnectionListener.ConnectionError;
 import com.xively.internal.connection.PublishListener;
 import com.xively.internal.connection.XiMqttConnection;
-import com.xively.internal.Config;
-import com.xively.internal.DependencyInjector;
-import com.xively.internal.account.XivelyAccount;
 import com.xively.internal.logger.LMILog;
 import com.xively.internal.util.AsyncTimerTask;
 import com.xively.messaging.XiLastWill;
@@ -27,12 +27,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.net.ssl.SSLContext;
 
+
 public class XiMqttConnectionImpl implements XiMqttConnection {
-	private static final String TAG = "XMqttConnection";
+    private static final String TAG = "XMqttConnection";
     private static final LMILog log = new LMILog(TAG);
-	static {
-		log.getClass();
-	}
+
+    static {
+        log.getClass();
+    }
 
     private final static Object CONNECT_SYNC = new Object();
 
@@ -43,16 +45,16 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
     private AsyncTimerTask mqttConnectionTimer;
 
     private final CopyOnWriteArrayList<ConnectionListener> connectionListeners;
-	private final CopyOnWriteArrayList<PublishListener> publishListeners;
-	private MqttAndroidClient client;
+    private final CopyOnWriteArrayList<PublishListener> publishListeners;
+    private MqttAndroidClient client;
     private String currentJwt = null;
     private String currentClientId = null;
     private String currentUserId = null;
 
-	public XiMqttConnectionImpl() {
-		connectionListeners = new CopyOnWriteArrayList<>();
-		publishListeners = new CopyOnWriteArrayList<>();
-	}
+    public XiMqttConnectionImpl() {
+        connectionListeners = new CopyOnWriteArrayList<>();
+        publishListeners = new CopyOnWriteArrayList<>();
+    }
 
     public boolean isCleanSession() {
         return this.cleanMqttSession;
@@ -63,7 +65,7 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
         return this.lastWill;
     }
 
-	public void connect(XivelyAccount xivelyAccount, String token, boolean cleanSession, XiLastWill lastWill) {
+    public void connect(XivelyAccount xivelyAccount, String token, boolean cleanSession, XiLastWill lastWill) {
         this.currentClientId = xivelyAccount.getClientId();
         this.currentUserId = xivelyAccount.getUserName();
         this.currentJwt = token;
@@ -71,28 +73,28 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
         this.lastWill = lastWill;
 
         connectMqtt(xivelyAccount);
-	}
+    }
 
     private void connectMqtt(final XivelyAccount xivelyAccount) {
         connectMqtt(xivelyAccount, false);
     }
 
-	private void connectMqtt(final XivelyAccount xivelyAccount, final boolean reconnect) {
-		log.d("Connecting to mqtt messaging...");
+    private void connectMqtt(final XivelyAccount xivelyAccount, final boolean reconnect) {
+        log.d("Connecting to mqtt messaging...");
         connCanceled = false;
 
-		Context context = DependencyInjector.get().getContext();
+        Context context = DependencyInjector.get().getContext();
 
-		String uri;
-		if (Config.CONN_USE_SSL) {
-			uri = "ssl://";
+        String uri;
+        if (Config.CONN_USE_SSL) {
+            uri = "ssl://";
             uri = uri + Config.xi_mqtt_host() + ":"
                     + Config.CONN_XI_MQTT_SECURE_PORT;
-		} else {
-			uri = "tcp://";
+        } else {
+            uri = "tcp://";
             uri = uri + Config.xi_mqtt_host() + ":"
                     + Config.CONN_XI_MQTT_PORT;
-		}
+        }
 
         log.t("Connecting to " + uri);
 
@@ -131,7 +133,7 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
                     } else {
                         //try to reconnect
                         onReconnecting();
-                        reconnectCount ++;
+                        reconnectCount++;
                         log.w("Reconnecting... (" + reconnectCount + ")");
                         try {
                             Thread.sleep(Config.CONN_MQTT_RECONNECT_DELAY);
@@ -160,13 +162,13 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
             }
         }
 
-		// TODO: check ssl cert - client.getSSLSocketFactory can return the key
+        // TODO: check ssl cert - client.getSSLSocketFactory can return the key
         MqttConnectOptions options = new MqttConnectOptions();
 
-		options.setUserName("Auth:JWT");
-		options.setPassword(currentJwt.toCharArray());
+        options.setUserName("Auth:JWT");
+        options.setPassword(currentJwt.toCharArray());
 
-		options.setCleanSession(cleanMqttSession);
+        options.setCleanSession(cleanMqttSession);
         if (this.getLastWill() != null) {
             options.setWill(this.lastWill.getTopic(),
                     this.getLastWill().getMessage(),
@@ -175,9 +177,9 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
         }
 
         options.setConnectionTimeout(Config.CONN_MQTT_MAX_TIMEOUT);
-		options.setKeepAliveInterval(Config.CONN_KEEPALIVE);
+        options.setKeepAliveInterval(Config.CONN_KEEPALIVE);
 
-        if (Config.CONN_USE_SSL){
+        if (Config.CONN_USE_SSL) {
             try {
                 SSLContext sslContext = SSLContext.getDefault();//SSLContext.getInstance("TLSv1");
                 options.setSocketFactory(sslContext.getSocketFactory());
@@ -187,16 +189,16 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
 
         }
 
-		try {
-			IMqttActionListener actionCallback = new IMqttActionListener() {
+        try {
+            IMqttActionListener actionCallback = new IMqttActionListener() {
 
-				@Override
-				public void onSuccess(IMqttToken arg0) {
-                    if (connCanceled){
+                @Override
+                public void onSuccess(IMqttToken arg0) {
+                    if (connCanceled) {
                         return;
                     }
 
-                    synchronized (CONNECT_SYNC){
+                    synchronized (CONNECT_SYNC) {
                         if (mqttConnectionTimer != null) {
                             mqttConnectionTimer.cancel();
                         }
@@ -210,11 +212,11 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
                         onConnected();
                         log.d("Connected.");
                     }
-				}
+                }
 
-				@Override
-				public void onFailure(IMqttToken arg0, Throwable arg1) {
-                    if (connCanceled){
+                @Override
+                public void onFailure(IMqttToken arg0, Throwable arg1) {
+                    if (connCanceled) {
                         return;
                     }
 
@@ -224,7 +226,7 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
                         onError(ConnectionError.FAILED_TO_CONNECT);
                     } else {
                         //try to reconnect
-                        reconnectCount ++;
+                        reconnectCount++;
                         log.w("Reconnecting... (" + reconnectCount + ")");
                         try {
                             Thread.sleep(Config.CONN_MQTT_RECONNECT_DELAY);
@@ -235,18 +237,18 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
                             connectMqtt(xivelyAccount, true);
                         }
                     }
-				}
-			};
+                }
+            };
 
-			client.connect(options, context, actionCallback);
+            client.connect(options, context, actionCallback);
 
-		} catch (MqttException e) {
+        } catch (MqttException e) {
             if (reconnectCount >= Config.CONN_MQTT_MAX_RECONNECT) {
                 log.e("Failed to connect: " + e);
                 cancelConnection(ConnectionError.FAILED_TO_CONNECT);
             } else {
                 //try to reconnect
-                reconnectCount ++;
+                reconnectCount++;
                 log.w("Reconnecting... (" + reconnectCount + ")");
                 try {
                     Thread.sleep(Config.CONN_MQTT_RECONNECT_DELAY);
@@ -255,14 +257,14 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
                 }
                 connectMqtt(xivelyAccount, true);
             }
-		}
+        }
 
-	}
+    }
 
-	public boolean isConnected(){
+    public boolean isConnected() {
         try {
             return client != null && client.isConnected();
-        } catch (Exception ex){
+        } catch (Exception ex) {
             log.d("Client isConnected failed: " + ex);
         }
 
@@ -275,14 +277,14 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
     }
 
     @Override
-    public String getUserName(){
+    public String getUserName() {
         return currentUserId;
     }
 
 
     public void disconnect() {
-		if (client != null && client.isConnected()) {
-			try {
+        if (client != null && client.isConnected()) {
+            try {
                 client.setCallback(null);//we don't need any more message delivery
                 onDisconnected();
 
@@ -303,35 +305,35 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
                                 client.unregisterResources();
                             }
                         });
-			} catch (MqttException e) {
-				log.e("Disconnect error: " + e);
+            } catch (MqttException e) {
+                log.e("Disconnect error: " + e);
                 client.unregisterResources();
-				client = null;
-				onError(ConnectionError.DISCONNECT_ERROR);
-			} catch (IllegalArgumentException e){
+                client = null;
+                onError(ConnectionError.DISCONNECT_ERROR);
+            } catch (IllegalArgumentException e) {
                 log.e("Disconnect error: " + e);
                 onClosed();
                 client.unregisterResources();
                 client = null;
             }
-		} else {
+        } else {
             onClosed();
         }
-	}
+    }
 
-    public void cancelConnection(ConnectionError reason){
+    public void cancelConnection(ConnectionError reason) {
         connCanceled = true;
 
-        if (mqttConnectionTimer != null){
+        if (mqttConnectionTimer != null) {
             mqttConnectionTimer.cancel();
         }
 
-        if (client != null){
+        if (client != null) {
             client.setCallback(null);//we don't need any more message delivery
-            if (client.isConnected()){
+            if (client.isConnected()) {
                 try {
                     client.disconnect(Config.CONN_MQTT_DISCONNECT_TIMEOUT);
-                } catch (Exception ex){
+                } catch (Exception ex) {
                     log.d("Disconnect warning: " + ex);
                 } finally {
                     client.unregisterResources();
@@ -340,21 +342,21 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
             }
         }
 
-        if (reason != null){
+        if (reason != null) {
             onError(reason);
         } else {
             onError(ConnectionError.FAILED_TO_CONNECT);
         }
     }
 
-	public int publish(String message, String topic, int qos) {
-		return publish(message.getBytes(), topic, qos, false);
-	}
+    public int publish(String message, String topic, int qos) {
+        return publish(message.getBytes(), topic, qos, false);
+    }
 
     public int publish(byte[] message, String topic, int qos, boolean retained) {
         try {
             int res = client.publish(topic, message, qos, retained).getMessageId();
-            if (qos < 1){
+            if (qos < 1) {
                 res = 0;
             }
             log.t("Message sent: " + res);
@@ -369,30 +371,30 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
         return publish(message, topic, Config.CONN_XI_MQTT_QOS);
     }
 
-	public void addConnectionListener(ConnectionListener listener) {
+    public void addConnectionListener(ConnectionListener listener) {
         if (listener != null && !connectionListeners.contains(listener)) {
             connectionListeners.add(listener);
         }
-	}
+    }
 
-	public void removeConnectionListener(ConnectionListener listener) {
+    public void removeConnectionListener(ConnectionListener listener) {
         connectionListeners.remove(listener);
-	}
+    }
 
-	public void addPublishListener(PublishListener listener) {
+    public void addPublishListener(PublishListener listener) {
         if (listener != null && !publishListeners.contains(listener)) {
             publishListeners.add(listener);
         }
-	}
+    }
 
-	public void removePublishListener(PublishListener listener) {
+    public void removePublishListener(PublishListener listener) {
         publishListeners.remove(listener);
-	}
+    }
 
     @Override
-	public void subscribeToTopic(String topic) throws MqttException {
+    public void subscribeToTopic(String topic) throws MqttException {
         subscribeToTopic(topic, Config.CONN_XI_MQTT_QOS);
-	}
+    }
 
     @Override
     public void subscribeToTopic(String topic, int qos) throws MqttException {
@@ -401,27 +403,27 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
             log.d("Topic subscription success.");
         } catch (MqttException e) {
             log.e("Error while subscribing to channel: " + e);
-            throw(e);
+            throw (e);
         }
     }
 
     @Override
-	public void unsubscribeFromTopic(String topic) throws MqttException  {
-		try {
-			client.unsubscribe(topic);
-			log.d("Unsubscribed from current channel.");
-		} catch (MqttException e) {
-			log.e("Unsubscribe error: " + e);
-            throw(e);
-		}
-	}
+    public void unsubscribeFromTopic(String topic) throws MqttException {
+        try {
+            client.unsubscribe(topic);
+            log.d("Unsubscribed from current channel.");
+        } catch (MqttException e) {
+            log.e("Unsubscribe error: " + e);
+            throw (e);
+        }
+    }
 
-	// ===== Listener callbacks
-	private void onConnected() {
+    // ===== Listener callbacks
+    private void onConnected() {
         for (ConnectionListener listener : connectionListeners) {
             listener.onConnected();
         }
-	}
+    }
 
     private void onReconnecting() {
         for (ConnectionListener listener : connectionListeners) {
@@ -435,37 +437,36 @@ public class XiMqttConnectionImpl implements XiMqttConnection {
         }
     }
 
-	private void onDisconnected() {
+    private void onDisconnected() {
         for (ConnectionListener listener : connectionListeners) {
             listener.onDisconnected();
         }
-	}
+    }
 
-	private void onClosed() {
+    private void onClosed() {
         for (ConnectionListener listener : connectionListeners) {
             listener.onDisconnected();
         }
-	}
+    }
 
-	private void onError(ConnectionListener.ConnectionError error) {
+    private void onError(ConnectionListener.ConnectionError error) {
         for (ConnectionListener listener : connectionListeners) {
             listener.onError(error);
         }
-	}
+    }
 
-	private void onMessageReceived(String topic, MqttMessage message) {
-		String messagePayload;
-		messagePayload = new String(message.getPayload());
+    private void onMessageReceived(String topic, MqttMessage message) {
+        String messagePayload;
+        messagePayload = new String(message.getPayload());
         for (PublishListener listener : publishListeners) {
             listener.onPublishReceived(messagePayload, topic);
         }
-	}
+    }
 
-    private void onMessageConfirmation(int messageId){
+    private void onMessageConfirmation(int messageId) {
         log.d("Message delivered: " + messageId);
         for (PublishListener listener : publishListeners) {
             listener.onMessageDeliveryConfirmation(messageId);
         }
     }
-
 }

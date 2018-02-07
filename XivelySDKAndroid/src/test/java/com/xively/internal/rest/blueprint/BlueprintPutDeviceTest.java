@@ -2,31 +2,33 @@ package com.xively.internal.rest.blueprint;
 
 import com.xively.XiSdkConfig;
 import com.xively.internal.logger.LMILog;
-import com.xively.internal.rest.blueprint.devicesQuery.XiDeviceData;
-import com.xively.messaging.XiDeviceUpdateInfo;
 
 import junit.framework.TestCase;
 
+import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.IOException;
 import java.util.HashMap;
 
-import retrofit.Callback;
-import retrofit.RestAdapter;
+import okhttp3.Request;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+
 public class BlueprintPutDeviceTest extends TestCase {
 
     @Mock
-    RestAdapter mockRestAdapter;
+    private PutDevice mockPutDevice;
 
     @Override
     protected void setUp() throws Exception {
@@ -34,22 +36,181 @@ public class BlueprintPutDeviceTest extends TestCase {
         MockitoAnnotations.initMocks(this);
     }
 
-    public void testPutDeviceCallsService() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
-
-        Callback<PutDevice.Response> mockCallback = mock(Callback.class);
-        PutDevice mockPutDevice = mock(PutDevice.class);
-        when(mockRestAdapter.create(Matchers.<Class<Object>>anyObject())).thenReturn(mockPutDevice);
+    @Test
+    public void testPutDeviceCallsServiceSuccess() throws Exception {
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                null,
+                null,
+                null,
+                mockPutDevice,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
 
         final String deviceId = "mock account id";
         final String version = "ef";
-        HashMap<String,Object> data = new HashMap<String,Object>();
-        data.put("connected","true");
-        testWS.putDevice( deviceId , version, data, mockCallback );
 
-        verify(mockRestAdapter, times(1)).create(Matchers.<Class<CreateCredentials>>anyObject());
-        verify(mockPutDevice, timeout(500).times(1)).putDevice(eq(deviceId),eq(version),eq(data), eq(mockCallback));
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("connected", "true");
 
+        final SuccessStubCall successStubCall = new SuccessStubCall();
+        when(mockPutDevice.putDevice(
+                anyString(),
+                anyString(),
+                anyString(),
+                Matchers.<HashMap<String, Object>>any()
+        )).thenReturn(successStubCall);
+
+        SUT.putDevice(deviceId, version, data, new Callback<PutDevice.Response>() {
+            @Override
+            public void onResponse(Call<PutDevice.Response> call, Response<PutDevice.Response> response) {
+                assertEquals(successStubCall, call);
+                assertEquals(response.code(), 200);
+            }
+
+            @Override
+            public void onFailure(Call<PutDevice.Response> call, Throwable t) {
+                fail();
+            }
+        });
+
+        verify(mockPutDevice, times(1)).putDevice(
+                anyString(),
+                eq(deviceId),
+                eq(version),
+                eq(data)
+        );
     }
 
+    @Test
+    public void testPutDeviceCallsServiceFailure() throws Exception {
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                null,
+                null,
+                null,
+                mockPutDevice,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        final String deviceId = "mock account id";
+        final String version = "ef";
+
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("connected", "true");
+
+        final FailureStubCall failureStubCall = new FailureStubCall();
+        when(mockPutDevice.putDevice(
+                anyString(),
+                anyString(),
+                anyString(),
+                Matchers.<HashMap<String, Object>>any()
+        )).thenReturn(failureStubCall);
+
+        SUT.putDevice(deviceId, version, data, new Callback<PutDevice.Response>() {
+            @Override
+            public void onResponse(Call<PutDevice.Response> call, Response<PutDevice.Response> response) {
+                fail();
+            }
+
+            @Override
+            public void onFailure(Call<PutDevice.Response> call, Throwable t) {
+                assertEquals(failureStubCall, call);
+                assertNotNull(t);
+            }
+        });
+
+        verify(mockPutDevice, times(1)).putDevice(
+                anyString(),
+                eq(deviceId),
+                eq(version),
+                eq(data)
+        );
+    }
+
+    private class SuccessStubCall implements Call<PutDevice.Response> {
+
+        @Override
+        public Response<PutDevice.Response> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<PutDevice.Response> callback) {
+            PutDevice.Response response = new PutDevice.Response();
+            Response<PutDevice.Response> retrofitResponse = Response.success(response);
+            callback.onResponse(this, retrofitResponse);
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<PutDevice.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
+    }
+
+    private class FailureStubCall implements Call<PutDevice.Response> {
+
+        @Override
+        public Response<PutDevice.Response> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<PutDevice.Response> callback) {
+            callback.onFailure(this, new Throwable("Just an exception"));
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<PutDevice.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
+    }
 }

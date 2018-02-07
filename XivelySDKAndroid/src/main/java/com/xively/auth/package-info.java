@@ -1,10 +1,10 @@
 /**
  * Base package for Xively Authentication APIs.
- *
+ * <p>
  * The OpenID Authentication with the Xively SDK on Android requires the implementing application
  * to declare an intent-filter in the <code>AndroidManifest.xml</code> in order to enable the
  * transfer of the authorization data from the authentication service to the SDK.
- *
+ * <p>
  * This intent-filter must have the following data:
  * <blockquote>
  * <pre>
@@ -17,12 +17,11 @@
  *          android:pathPrefix="/"
  *      />
  *      }
- *</pre>
- *</blockquote>
- *
+ * </pre>
+ * </blockquote>
+ * <p>
  * <b>Important!</b>
  * In the above declaration you must substitute the <i>XIVELY_ACCOUNT_ID</i> with your actual
  * account Id assigned to you in the Xively system.
- *
  */
 package com.xively.auth;

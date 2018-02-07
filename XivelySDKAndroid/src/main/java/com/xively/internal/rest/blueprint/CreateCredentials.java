@@ -2,27 +2,45 @@ package com.xively.internal.rest.blueprint;
 
 import com.xively.internal.rest.blueprint.credentialsCreate.Credential;
 
-import retrofit.Callback;
-import retrofit.http.Body;
-import retrofit.http.POST;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.Header;
+import retrofit2.http.POST;
+
 
 public interface CreateCredentials {
 
     @POST("/api/v1/access/mqtt-credentials")
-    void createCredentials(@Body Request body, Callback<Response> callback);
+    Call<Response> createCredentials(
+            @Header("Authorization") String authHeader,
+            @Body Request body
+    );
 
-    /**
-     * entityId - endUserId
-     * entityType - "endUser"
-     */
     class Request {
         public String accountId;
         public String entityId;
         public String entityType;
+
+        @Override
+        public String toString() {
+            return "Request{" +
+                    "accountId='" + accountId + '\'' +
+                    ", entityId='" + entityId + '\'' +
+                    ", entityType='" + entityType + '\'' +
+                    '}';
+        }
     }
 
     class Response {
         public Credential mqttCredential;
         public BlueprintError error;
+
+        @Override
+        public String toString() {
+            return "Response{" +
+                    "mqttCredential=" + mqttCredential +
+                    ", error=" + error +
+                    '}';
+        }
     }
 }

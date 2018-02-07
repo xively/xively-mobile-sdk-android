@@ -1,8 +1,6 @@
 package com.xively.messaging;
 
-/**
- * Created by milgra on 26/07/16.
- */
+
 public class XiDeviceUpdateInfo {
     public String organizationId;
     public String serialNumber;

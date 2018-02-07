@@ -16,10 +16,11 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class XiMessagingImpl implements XiMessaging, ConnectionListener, PublishListener {
 
+public class XiMessagingImpl implements XiMessaging, ConnectionListener, PublishListener {
     private static final String TAG = "XiMessaging";
     private static final LMILog log = new LMILog(TAG);
+
     static {
         log.getClass();
     }
@@ -29,11 +30,11 @@ public class XiMessagingImpl implements XiMessaging, ConnectionListener, Publish
     private XiMqttConnection connection;
     private XiMqttConnectionPool connectionPool;
 
-    final CopyOnWriteArrayList<XiMessagingDataListener> dataListeners;
-    final CopyOnWriteArrayList<XiMessagingStateListener> stateListeners;
-    final CopyOnWriteArrayList<XiMessagingSubscriptionListener> subscriptionListeners;
+    private final CopyOnWriteArrayList<XiMessagingDataListener> dataListeners;
+    private final CopyOnWriteArrayList<XiMessagingStateListener> stateListeners;
+    private final CopyOnWriteArrayList<XiMessagingSubscriptionListener> subscriptionListeners;
 
-    public XiMessagingImpl(XiMqttConnectionPool connectionPool, String token){
+    public XiMessagingImpl(XiMqttConnectionPool connectionPool, String token) {
         log.i("Messaging init.");
         jwt = token;
         dataListeners = new CopyOnWriteArrayList<>();
@@ -81,14 +82,14 @@ public class XiMessagingImpl implements XiMessaging, ConnectionListener, Publish
 
     @Override
     public void removeDataListener(XiMessagingDataListener listener) {
-        synchronized (dataListeners){
+        synchronized (dataListeners) {
             dataListeners.remove(listener);
         }
     }
 
     @Override
     public void addStateListener(XiMessagingStateListener listener) {
-        synchronized (stateListeners){
+        synchronized (stateListeners) {
             if (listener != null && !stateListeners.contains(listener)) {
                 stateListeners.add(listener);
             }
@@ -97,14 +98,14 @@ public class XiMessagingImpl implements XiMessaging, ConnectionListener, Publish
 
     @Override
     public void removeStateListener(XiMessagingStateListener listener) {
-        synchronized (stateListeners){
+        synchronized (stateListeners) {
             stateListeners.remove(listener);
         }
     }
 
     @Override
     public void addSubscriptionListener(XiMessagingSubscriptionListener listener) {
-        synchronized (subscriptionListeners){
+        synchronized (subscriptionListeners) {
             if (listener != null && !subscriptionListeners.contains(listener)) {
                 subscriptionListeners.add(listener);
             }
@@ -113,7 +114,7 @@ public class XiMessagingImpl implements XiMessaging, ConnectionListener, Publish
 
     @Override
     public void removeSubscriptionListener(XiMessagingSubscriptionListener listener) {
-        synchronized (subscriptionListeners){
+        synchronized (subscriptionListeners) {
             subscriptionListeners.remove(listener);
         }
     }
@@ -121,7 +122,7 @@ public class XiMessagingImpl implements XiMessaging, ConnectionListener, Publish
     @Override
     public int publish(String channel, byte[] message, XiMessagingQoS qos) throws XiException.NotConnectedException {
         if (connection == null ||
-                !connection.isConnected()){
+                !connection.isConnected()) {
             throw new XiException.NotConnectedException();
         }
         return connection.publish(message, channel, getQosValue(qos), false);
@@ -129,8 +130,7 @@ public class XiMessagingImpl implements XiMessaging, ConnectionListener, Publish
 
     @Override
     public int publish(String channel, byte[] message, XiMessagingQoS qos, boolean retain) throws XiException.NotConnectedException {
-        if (connection == null ||
-                !connection.isConnected()){
+        if (connection == null || !connection.isConnected()) {
             throw new XiException.NotConnectedException();
         }
         return connection.publish(message, channel, getQosValue(qos), retain);
@@ -139,8 +139,7 @@ public class XiMessagingImpl implements XiMessaging, ConnectionListener, Publish
     @Override
     public void subscribe(String channel, XiMessagingQoS qos)
             throws XiException.NotConnectedException, XiException.ConnectionException {
-        if (connection == null ||
-                !connection.isConnected()){
+        if (connection == null || !connection.isConnected() || channel == null) {
             fireSubscribeFailed(channel);
             throw new XiException.NotConnectedException();
         }
@@ -159,7 +158,7 @@ public class XiMessagingImpl implements XiMessaging, ConnectionListener, Publish
     public void unsubscribe(String channel)
             throws XiException.NotConnectedException, XiException.ConnectionException {
         if (connection == null ||
-                !connection.isConnected()){
+                !connection.isConnected()) {
             fireUnsubscribeFailed(channel);
             throw new XiException.NotConnectedException();
         }
@@ -232,79 +231,79 @@ public class XiMessagingImpl implements XiMessaging, ConnectionListener, Publish
     //Mqtt messages
 
 
-    private void fireStateChanged(State state){
-        if (state == this.state){
+    private void fireStateChanged(State state) {
+        if (state == this.state) {
             return;
         }
 
         this.state = state;
         log.d("Messaging service state change: " + state);
 
-        for (XiMessagingStateListener listener: stateListeners){
-            if (listener != null){
+        for (XiMessagingStateListener listener : stateListeners) {
+            if (listener != null) {
                 listener.onStateChanged(state);
             }
         }
     }
 
-    private void fireConnectionError(){
-        for (XiMessagingStateListener listener: stateListeners){
-            if (listener != null){
+    private void fireConnectionError() {
+        for (XiMessagingStateListener listener : stateListeners) {
+            if (listener != null) {
                 listener.onError();
             }
         }
     }
 
-    private void fireMessageReceived(byte[] data, String channel){
-        for (XiMessagingDataListener listener: dataListeners){
-            if (listener != null){
+    private void fireMessageReceived(byte[] data, String channel) {
+        for (XiMessagingDataListener listener : dataListeners) {
+            if (listener != null) {
                 listener.onDataReceived(data, channel);
             }
         }
     }
 
-    private void fireMessageDelivered(int messageId){
-        for (XiMessagingDataListener listener: dataListeners){
-            if (listener != null){
+    private void fireMessageDelivered(int messageId) {
+        for (XiMessagingDataListener listener : dataListeners) {
+            if (listener != null) {
                 listener.onDataSent(messageId);
             }
         }
     }
 
-    private void fireSubscribed(String channel){
-        for (XiMessagingSubscriptionListener listener: subscriptionListeners){
-            if (listener != null){
+    private void fireSubscribed(String channel) {
+        for (XiMessagingSubscriptionListener listener : subscriptionListeners) {
+            if (listener != null) {
                 listener.onSubscribed(channel);
             }
         }
     }
 
-    private void fireSubscribeFailed(String channel){
-        for (XiMessagingSubscriptionListener listener: subscriptionListeners){
-            if (listener != null){
+    private void fireSubscribeFailed(String channel) {
+        for (XiMessagingSubscriptionListener listener : subscriptionListeners) {
+            if (listener != null) {
                 listener.onSubscribeFailed(channel);
             }
         }
     }
 
-    private void fireUnsubscribed(String channel){
-        for (XiMessagingSubscriptionListener listener: subscriptionListeners){
-            if (listener != null){
+    private void fireUnsubscribed(String channel) {
+        for (XiMessagingSubscriptionListener listener : subscriptionListeners) {
+            if (listener != null) {
                 listener.onUnsubscribed(channel);
             }
         }
     }
 
-    private void fireUnsubscribeFailed(String channel){
-        for (XiMessagingSubscriptionListener listener: subscriptionListeners){
-            if (listener != null){
+    private void fireUnsubscribeFailed(String channel) {
+        for (XiMessagingSubscriptionListener listener : subscriptionListeners) {
+            if (listener != null) {
                 listener.onUnsubscribeFailed(channel);
             }
         }
     }
 
-    private int getQosValue(XiMessagingQoS xiQos){
-        switch (xiQos){
+    private int getQosValue(XiMessagingQoS xiQos) {
+        switch (xiQos) {
 
             case AtLeastOnce:
                 return 0;

@@ -2,13 +2,8 @@ package com.xively.messaging;
 
 import com.google.gson.internal.LinkedTreeMap;
 
-import java.util.ArrayList;
 
-/**
- * Created by milgra on 26/07/16.
- */
 public class XiOrganizationInfo {
-
     public String organizationId;
     public String parentId;
     public String organizationTemplateId;
@@ -23,26 +18,26 @@ public class XiOrganizationInfo {
     public String industry;
     public String organizaitonSize;
     public String websiteAddress;
-    public LinkedTreeMap<String,Object>customFields;
+    public LinkedTreeMap<String, Object> customFields;
 
     @Override
     public String toString() {
-
-        return
-                "organizationId: " + organizationId + "\n" +
-                        "parentId: " + parentId + "\n" +
-                        "organizationTemplateId: " + organizationTemplateId+ "\n" +
-                        "name: " + name + "\n" +
-                        "description: " + description+ "\n" +
-                        "phoneNumber: " + phoneNumber + "\n" +
-                        "address: " + address + "\n" +
-                        "city: " + city + "\n" +
-                        "state: " + state + "\n" +
-                        "postalCode: " + postalCode + "\n" +
-                        "countryCode: " + countryCode + "\n" +
-                        "industry: " + industry + "\n" +
-                        "organizationSize: " + organizaitonSize + "\n" +
-                        "websiteAddress: " + websiteAddress + "\n" +
-                        "customFields: " + customFields;
+        return "XiOrganizationInfo{" +
+                "organizationId='" + organizationId + '\'' +
+                ", parentId='" + parentId + '\'' +
+                ", organizationTemplateId='" + organizationTemplateId + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", postalCode='" + postalCode + '\'' +
+                ", countryCode='" + countryCode + '\'' +
+                ", industry='" + industry + '\'' +
+                ", organizaitonSize='" + organizaitonSize + '\'' +
+                ", websiteAddress='" + websiteAddress + '\'' +
+                ", customFields=" + customFields +
+                '}';
     }
 }

@@ -5,27 +5,30 @@ import com.xively.internal.logger.LMILog;
 
 import junit.framework.TestCase;
 
-import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import retrofit.Callback;
-import retrofit.RestAdapter;
+import java.io.IOException;
 
+import okhttp3.Request;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+
 public class BlueprintGetUsersTest extends TestCase {
 
     @Mock
-    RestAdapter mockRestAdapter;
+    private GetEndUsers mockGetEndUsers;
 
     @Override
     protected void setUp() throws Exception {
@@ -33,84 +36,189 @@ public class BlueprintGetUsersTest extends TestCase {
         MockitoAnnotations.initMocks(this);
     }
 
-    public void testStartGetEndUserQuery() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
-
-        Callback<GetEndUsers.Response> mockCallback = mock(Callback.class);
-        GetEndUsers mockGetEndUser = mock(GetEndUsers.class);
-        when(mockRestAdapter.create(Matchers.<Class<Object>>anyObject())).thenReturn(mockGetEndUser);
+    @Test
+    public void testStartGetEndUserQuerySuccess() throws Exception {
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                mockGetEndUsers,
+                null,
+                null
+        );
 
         String accountId = "mock account id";
         String userId = "mock access user id";
 
-        testWS.getEndUsers(accountId, userId, mockCallback);
+        final SuccessStubCall successStubCall = new SuccessStubCall();
+        when(mockGetEndUsers.getEndUsers(
+                anyString(),
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString()
+        )).thenReturn(successStubCall);
 
-        verify(mockRestAdapter, times(1)).create(Matchers.<Class<GetEndUsers>>anyObject());
-        verify(mockGetEndUser, timeout(1000).times(1)).getEndUsers(
+        SUT.getEndUsers(accountId, userId, new Callback<GetEndUsers.Response>() {
+            @Override
+            public void onResponse(Call<GetEndUsers.Response> call, Response<GetEndUsers.Response> response) {
+                assertEquals(successStubCall, call);
+                assertEquals(response.code(), 200);
+            }
+
+            @Override
+            public void onFailure(Call<GetEndUsers.Response> call, Throwable t) {
+                fail();
+            }
+        });
+
+        verify(mockGetEndUsers, times(1)).getEndUsers(
+                anyString(),
                 eq(accountId),
                 eq(userId),
                 eq(true),
                 eq(true),
                 eq(1),
                 anyInt(),
-                anyString(),
-                eq(mockCallback)
+                anyString()
         );
-
     }
 
-    public void testStartGeAccountUserQuery() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
-
-        Callback<GetAccountUser.Response> mockCallback = mock(Callback.class);
-        GetAccountUser mockGetAccountUser = mock(GetAccountUser.class);
-        when(mockRestAdapter.create(Matchers.<Class<Object>>anyObject())).thenReturn(mockGetAccountUser);
+    @Test
+    public void testStartGetEndUserQueryFailure() throws Exception {
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                mockGetEndUsers,
+                null,
+                null
+        );
 
         String accountId = "mock account id";
         String userId = "mock access user id";
 
-        testWS.getAccountUser(accountId, userId, mockCallback);
+        final FailureStubCall failureStubCall = new FailureStubCall();
+        when(mockGetEndUsers.getEndUsers(
+                anyString(),
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString()
+        )).thenReturn(failureStubCall);
 
-        verify(mockRestAdapter, times(1)).create(Matchers.<Class<GetAccountUser>>anyObject());
-        verify(mockGetAccountUser, timeout(1000).times(1)).getAccountUser(
+        SUT.getEndUsers(accountId, userId, new Callback<GetEndUsers.Response>() {
+            @Override
+            public void onResponse(Call<GetEndUsers.Response> call, Response<GetEndUsers.Response> response) {
+                fail();
+            }
+
+            @Override
+            public void onFailure(Call<GetEndUsers.Response> call, Throwable t) {
+                assertEquals(failureStubCall, call);
+                assertNotNull(t);
+            }
+        });
+
+        verify(mockGetEndUsers, times(1)).getEndUsers(
+                anyString(),
                 eq(accountId),
                 eq(userId),
                 eq(true),
                 eq(true),
                 eq(1),
                 anyInt(),
-                anyString(),
-                eq(mockCallback)
+                anyString()
         );
-
     }
 
-    public void testStartCreateCredentialsQuery() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
+    private class SuccessStubCall implements Call<GetEndUsers.Response> {
+        @Override
+        public Response<GetEndUsers.Response> execute() throws IOException {
+            return null;
+        }
 
-        Callback<CreateCredentials.Response> mockCallback = mock(Callback.class);
-        CreateCredentials mockCreateCredentials = mock(CreateCredentials.class);
-        when(mockRestAdapter.create(Matchers.<Class<Object>>anyObject())).thenReturn(mockCreateCredentials);
+        @Override
+        public void enqueue(Callback<GetEndUsers.Response> callback) {
+            GetEndUsers.Response response = new GetEndUsers.Response();
+            Response<GetEndUsers.Response> retrofitResponse = Response.success(response);
+            callback.onResponse(this, retrofitResponse);
+        }
 
-        ArgumentCaptor<CreateCredentials.Request> createCredentialsRequestCaptor =
-                ArgumentCaptor.forClass(CreateCredentials.Request.class);
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
 
-        String accountId = "mock account id";
-        String userId = "mock access user id";
+        @Override
+        public void cancel() {
 
-        testWS.createCredentials(accountId, userId, BlueprintWebServices.BluePrintEntity.endUser, mockCallback);
+        }
 
-        verify(mockRestAdapter, times(1)).create(Matchers.<Class<CreateCredentials>>anyObject());
-        verify(mockCreateCredentials, timeout(1000).times(1)).createCredentials(
-                createCredentialsRequestCaptor.capture(),
-                eq(mockCallback)
-        );
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
 
-        CreateCredentials.Request request = createCredentialsRequestCaptor.getValue();
-        assertNotNull(request);
-        assertEquals(accountId, request.accountId);
-        assertEquals(userId, request.entityId);
-        assertEquals("endUser", request.entityType);
+        @Override
+        public Call<GetEndUsers.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
     }
 
+    private class FailureStubCall implements Call<GetEndUsers.Response> {
+        @Override
+        public Response<GetEndUsers.Response> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<GetEndUsers.Response> callback) {
+            callback.onFailure(this, new Throwable("Just an exception"));
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<GetEndUsers.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
+    }
 }

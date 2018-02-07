@@ -5,26 +5,28 @@ import com.xively.internal.logger.LMILog;
 
 import junit.framework.TestCase;
 
-import org.mockito.Matchers;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import retrofit.Callback;
-import retrofit.RestAdapter;
+import java.io.IOException;
 
+import okhttp3.Request;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * Created by milgra on 27/07/16.
- */
+
 public class BlueprintGetOrganizationTest extends TestCase {
+
     @Mock
-    RestAdapter mockRestAdapter;
+    private GetOrganization mockGetOrganization;
 
     @Override
     protected void setUp() throws Exception {
@@ -32,18 +34,151 @@ public class BlueprintGetOrganizationTest extends TestCase {
         MockitoAnnotations.initMocks(this);
     }
 
-    public void testGetOrganizationCallsService() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
-
-        Callback<GetOrganization.Response> mockCallback = mock(Callback.class);
-        GetOrganization mockGetOrganization = mock(GetOrganization.class);
-        when(mockRestAdapter.create(Matchers.<Class<Object>>anyObject())).thenReturn(mockGetOrganization);
+    @Test
+    public void testGetOrganizationCallsServiceSuccess() throws Exception {
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                mockGetOrganization,
+                null
+        );
 
         final String organizationId = "mock orgid";
-        testWS.getOrganization( organizationId, mockCallback );
 
-        verify(mockRestAdapter, times(1)).create(Matchers.<Class<CreateCredentials>>anyObject());
-        verify(mockGetOrganization, timeout(500).times(1)).getOrganization(eq(organizationId),eq(mockCallback));
+        final SuccessStubCall successStubCall = new SuccessStubCall();
+        when(mockGetOrganization.getOrganization(anyString(), anyString())).thenReturn(successStubCall);
 
+        SUT.getOrganization(organizationId, new Callback<GetOrganization.Response>() {
+            @Override
+            public void onResponse(Call<GetOrganization.Response> call, Response<GetOrganization.Response> response) {
+                assertEquals(successStubCall, call);
+                assertEquals(response.code(), 200);
+            }
+
+            @Override
+            public void onFailure(Call<GetOrganization.Response> call, Throwable t) {
+                fail();
+            }
+        });
+
+        verify(mockGetOrganization, times(1)).getOrganization(anyString(), eq(organizationId));
+    }
+
+    @Test
+    public void testGetOrganizationCallsServiceFailure() throws Exception {
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                mockGetOrganization,
+                null
+        );
+
+        final String organizationId = "mock orgid";
+
+        final FailureStubCall failureStubCall = new FailureStubCall();
+        when(mockGetOrganization.getOrganization(anyString(), anyString())).thenReturn(failureStubCall);
+
+        SUT.getOrganization(organizationId, new Callback<GetOrganization.Response>() {
+            @Override
+            public void onResponse(Call<GetOrganization.Response> call, Response<GetOrganization.Response> response) {
+                fail();
+            }
+
+            @Override
+            public void onFailure(Call<GetOrganization.Response> call, Throwable t) {
+                assertEquals(failureStubCall, call);
+                assertNotNull(t);
+            }
+        });
+
+        verify(mockGetOrganization, times(1)).getOrganization(anyString(), eq(organizationId));
+    }
+
+    private class SuccessStubCall implements Call<GetOrganization.Response> {
+        @Override
+        public Response<GetOrganization.Response> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<GetOrganization.Response> callback) {
+            GetOrganization.Response response = new GetOrganization.Response();
+            Response<GetOrganization.Response> retrofitResponse = Response.success(response);
+            callback.onResponse(this, retrofitResponse);
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<GetOrganization.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
+    }
+
+    private class FailureStubCall implements Call<GetOrganization.Response> {
+        @Override
+        public Response<GetOrganization.Response> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<GetOrganization.Response> callback) {
+            callback.onFailure(this, new Throwable("Just an exception"));
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<GetOrganization.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
     }
 }

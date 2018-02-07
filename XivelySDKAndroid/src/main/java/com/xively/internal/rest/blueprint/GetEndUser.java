@@ -2,19 +2,30 @@ package com.xively.internal.rest.blueprint;
 
 import com.google.gson.internal.LinkedTreeMap;
 
-import retrofit.Callback;
-import retrofit.http.GET;
-import retrofit.http.Path;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Path;
 
-/**
- * Created by milgra on 27/07/16.
- */
+
 public interface GetEndUser {
+
     @GET("/api/v1/end-users/{id}")
-    void getEndUser(@Path("id") String userId, Callback<Response> callback);
+    Call<Response> getEndUser(
+            @Header("Authorization") String authHeader,
+            @Path("id") String userId
+    );
 
     class Response {
         public LinkedTreeMap<String, Object> endUser;
         public BlueprintError error;
+
+        @Override
+        public String toString() {
+            return "Response{" +
+                    "endUser=" + endUser +
+                    ", error=" + error +
+                    '}';
+        }
     }
 }

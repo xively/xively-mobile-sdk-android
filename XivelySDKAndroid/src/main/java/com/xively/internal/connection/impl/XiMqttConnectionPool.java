@@ -1,10 +1,9 @@
 package com.xively.internal.connection.impl;
 
-import com.xively.XiException;
 import com.xively.XiService;
+import com.xively.internal.account.XivelyAccount;
 import com.xively.internal.connection.ConnectionListener;
 import com.xively.internal.connection.XiMqttConnection;
-import com.xively.internal.account.XivelyAccount;
 import com.xively.internal.logger.LMILog;
 import com.xively.messaging.XiLastWill;
 
@@ -14,9 +13,9 @@ import java.util.ArrayList;
  * @Internal
  */
 public class XiMqttConnectionPool {
-
     private static final String TAG = "XiMqttConnectionPool";
     private static final LMILog log = new LMILog(TAG);
+
     static {
         log.getClass();
     }
@@ -26,13 +25,13 @@ public class XiMqttConnectionPool {
 
     private ArrayList<XiService> connectionUsers;
 
-    public XiMqttConnectionPool(XivelyAccount xivelyAccount){
+    public XiMqttConnectionPool(XivelyAccount xivelyAccount) {
         connectionUsers = new ArrayList<>(5);
         this.xivelyAccount = xivelyAccount;
     }
 
     //Only for unit testing
-    protected void setTestConnectionObject(XiMqttConnection conn){
+    protected void setTestConnectionObject(XiMqttConnection conn) {
         this.mqttConnection = conn;
     }
 
@@ -47,15 +46,15 @@ public class XiMqttConnectionPool {
 
         if (mqttConnection != null) {
             //Check if the cleanSession and lastWill params are the same
-            if (( cleanSession != mqttConnection.isCleanSession()) ||              //Clean session param mismatch
+            if ((cleanSession != mqttConnection.isCleanSession()) ||              //Clean session param mismatch
                     ((lastWill == null) ^ (mqttConnection.getLastWill() == null)) ||//one has last will the other not
                     (lastWill != null && mqttConnection.getLastWill() != null && //both have last wills but they are not equal
-                        !lastWill.equals(mqttConnection.getLastWill()))) {
+                            !lastWill.equals(mqttConnection.getLastWill()))) {
                 throw new IllegalArgumentException();
             }
         }
 
-        if (mqttConnection == null || !mqttConnection.isConnected()){
+        if (mqttConnection == null || !mqttConnection.isConnected()) {
             log.d("Creating new mqtt connection.");
             mqttConnection = new XiMqttConnectionImpl();
 
@@ -70,13 +69,16 @@ public class XiMqttConnectionPool {
                 }
 
                 @Override
-                public void onReconnected() {}
+                public void onReconnected() {
+                }
 
                 @Override
-                public void onReconnecting() {}
+                public void onReconnecting() {
+                }
 
                 @Override
-                public void onDisconnected() {}
+                public void onDisconnected() {
+                }
 
                 @Override
                 public void onClosed() {
@@ -102,32 +104,32 @@ public class XiMqttConnectionPool {
 
     }
 
-    public void releaseConnection(XiService service){
+    public void releaseConnection(XiService service) {
 
         log.t("Connection release request: " + service.getClass().getName());
 
         connectionUsers.remove(service);
-        if (connectionUsers.size() == 0){
+        if (connectionUsers.size() == 0) {
             log.d("No more connection users, shutting down mqtt.");
             closeMqttConnection();
         }
     }
 
-    public void dropConnection(){
+    public void dropConnection() {
         closeMqttConnection();
     }
 
-    private void closeMqttConnection(){
+    private void closeMqttConnection() {
         if (mqttConnection != null &&
-                mqttConnection.isConnected()){
+                mqttConnection.isConnected()) {
             mqttConnection.disconnect();
             mqttConnection = null;
         }
     }
 
-    public interface MqttConnectionRequestCallback{
+    public interface MqttConnectionRequestCallback {
         void onConnectionReady(XiMqttConnection xiMqttConnection);
+
         void onConnectFailed(ConnectionListener.ConnectionError error);
     }
-
 }

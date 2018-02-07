@@ -47,7 +47,7 @@ public class DeviceInfoTest extends TestCase {
         DependencyInjector.setInstance(mockDependencyInjector);
     }
 
-    public void testGetUUIdGeneratesAndStoresId(){
+    public void testGetUUIdGeneratesAndStoresId() {
         ArgumentCaptor<String> prefIdCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> prefValueCaptor = ArgumentCaptor.forClass(String.class);
 
@@ -67,7 +67,7 @@ public class DeviceInfoTest extends TestCase {
         assertEquals(prefValueCaptor.getValue(), uuid);
     }
 
-    public void testGetUUIdReturnsStoredValue(){
+    public void testGetUUIdReturnsStoredValue() {
         when(mockSharedPreferences.getString(anyString(), Matchers.<String>anyObject()))
                 .thenReturn(mockUId);
 
@@ -79,11 +79,11 @@ public class DeviceInfoTest extends TestCase {
         verify(mockEditor, never()).apply();
     }
 
-    public void testGetUUIdReturnsCachedValue(){
+    public void testGetUUIdReturnsCachedValue() {
         DeviceInfoImpl testDeviceInfo = new DeviceInfoImpl();
         String uuid = testDeviceInfo.getUUId();
 
-        for (int i=0; i<10; i++){
+        for (int i = 0; i < 10; i++) {
             String uuid2 = testDeviceInfo.getUUId();
             assertEquals(uuid, uuid2);
         }

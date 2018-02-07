@@ -2,8 +2,8 @@ package com.xively.internal.util;
 
 import java.util.Calendar;
 
-public class LMITime {
 
+public class LMITime {
     private final Calendar mCalendar;
 
     public LMITime() {

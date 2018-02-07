@@ -1,12 +1,19 @@
 package com.xively.internal.rest.blueprint.organizationsQuery;
 
 import com.xively.internal.rest.blueprint.BlueprintMeta;
-import com.xively.internal.rest.blueprint.devicesQuery.XiDeviceData;
 
-/**
- * Created by milgra on 26/07/16.
- */
+import java.util.Arrays;
+
+
 public class XiOrganizationsList {
     public XiOrganizationData[] results;
     public BlueprintMeta meta;
+
+    @Override
+    public String toString() {
+        return "XiOrganizationsList{" +
+                "results=" + Arrays.toString(results) +
+                ", meta=" + meta +
+                '}';
+    }
 }

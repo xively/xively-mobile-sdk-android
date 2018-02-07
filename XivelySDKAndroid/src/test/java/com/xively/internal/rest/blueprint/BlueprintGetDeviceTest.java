@@ -5,23 +5,28 @@ import com.xively.internal.logger.LMILog;
 
 import junit.framework.TestCase;
 
-import org.mockito.Matchers;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import retrofit.Callback;
-import retrofit.RestAdapter;
+import java.io.IOException;
 
+import okhttp3.Request;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+
 public class BlueprintGetDeviceTest extends TestCase {
+
     @Mock
-    RestAdapter mockRestAdapter;
+    private GetDevice mockGetDevice;
 
     @Override
     protected void setUp() throws Exception {
@@ -29,19 +34,152 @@ public class BlueprintGetDeviceTest extends TestCase {
         MockitoAnnotations.initMocks(this);
     }
 
-    public void testGetDeviceCallsService() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
-
-        Callback<GetDevice.Response> mockCallback = mock(Callback.class);
-        GetDevice mockGetDevice = mock(GetDevice.class);
-        when(mockRestAdapter.create(Matchers.<Class<Object>>anyObject())).thenReturn(mockGetDevice);
+    @Test
+    public void testGetDeviceCallsServiceSuccess() throws Exception {
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                null,
+                null,
+                mockGetDevice,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
 
         final String deviceId = "mock account id";
-        testWS.getDevice( deviceId , mockCallback );
 
-        verify(mockRestAdapter, times(1)).create(Matchers.<Class<CreateCredentials>>anyObject());
-        verify(mockGetDevice, timeout(500).times(1)).getDevice(eq(deviceId),eq(mockCallback));
+        final SuccessStubCall successStubCall = new SuccessStubCall();
+        when(mockGetDevice.getDevice(anyString(), anyString())).thenReturn(successStubCall);
 
+        SUT.getDevice(deviceId, new Callback<GetDevice.Response>() {
+            @Override
+            public void onResponse(Call<GetDevice.Response> call, Response<GetDevice.Response> response) {
+                assertEquals(successStubCall, call);
+                assertEquals(response.code(), 200);
+            }
+
+            @Override
+            public void onFailure(Call<GetDevice.Response> call, Throwable t) {
+                fail();
+            }
+        });
+
+        verify(mockGetDevice, times(1)).getDevice(anyString(), eq(deviceId));
     }
 
+    @Test
+    public void testGetDeviceCallsServiceFailure() throws Exception {
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                null,
+                null,
+                mockGetDevice,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        final String deviceId = "mock account id";
+
+
+        final FailureStubCall failureStubCall = new FailureStubCall();
+        when(mockGetDevice.getDevice(anyString(), anyString())).thenReturn(failureStubCall);
+
+        SUT.getDevice(deviceId, new Callback<GetDevice.Response>() {
+            @Override
+            public void onResponse(Call<GetDevice.Response> call, Response<GetDevice.Response> response) {
+                fail();
+            }
+
+            @Override
+            public void onFailure(Call<GetDevice.Response> call, Throwable t) {
+                assertEquals(failureStubCall, call);
+                assertNotNull(t);
+            }
+        });
+
+        verify(mockGetDevice, times(1)).getDevice(anyString(), eq(deviceId));
+    }
+
+    private class SuccessStubCall implements Call<GetDevice.Response> {
+        @Override
+        public Response<GetDevice.Response> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<GetDevice.Response> callback) {
+            GetDevice.Response response = new GetDevice.Response();
+            Response<GetDevice.Response> retrofitResponse = Response.success(response);
+            callback.onResponse(this, retrofitResponse);
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<GetDevice.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
+    }
+
+    private class FailureStubCall implements Call<GetDevice.Response> {
+        @Override
+        public Response<GetDevice.Response> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<GetDevice.Response> callback) {
+            callback.onFailure(this, new Throwable("Just and exception"));
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<GetDevice.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
+    }
 }

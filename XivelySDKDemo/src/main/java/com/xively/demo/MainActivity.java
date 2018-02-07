@@ -3,33 +3,32 @@ package com.xively.demo;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import com.xively.XiSdkConfig;
 import com.xively.XiSession;
+import com.xively.auth.XiAuthentication;
+import com.xively.auth.XiAuthenticationCallback;
+import com.xively.auth.XiAuthenticationFactory;
 import com.xively.demo.fragments.ChannelsFragment;
 import com.xively.demo.fragments.DevicesFragment;
 import com.xively.demo.fragments.MessagingFragment;
 import com.xively.demo.fragments.OnFragmentInteractionListener;
 import com.xively.demo.fragments.SettingsFragment;
-import com.xively.auth.XiAuthentication;
-import com.xively.auth.XiAuthenticationCallback;
-import com.xively.auth.XiAuthenticationFactory;
 import com.xively.messaging.XiDeviceChannel;
 import com.xively.messaging.XiDeviceInfo;
 
@@ -38,17 +37,19 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         OnFragmentInteractionListener {
-
     private static final String TAG = "MainAcitivty";
 
     /**
      * **************************************************
      * Important!
-     *
+     * <p>
      * Insert your account Id here before using the app.
      * **************************************************
      */
-    private enum UiState {unknown, login, DevicesFragment, ChannelsFragment, MessagingFragment, SettingsFragment}
+    private enum UiState {
+        unknown, login, DevicesFragment, ChannelsFragment, MessagingFragment, SettingsFragment
+    }
+
     private UiState currentUiState = UiState.login;
 
     private XiSession xivelySession;
@@ -87,17 +88,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        if (!isXivelyActive() || savedInstanceState == null){
+        if (!isXivelyActive() || savedInstanceState == null) {
             xivelyLogin();
-        } else
-        if (savedInstanceState.containsKey("UiState")){
+        } else if (savedInstanceState.containsKey("UiState")) {
             String savedStateString = savedInstanceState.getString("UiState");
             UiState savedState = UiState.unknown;
             try {
                 savedState = UiState.valueOf(savedStateString);
-            } catch (IllegalArgumentException ignored){}
+            } catch (IllegalArgumentException ignored) {
+            }
 
-            switch (savedState){
+            switch (savedState) {
 
                 case login:
                     xivelyLogin();
@@ -129,8 +130,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             Fragment fragment = getActiveFragmentObject();
 
-            if ( fragment instanceof DevicesFragment )
-            {
+            if (fragment instanceof DevicesFragment) {
                 DevicesFragment devices = (DevicesFragment) fragment;
                 devices.onBackPressed();
             }
@@ -169,18 +169,16 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_login) {
             xivelyLogin();
         } else if (id == R.id.nav_device_list) {
-            if (isXivelyActive()){
+            if (isXivelyActive()) {
                 changeFragment(new DevicesFragment(), false);
             } else {
                 showAlert("Error", "You must login to use this feature.", null);
             }
         } else if (id == R.id.nav_channel_list) {
-            if (isXivelyActive()){
-                if ( deviceInfo != null ) {
+            if (isXivelyActive()) {
+                if (deviceInfo != null) {
                     changeFragment(ChannelsFragment.newInstance(deviceInfo), false);
-                }
-                else
-                {
+                } else {
                     showAlert("Error", "Select a device first.", null);
                 }
             } else {
@@ -223,11 +221,11 @@ public class MainActivity extends AppCompatActivity
     //***** End of Devices Fragment callback listeners
 
 
-    public XiSession getXivelySession(){
+    public XiSession getXivelySession() {
         return xivelySession;
     }
 
-    private void xivelyLogin(){
+    private void xivelyLogin() {
         requestLogin(new LoginDialogResult() {
             @Override
             public void onSubmitCredentials(String accountId, String userName, String password) {
@@ -240,17 +238,21 @@ public class MainActivity extends AppCompatActivity
                     try {
                         XiSdkConfig.XI_ENVIRONMENT env = XiSdkConfig.XI_ENVIRONMENT.valueOf(envValue);
                         customConfig.environment = env;
-                    } catch (Exception ignored){}
+                    } catch (Exception ignored) {
+                    }
                 }
 
                 String customLogLevelValue = XiSettings.getString(XiSettings.PREF_LOG_LEVEL, null);
-                if (customLogLevelValue != null){
+                if (customLogLevelValue != null) {
                     try {
                         XiSdkConfig.LogLevel customLogLevel = XiSdkConfig.LogLevel.valueOf(customLogLevelValue);
                         customConfig.logLevel = customLogLevel;
-                    } catch (Exception ignored){}
+                    } catch (Exception ignored) {
+                    }
 
                 }
+
+                customConfig.logLevel = XiSdkConfig.LogLevel.DEBUG;
 
                 XiAuthentication xiAuthentication =
                         XiAuthenticationFactory.createAuthenticationService(getApplicationContext(), customConfig);
@@ -287,10 +289,10 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void requestLogin(final LoginDialogResult loginDialogResult){
+    private void requestLogin(final LoginDialogResult loginDialogResult) {
 
         if (alertDialog != null &&
-                alertDialog.isShowing()){
+                alertDialog.isShowing()) {
             alertDialog.dismiss();
             alertDialog = null;
         }
@@ -331,7 +333,7 @@ public class MainActivity extends AppCompatActivity
                             }
                         })
                 .setNeutralButton("Settings",
-                        new DialogInterface.OnClickListener(){
+                        new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
@@ -364,13 +366,13 @@ public class MainActivity extends AppCompatActivity
         return xivelySession != null && xivelySession.getState().equals(XiSession.State.Active);
     }
 
-    private void showAlert(String title, String message, DialogInterface.OnClickListener onClickListener){
-        if (isFinishing()){
+    private void showAlert(String title, String message, DialogInterface.OnClickListener onClickListener) {
+        if (isFinishing()) {
             return;
         }
 
         if (alertDialog != null &&
-                alertDialog.isShowing()){
+                alertDialog.isShowing()) {
             alertDialog.dismiss();
         }
 
@@ -386,11 +388,11 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void changeFragment(Fragment fragment, boolean addToBackStack){
+    private void changeFragment(Fragment fragment, boolean addToBackStack) {
         changeFragment(fragment, addToBackStack, true);
     }
 
-    private void changeFragment(Fragment fragment, boolean addToBackStack, boolean enableCustomAnim){
+    private void changeFragment(Fragment fragment, boolean addToBackStack, boolean enableCustomAnim) {
         //TODO: Set active state in Drawer menu
 
         if (!getActiveFragmentName().equals(fragment.getClass().getName())) {
@@ -405,7 +407,7 @@ public class MainActivity extends AppCompatActivity
             ft.commit();
             try {
                 currentUiState = UiState.valueOf(fragment.getClass().getSimpleName());
-            } catch (IllegalArgumentException ex){
+            } catch (IllegalArgumentException ex) {
                 ex.printStackTrace();
             }
         }
@@ -414,7 +416,7 @@ public class MainActivity extends AppCompatActivity
     private String getActiveFragmentName() {
         Fragment fragment = getActiveFragmentObject();
         String tag = "";
-        if (fragment != null){
+        if (fragment != null) {
             tag = fragment.getClass().getName();
         }
 
@@ -424,12 +426,12 @@ public class MainActivity extends AppCompatActivity
     private Fragment getActiveFragmentObject() {
 
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        if (fragments == null){
+        if (fragments == null) {
             return null;
         }
 
-        for(Fragment fragment : fragments){
-            if (fragment != null && fragment.isVisible()){
+        for (Fragment fragment : fragments) {
+            if (fragment != null && fragment.isVisible()) {
                 return fragment;
             }
         }

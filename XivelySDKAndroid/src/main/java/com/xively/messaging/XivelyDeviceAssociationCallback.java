@@ -1,11 +1,14 @@
 package com.xively.messaging;
 
+
 public interface XivelyDeviceAssociationCallback {
 
     /**
      * Enum of possible association error causes.
      */
-    public enum AssociationError {UNAUTHORIZED, ASSOCIATION_ERROR, INVALID_CODE, SERVER_INTERNAL_ERROR, SERVICE_UNAVAILABLE}
+    public enum AssociationError {
+        UNAUTHORIZED, ASSOCIATION_ERROR, INVALID_CODE, SERVER_INTERNAL_ERROR, SERVICE_UNAVAILABLE
+    }
 
     /**
      * Successful association event. The device has been associated with the end user's Xively account.

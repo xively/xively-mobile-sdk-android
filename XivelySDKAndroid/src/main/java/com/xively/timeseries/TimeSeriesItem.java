@@ -1,5 +1,6 @@
 package com.xively.timeseries;
 
+
 public class TimeSeriesItem {
     public String time; //Time in ISO8601 (yyyy-MM-ddTHH:mm:ssZ)
     public String category; //Category
@@ -8,12 +9,11 @@ public class TimeSeriesItem {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Time: ").append(time);
-        sb.append("\nCategory: ").append(category);
-        sb.append("\nNumeric: ").append(numericValue);
-        sb.append("\nString: ").append(stringValue);
-
-        return sb.toString();
+        return "TimeSeriesItem{" +
+                "time='" + time + '\'' +
+                ", category='" + category + '\'' +
+                ", numericValue='" + numericValue + '\'' +
+                ", stringValue='" + stringValue + '\'' +
+                '}';
     }
 }

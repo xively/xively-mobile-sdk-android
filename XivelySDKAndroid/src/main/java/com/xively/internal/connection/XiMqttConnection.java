@@ -17,10 +17,10 @@ public interface XiMqttConnection {
      * Connects to the Xively Messaging with the credentials specified by the {@param xivelyAccount} parameter.
      *
      * @param xivelyAccount Xively end user credentials.
-     * @param cleanSession Clean session.
-     * @param lastWill Last will data.
+     * @param cleanSession  Clean session.
+     * @param lastWill      Last will data.
      */
-	public void connect(XivelyAccount xivelyAccount, String jwt, boolean cleanSession, XiLastWill lastWill);
+    public void connect(XivelyAccount xivelyAccount, String jwt, boolean cleanSession, XiLastWill lastWill);
 
     /**
      * Gets what clean session parameter the connection was initiated.*
@@ -38,13 +38,13 @@ public interface XiMqttConnection {
      *
      * @return True if the connection is alive, false if there is no connection to Xively Messaging.
      */
-	public boolean isConnected();
+    public boolean isConnected();
 
     /**
      * Initiates disconnect. This call is asynchronous, <code>onDisconnected</code>, <code>onClosed</code>
      * <code>onError</code> events are raised when disconnect has finished.
      */
-	public void disconnect();
+    public void disconnect();
 
     /**
      * The Xively client id associated with this connection.
@@ -65,20 +65,20 @@ public interface XiMqttConnection {
      * The message will have QoS 1.
      *
      * @param message a plain text message with optional Markdown rich text formatting.
-     * @param topic An MQTT topic / Xively Messaging channel.
+     * @param topic   An MQTT topic / Xively Messaging channel.
      * @return Returns the message id. This id identifies the message in the delivery confirmation callback.
      * The value is -1 on message send error.
      */
-	public int publish(String message, String topic);
+    public int publish(String message, String topic);
 
     /**
      * Publishes the plain text {@param message} to the specified {@param topic} as an MQTT payload.
      * The message can have QoS specified by @param qos.
      *
      * @param message a plain text message with optional Markdown rich text formatting.
-     * @param topic An MQTT topic / Xively Messaging channel.
-     * @param qos MQTT qos. The usage of corresponding {@link Config}
-     *            constants are encouraged.
+     * @param topic   An MQTT topic / Xively Messaging channel.
+     * @param qos     MQTT qos. The usage of corresponding {@link Config}
+     *                constants are encouraged.
      * @return Returns the message id. This id identifies the message in the delivery confirmation callback.
      * The value is -1 on message send error.
      */
@@ -88,10 +88,10 @@ public interface XiMqttConnection {
      * Publishes the plain text {@param message} to the specified {@param topic} as an MQTT payload.
      * The message can have QoS specified by @param qos.
      *
-     * @param message The mqtt payload.
-     * @param topic An MQTT topic / Xively Messaging channel.
-     * @param qos MQTT qos. The usage of corresponding {@link Config}
-     *            constants are encouraged.
+     * @param message  The mqtt payload.
+     * @param topic    An MQTT topic / Xively Messaging channel.
+     * @param qos      MQTT qos. The usage of corresponding {@link Config}
+     *                 constants are encouraged.
      * @param retained The retain flag of the mqtt message.
      * @return Returns the message id. This id identifies the message in the delivery confirmation callback.
      * The value is -1 on message send error.
@@ -130,7 +130,7 @@ public interface XiMqttConnection {
      *
      * @param listener A {@link ConnectionListener} instance.
      */
-	public void addConnectionListener(ConnectionListener listener);
+    public void addConnectionListener(ConnectionListener listener);
 
     /**
      * Removes the specified listener instance. If it has already been removed or has never
@@ -138,7 +138,7 @@ public interface XiMqttConnection {
      *
      * @param listener A {@link ConnectionListener} instance.
      */
-	public void removeConnectionListener(ConnectionListener listener);
+    public void removeConnectionListener(ConnectionListener listener);
 
     /**
      * Adds a {@link PublishListener} listener instance for publish delivery callback.
@@ -146,7 +146,7 @@ public interface XiMqttConnection {
      *
      * @param listener A {@link PublishListener} instance.
      */
-	public void addPublishListener(PublishListener listener);
+    public void addPublishListener(PublishListener listener);
 
     /**
      * Removes the specified listener instance. If it has already been removed or has never
@@ -154,6 +154,5 @@ public interface XiMqttConnection {
      *
      * @param listener A {@link PublishListener} instance.
      */
-	public void removePublishListener(PublishListener listener);
-	
+    public void removePublishListener(PublishListener listener);
 }

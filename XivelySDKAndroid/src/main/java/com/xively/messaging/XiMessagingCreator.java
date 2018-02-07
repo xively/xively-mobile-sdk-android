@@ -1,5 +1,5 @@
 package com.xively.messaging;
-import com.xively.XiException;
+
 import com.xively.XiServiceCreator;
 import com.xively.XiServiceCreatorCallback;
 
@@ -13,7 +13,7 @@ public abstract class XiMessagingCreator extends XiServiceCreator<XiMessaging> {
      * set to true, and there is no last will set.
      * The service will be returned as a parameter of the serviceCreated event
      * of the {@link XiServiceCreatorCallback}.
-     *
+     * <p>
      * Service Creator Callback listeners must registered before this method is called.
      */
     public abstract void createMessaging();
@@ -23,7 +23,7 @@ public abstract class XiMessagingCreator extends XiServiceCreator<XiMessaging> {
      * set, and there is no last will.
      * The service will be returned as a parameter of the serviceCreated event
      * of the {@link XiServiceCreatorCallback}.
-     *
+     * <p>
      * Service Creator Callback listeners must registered before this method is called.
      */
     public abstract void createMessaging(boolean cleanSession);
@@ -33,9 +33,8 @@ public abstract class XiMessagingCreator extends XiServiceCreator<XiMessaging> {
      * the last will can be set.
      * The service will be returned as a parameter of the serviceCreated event
      * of the {@link XiServiceCreatorCallback}.
-     *
+     * <p>
      * Service Creator Callback listeners must registered before this method is called.
      */
     public abstract void createMessaging(boolean cleanSession, XiLastWill lastWill);
-
 }

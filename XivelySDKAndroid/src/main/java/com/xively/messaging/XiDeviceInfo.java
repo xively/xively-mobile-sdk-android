@@ -3,11 +3,10 @@ package com.xively.messaging;
 import com.google.gson.internal.LinkedTreeMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class XiDeviceInfo {
-
     public enum ProvisioningStateEnum {defined, activated, associated, reserved}
+
     public enum PersistenceTypeEnum {simple, timeSeries}
 
     public String deviceId;
@@ -18,13 +17,13 @@ public class XiDeviceInfo {
     public String deviceName;
     public String purchaseDate;//FIXME: parse date
     public ArrayList<XiDeviceChannel> deviceChannels;
-    public LinkedTreeMap<String,Object> customFields;
+    public LinkedTreeMap<String, Object> customFields;
 
     @Override
     public String toString() {
         String deviceChannelsString = "";
-        if (deviceChannels != null && deviceChannels.size() > 0){
-            for (XiDeviceChannel deviceChannel: deviceChannels){
+        if (deviceChannels != null && deviceChannels.size() > 0) {
+            for (XiDeviceChannel deviceChannel : deviceChannels) {
                 deviceChannelsString += "Channel id: " + deviceChannel.channelId + " \n";
                 deviceChannelsString += "Channel type: " + deviceChannel.persistenceType.toString() + "\n ";
             }
@@ -32,16 +31,16 @@ public class XiDeviceInfo {
             deviceChannelsString = "N/A";
         }
 
-        return
-                "id: " + deviceId + "\n" +
-                "serialNumber: " + serialNumber + "\n" +
-                "provisioningState: " + provisioningState + "\n" +
-                "deviceVersion: " + deviceVersion + "\n" +
-                "deviceLocation: " + deviceLocation + "\n" +
-                "deviceName: " + deviceName + "\n" +
-                "purchaseDate: " + purchaseDate + "\n" +
-                "deviceChannels: " + deviceChannelsString + "\n" +
-                        "customFields: " + customFields;
-
+        return "XiDeviceInfo{" +
+                "deviceId='" + deviceId + '\'' +
+                ", serialNumber='" + serialNumber + '\'' +
+                ", provisioningState=" + provisioningState +
+                ", deviceVersion='" + deviceVersion + '\'' +
+                ", deviceLocation='" + deviceLocation + '\'' +
+                ", deviceName='" + deviceName + '\'' +
+                ", purchaseDate='" + purchaseDate + '\'' +
+                ", deviceChannels=" + deviceChannelsString +
+                ", customFields=" + customFields +
+                '}';
     }
 }

@@ -5,7 +5,7 @@ package com.xively;
  *
  * @param <T> The initialized service (TimeSeries, Messaging etc.).
  */
-public interface XiServiceCreatorCallback<T extends XiService>{
+public interface XiServiceCreatorCallback<T extends XiService> {
 
     /**
      * Listener for asynchronous service creation.

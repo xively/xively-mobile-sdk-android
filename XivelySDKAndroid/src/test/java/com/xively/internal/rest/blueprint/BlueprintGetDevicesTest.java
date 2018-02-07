@@ -6,25 +6,30 @@ import com.xively.messaging.XiDeviceInfo.ProvisioningStateEnum;
 
 import junit.framework.TestCase;
 
-import org.mockito.Matchers;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import retrofit.Callback;
-import retrofit.RestAdapter;
+import java.io.IOException;
 
+import okhttp3.Request;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+
 public class BlueprintGetDevicesTest extends TestCase {
 
     @Mock
-    RestAdapter mockRestAdapter;
+    private GetDevices mockGetDevices;
 
     @Override
     protected void setUp() throws Exception {
@@ -32,12 +37,20 @@ public class BlueprintGetDevicesTest extends TestCase {
         MockitoAnnotations.initMocks(this);
     }
 
-    public void testGetDevicesCallsService() throws Exception {
-        BlueprintWebServices testWS = new BlueprintWebServices(mockRestAdapter);
-
-        Callback<GetDevices.Response> mockCallback = mock(Callback.class);
-        GetDevices mockGetDevices = mock(GetDevices.class);
-        when(mockRestAdapter.create(Matchers.<Class<Object>>anyObject())).thenReturn(mockGetDevices);
+    @Test
+    public void testGetDevicesCallsServiceSuccess() throws Exception {
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                null,
+                null,
+                null,
+                null,
+                mockGetDevices,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
 
         final String accountId = "mock account id";
         final String deviceTemplateId = "mock device template id";
@@ -46,19 +59,197 @@ public class BlueprintGetDevicesTest extends TestCase {
         final int page = 66;
         final int pageSize = 99;
 
-        testWS.getDevices(
+        final SuccessStubCall successStubCall = new SuccessStubCall();
+
+        when(mockGetDevices.getDevices(
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString(),
+                anyString()
+        )).thenReturn(successStubCall);
+
+        SUT.getDevices(
                 accountId, deviceTemplateId, organizationId, provisioningState, page, pageSize,
-                mockCallback
+                new Callback<GetDevices.Response>() {
+                    @Override
+                    public void onResponse(Call<GetDevices.Response> call, Response<GetDevices.Response> response) {
+                        assertEquals(successStubCall, call);
+                        assertEquals(response.code(), 200);
+                    }
+
+                    @Override
+                    public void onFailure(Call<GetDevices.Response> call, Throwable t) {
+                        fail();
+                    }
+                }
         );
 
-        verify(mockRestAdapter, times(1)).create(Matchers.<Class<CreateCredentials>>anyObject());
-        verify(mockGetDevices, timeout(500).times(1)).getDevices(
-                eq(accountId), eq(deviceTemplateId), eq(organizationId),
-                eq(provisioningState.toString()), eq(Boolean.TRUE), eq(Boolean.TRUE),
-                eq(page), eq(pageSize), anyString(), anyString(),
-                eq(mockCallback)
+        verify(mockGetDevices, times(1)).getDevices(
+                anyString(),
+                eq(accountId),
+                eq(deviceTemplateId),
+                eq(organizationId),
+                eq(provisioningState.toString()),
+                eq(Boolean.TRUE),
+                eq(Boolean.TRUE),
+                eq(page),
+                eq(pageSize),
+                anyString(),
+                anyString()
         );
-
     }
 
+    @Test
+    public void testGetDevicesCallsServiceFailure() {
+        BlueprintWebServices SUT = new BlueprintWebServices(
+                null,
+                null,
+                null,
+                null,
+                mockGetDevices,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        final String accountId = "mock account id";
+        final String deviceTemplateId = "mock device template id";
+        final String organizationId = "mock organization id";
+        final ProvisioningStateEnum provisioningState = ProvisioningStateEnum.activated;
+        final int page = 66;
+        final int pageSize = 99;
+
+        final FailureStubCall failureStubCall = new FailureStubCall();
+
+        when(mockGetDevices.getDevices(
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                anyBoolean(),
+                anyInt(),
+                anyInt(),
+                anyString(),
+                anyString()
+        )).thenReturn(failureStubCall);
+
+        SUT.getDevices(
+                accountId, deviceTemplateId, organizationId, provisioningState, page, pageSize,
+                new Callback<GetDevices.Response>() {
+                    @Override
+                    public void onResponse(Call<GetDevices.Response> call, Response<GetDevices.Response> response) {
+                        fail();
+                    }
+
+                    @Override
+                    public void onFailure(Call<GetDevices.Response> call, Throwable t) {
+                        assertEquals(failureStubCall, call);
+                        assertNotNull(t);
+                    }
+                }
+        );
+
+        verify(mockGetDevices, times(1)).getDevices(
+                anyString(),
+                eq(accountId),
+                eq(deviceTemplateId),
+                eq(organizationId),
+                eq(provisioningState.toString()),
+                eq(Boolean.TRUE),
+                eq(Boolean.TRUE),
+                eq(page),
+                eq(pageSize),
+                anyString(),
+                anyString()
+        );
+    }
+
+    private class SuccessStubCall implements Call<GetDevices.Response> {
+
+        @Override
+        public Response<GetDevices.Response> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<GetDevices.Response> callback) {
+            GetDevices.Response response = new GetDevices.Response();
+            Response<GetDevices.Response> retrofitResponse = Response.success(response);
+            callback.onResponse(this, retrofitResponse);
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<GetDevices.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
+    }
+
+    private class FailureStubCall implements Call<GetDevices.Response> {
+
+        @Override
+        public Response<GetDevices.Response> execute() throws IOException {
+            return null;
+        }
+
+        @Override
+        public void enqueue(Callback<GetDevices.Response> callback) {
+            callback.onFailure(this, new Throwable("Just and error message"));
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return false;
+        }
+
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+
+        @Override
+        public Call<GetDevices.Response> clone() {
+            return null;
+        }
+
+        @Override
+        public Request request() {
+            return null;
+        }
+    }
 }

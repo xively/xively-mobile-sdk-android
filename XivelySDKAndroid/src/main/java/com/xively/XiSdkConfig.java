@@ -6,7 +6,7 @@ import com.xively.internal.logger.LMILog;
 /**
  * Provides access to SDK internal configuration values such as connection timeouts
  * and maximum automatic retry counts.
- *
+ * <p>
  * The configuration becomes effective only by passing the custom configuration object
  * to the Authentication request service.
  */
@@ -19,7 +19,7 @@ public class XiSdkConfig {
         TRACE, DEBUG, INFO, WARNING, ERROR, OFF
     }
 
-    public XiSdkConfig(){
+    public XiSdkConfig() {
         httpTimeout = Config.CONN_HTTP_TIMEOUT;
         httpReadtimeout = Config.CONN_HTTP_READTIMEOUT;
         mqttMaxTimeout = Config.CONN_MQTT_MAX_TIMEOUT;
@@ -79,7 +79,7 @@ public class XiSdkConfig {
     /**
      * Resets all options to their default value in the current instance.
      */
-    public void resetConfig(){
+    public void resetConfig() {
         httpTimeout = Config.DEFAULT_CONN_HTTP_TIMEOUT;
         httpReadtimeout = Config.DEFAULT_CONN_HTTP_READTIMEOUT;
         mqttMaxTimeout = Config.DEFAULT_CONN_MQTT_MAX_TIMEOUT;
@@ -92,5 +92,6 @@ public class XiSdkConfig {
     }
 
     public XI_ENVIRONMENT environment;
+
     public enum XI_ENVIRONMENT {DEV, STAGE, DEMO, DEPLOY, LIVE}
 }

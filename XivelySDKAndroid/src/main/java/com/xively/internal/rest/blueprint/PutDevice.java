@@ -5,19 +5,33 @@ import com.google.gson.internal.LinkedTreeMap;
 
 import java.util.HashMap;
 
-import retrofit.Callback;
-import retrofit.http.Body;
-import retrofit.http.Header;
-import retrofit.http.PUT;
-import retrofit.http.Path;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.Header;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
 
-public interface PutDevice
-{
+
+public interface PutDevice {
+
     @PUT("/api/v1/devices/{id}")
-    void putDevice(@Path("id") String deviceId, @Header("etag") String version, @Body HashMap<String,Object> body, Callback<Response> callback );
+    Call<Response> putDevice(
+            @Header("Authorization") String authHeader,
+            @Path("id") String deviceId,
+            @Header("etag") String version,
+            @Body HashMap<String, Object> body
+    );
 
     class Response {
         public LinkedTreeMap<String, Object> device;
         public BlueprintError error;
+
+        @Override
+        public String toString() {
+            return "Response{" +
+                    "device=" + device +
+                    ", error=" + error +
+                    '}';
+        }
     }
 }

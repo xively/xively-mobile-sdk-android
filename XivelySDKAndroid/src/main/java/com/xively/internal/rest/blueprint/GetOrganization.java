@@ -2,19 +2,30 @@ package com.xively.internal.rest.blueprint;
 
 import com.google.gson.internal.LinkedTreeMap;
 
-import retrofit.Callback;
-import retrofit.http.GET;
-import retrofit.http.Path;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Path;
 
-/**
- * Created by milgra on 27/07/16.
- */
+
 public interface GetOrganization {
+
     @GET("/api/v1/organizations/{id}")
-    void getOrganization(@Path("id") String organizationId, Callback<Response> callback);
+    Call<Response> getOrganization(
+            @Header("Authorization") String authHeader,
+            @Path("id") String organizationId
+    );
 
     class Response {
         public LinkedTreeMap<String, Object> organization;
         public BlueprintError error;
+
+        @Override
+        public String toString() {
+            return "Response{" +
+                    "organization=" + organization +
+                    ", error=" + error +
+                    '}';
+        }
     }
 }

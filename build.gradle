@@ -2,51 +2,18 @@
 buildscript {
     repositories {
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
-        //Check for the latest version here: http://plugins.gradle.org/plugin/com.jfrog.artifactory
+        classpath 'com.android.tools.build:gradle:3.0.1'
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:3.1.1"
     }
 }
 
 allprojects {
-    //FIXME: move to private properties file as static TC resource
-    ext {
-        artifactory_user = "imatko"
-        artifactory_password = "AP7RTgp18gJ91BfwzTEamKwVfno"
-        artifactory_contextUrl = "https://artifactory.intra.3amlabs.net/artifactory"
-    }
-
     repositories {
-        maven {
-            url 'https://artifactory.intra.3amlabs.net/artifactory/repo'
-            credentials {
-                username = "${artifactory_user}"
-                password = "${artifactory_password}"
-            }
-        }
         jcenter()
     }
 
-    apply plugin: "com.jfrog.artifactory"
-}
-
-artifactory {
-    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
-    publish {
-        repository {
-            repoKey = 'xively'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-
-        }
-    }
-    resolve {
-        repository {
-            repoKey = 'repo'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-        }
-    }
+    ext.buildToolsVersion = '27.0.3'
 }

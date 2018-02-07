@@ -2,54 +2,80 @@ package com.xively.internal.device;
 
 import com.xively.internal.DependencyInjector;
 import com.xively.internal.account.XivelyAccount;
+import com.xively.internal.logger.LMILog;
 import com.xively.internal.rest.provision.StartAssociationWithCode;
 import com.xively.messaging.XivelyDeviceAssociationCallback;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class XiDeviceAssociationImpl {
+    private static final String TAG = "XiDeviceAssociationImpl";
+    private static final LMILog log = new LMILog(TAG);
     private final XivelyAccount account;
 
-    public XiDeviceAssociationImpl(XivelyAccount xivelyEndUserAccount){
+    static {
+        log.getClass();
+    }
+
+    public XiDeviceAssociationImpl(XivelyAccount xivelyEndUserAccount) {
         this.account = xivelyEndUserAccount;
     }
 
-    public void startDeviceAssociation(String associationCode, final XivelyDeviceAssociationCallback callback) {
-
-        DependencyInjector.get().provisionWebServices()
-                .associateIoTDevice(associationCode, account.getUserName(), new Callback<StartAssociationWithCode.Response>() {
-                    @Override
-                    public void success(StartAssociationWithCode.Response response, Response response2) {
-                        callback.onAssociationSuccess();
-                    }
+    public void startDeviceAssociation(final String associationCode, final XivelyDeviceAssociationCallback callback) {
+        DependencyInjector.get().provisionWebServices().associateIoTDevice(
+                associationCode,
+                account.getUserName(),
+                new Callback<StartAssociationWithCode.Response>() {
 
                     @Override
-                    public void failure(RetrofitError retrofitError) {
-                        XivelyDeviceAssociationCallback.AssociationError error;
-                        if (retrofitError == null || retrofitError.getResponse() == null){
-                            error = XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR;
-                        } else {
-                            switch (retrofitError.getResponse().getStatus()) {
+                    public void onResponse(
+                            Call<StartAssociationWithCode.Response> call,
+                            Response<StartAssociationWithCode.Response> response
+                    ) {
+                        StartAssociationWithCode.Response associationResponse = response.body();
+                        if (associationResponse != null) {
+                            log.d(associationResponse.toString());
+                            switch (response.code()) {
                                 case 401:
-                                    error = XivelyDeviceAssociationCallback.AssociationError.UNAUTHORIZED;
+                                    callback.onAssociationFailure(
+                                            XivelyDeviceAssociationCallback.AssociationError.UNAUTHORIZED
+                                    );
                                     break;
                                 case 400:
                                 case 404:
-                                    error = XivelyDeviceAssociationCallback.AssociationError.INVALID_CODE;
+                                    callback.onAssociationFailure(
+                                            XivelyDeviceAssociationCallback.AssociationError.INVALID_CODE
+                                    );
                                     break;
                                 case 500:
-                                    error = XivelyDeviceAssociationCallback.AssociationError.SERVER_INTERNAL_ERROR;
+                                    callback.onAssociationFailure(
+                                            XivelyDeviceAssociationCallback.AssociationError.SERVER_INTERNAL_ERROR
+                                    );
                                     break;
                                 case 503:
-                                    error = XivelyDeviceAssociationCallback.AssociationError.SERVICE_UNAVAILABLE;
+                                    callback.onAssociationFailure(
+                                            XivelyDeviceAssociationCallback.AssociationError.SERVICE_UNAVAILABLE
+                                    );
                                     break;
                                 default:
-                                    error = XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR;
+                                    callback.onAssociationFailure(
+                                            XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR
+                                    );
                                     break;
                             }
+
+                            callback.onAssociationSuccess();
+                        } else {
+                            callback.onAssociationFailure(XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR);
                         }
-                        callback.onAssociationFailure(error);
+                    }
+
+                    @Override
+                    public void onFailure(Call<StartAssociationWithCode.Response> call, Throwable t) {
+                        callback.onAssociationFailure(XivelyDeviceAssociationCallback.AssociationError.ASSOCIATION_ERROR);
                     }
                 });
     }

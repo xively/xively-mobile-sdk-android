@@ -3,11 +3,8 @@ package com.xively.messaging;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 
-/**
- * Last will data for a messaging connection.
- */
-public class XiLastWill {
 
+public class XiLastWill {
     private String topic;
     private byte[] message;
     private XiMessaging.XiMessagingQoS qos;
@@ -17,9 +14,11 @@ public class XiLastWill {
 
     }
 
-    public XiLastWill(String topic, byte[] message, XiMessaging.XiMessagingQoS qos, boolean retain){
-        if (topic == null || topic.length() == 0) throw new InvalidParameterException("Topic needs to be filled");
-        if (message == null || message.length == 0) throw new InvalidParameterException("Message needs to be filled");
+    public XiLastWill(String topic, byte[] message, XiMessaging.XiMessagingQoS qos, boolean retain) {
+        if (topic == null || topic.length() == 0)
+            throw new InvalidParameterException("Topic needs to be filled");
+        if (message == null || message.length == 0)
+            throw new InvalidParameterException("Message needs to be filled");
 
         this.topic = topic;
         this.message = message;
@@ -61,8 +60,8 @@ public class XiLastWill {
 
     @Override
     public boolean equals(Object o) {
-        if ( !(o instanceof XiLastWill) ) return false;
-        XiLastWill comparingLastWill = (XiLastWill)o;
+        if (!(o instanceof XiLastWill)) return false;
+        XiLastWill comparingLastWill = (XiLastWill) o;
 
         return this.topic.equals(comparingLastWill.getTopic()) &&
                 Arrays.equals(this.message, comparingLastWill.getMessage()) &&
@@ -72,10 +71,11 @@ public class XiLastWill {
 
     @Override
     public String toString() {
-        return
-                "topic: " + topic + "\n" +
-                        "message: " + message + "\n" +
-                        "qos: " + qos + "\n" +
-                        "retain: " + retain;
+        return "XiLastWill{" +
+                "topic='" + topic + '\'' +
+                ", message=" + Arrays.toString(message) +
+                ", qos=" + qos +
+                ", retain=" + retain +
+                '}';
     }
 }
