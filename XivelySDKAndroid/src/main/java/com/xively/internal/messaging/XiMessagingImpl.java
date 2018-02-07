@@ -130,8 +130,7 @@ public class XiMessagingImpl implements XiMessaging, ConnectionListener, Publish
 
     @Override
     public int publish(String channel, byte[] message, XiMessagingQoS qos, boolean retain) throws XiException.NotConnectedException {
-        if (connection == null ||
-                !connection.isConnected()) {
+        if (connection == null || !connection.isConnected()) {
             throw new XiException.NotConnectedException();
         }
         return connection.publish(message, channel, getQosValue(qos), retain);
@@ -140,8 +139,7 @@ public class XiMessagingImpl implements XiMessaging, ConnectionListener, Publish
     @Override
     public void subscribe(String channel, XiMessagingQoS qos)
             throws XiException.NotConnectedException, XiException.ConnectionException {
-        if (connection == null ||
-                !connection.isConnected()) {
+        if (connection == null || !connection.isConnected() || channel == null) {
             fireSubscribeFailed(channel);
             throw new XiException.NotConnectedException();
         }
