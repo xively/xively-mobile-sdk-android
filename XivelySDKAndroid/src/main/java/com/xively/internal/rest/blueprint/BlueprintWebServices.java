@@ -331,7 +331,9 @@ public class BlueprintWebServices {
                     retrofit2.Response<GetAccountUser.Response> response
             ) {
                 GetAccountUser.Response accountUsersResponse = response.body();
-                log.d(accountUsersResponse.toString());
+                if (accountUsersResponse != null) {
+                    log.d(accountUsersResponse.toString());   
+                }
 
                 if (accountUsersResponse == null ||
                         accountUsersResponse.accountUsers == null ||
